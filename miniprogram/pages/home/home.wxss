@@ -44,21 +44,22 @@
 /* ---- 阵容信息流卡 ---- */
 .feed-card { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 24rpx; padding: 22rpx 24rpx 20rpx; margin-bottom: 22rpx; box-shadow: 0 4rpx 16rpx -10rpx rgba(58,50,38,.15); }
 .feed-card.big { border-color: rgba(169,134,67,.4); }
-.fc-head { display: flex; align-items: center; gap: 12rpx; margin-bottom: 16rpx; }
+.fc-head { display: flex; align-items: flex-start; gap: 12rpx; margin-bottom: 16rpx; }
 .fc-mark { flex: none; width: 40rpx; height: 40rpx; border-radius: 50%; background: var(--gold-dim); color: var(--gold-hi); display: grid; place-items: center; font-size: 22rpx; }
-.fc-name { font-family: var(--serif); font-size: 30rpx; font-weight: 700; max-width: 34%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.fc-author { font-size: 20rpx; color: var(--faint); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.fc-fav { flex: none; font-size: 21rpx; color: var(--dim); padding: 6rpx 16rpx; border: 1px solid var(--line-hi); border-radius: 99rpx; background: #FFFDF8; }
-.fc-fav.on { color: var(--gold-hi); border-color: rgba(169,134,67,.5); background: var(--gold-dim); }
+.fc-name { flex: 1; min-width: 0; font-family: var(--serif); font-size: 30rpx; font-weight: 700; line-height: 1.35; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: anywhere; }
+.fc-acts { flex: none; display: flex; align-items: center; gap: 12rpx; }
+.fc-author { max-width: 176rpx; font-size: 20rpx; color: var(--faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fc-star { width: 64rpx; height: 64rpx; display: grid; place-items: center; font-size: 34rpx; color: var(--gold-hi); background: var(--gold-dim); border-radius: 50%; }
+.fc-star.on { color: #D99535; }
 
 .fc-units { display: flex; align-items: stretch; gap: 12rpx; }
 .fc-main-wrap { position: relative; flex: none; width: 128rpx; height: 160rpx; border-radius: 14rpx; overflow: hidden; border: 3rpx solid var(--gold); background: var(--gold-dim); }
 .fc-main-seal { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--serif); font-size: 52rpx; font-weight: 700; color: var(--gold-hi); }
 .fc-main { position: absolute; inset: 0; width: 100%; height: 100%; }
-.fc-cbadge { position: absolute; top: 0; left: 0; font-size: 17rpx; padding: 2rpx 10rpx; background: var(--gold); color: #FFF9EE; border-radius: 0 0 12rpx 0; font-weight: 700; }
-.fc-star { position: absolute; bottom: 2rpx; left: 6rpx; font-size: 16rpx; color: #FFE9B8; text-shadow: 0 0 4rpx rgba(0,0,0,.6); }
-.fc-strip { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; gap: 8rpx; align-content: flex-start; }
-.fc-unit { position: relative; width: calc((100% - 16rpx) / 3); height: 0; padding-bottom: calc((100% - 16rpx) / 3 * 1.2); border-radius: 10rpx; overflow: hidden; border: 2rpx solid var(--line-hi); box-sizing: border-box; }
+.fc-cbadge { position: absolute; top: 0; left: 0; font-size: 17rpx; padding: 2rpx 10rpx; background: var(--gold); color: #FFF9EE; border-radius: 0 0 12rpx 0; font-weight: 700; z-index: 2; }
+/* 头像横滑区:scroll-view 内容不吃宿主 flex,用 inline-block + nowrap(最兼容的横滑方案) */
+.fc-strip { flex: 1; min-width: 0; overflow-x: auto; white-space: nowrap; }
+.fc-unit { position: relative; display: inline-block; vertical-align: top; width: 96rpx; height: 118rpx; margin-right: 10rpx; border-radius: 10rpx; overflow: hidden; border: 2rpx solid var(--line-hi); }
 .fc-unit image { position: absolute; inset: 0; width: 100%; height: 100%; }
 .fc-unit-star { position: absolute; bottom: 1rpx; left: 4rpx; font-size: 14rpx; color: #FFE9B8; text-shadow: 0 0 3rpx rgba(0,0,0,.6); }
 .fc-arrow { flex: none; align-self: center; color: var(--faint); font-size: 34rpx; }
@@ -67,5 +68,21 @@
 .fpill { display: inline-flex; align-items: center; gap: 8rpx; padding: 5rpx 14rpx 5rpx 6rpx; border-radius: 99rpx; border: 1px solid; background: #FFFDF8; }
 .fpill-icon { width: 34rpx; height: 34rpx; border-radius: 50%; background: var(--panel); }
 .fpill-n { font-size: 21rpx; font-weight: 650; }
+
+/* ---- 速览弹层(侠客/羁绊) ---- */
+.modal.pop { width: 86%; padding-bottom: 30rpx; }
+.pop-head { display: flex; gap: 20rpx; }
+.pop-art { flex: none; width: 144rpx; height: 180rpx; border-radius: 16rpx; background: var(--panel); }
+.pop-info { flex: 1; min-width: 0; }
+.pop-name { font-family: var(--serif); font-size: 34rpx; font-weight: 700; }
+.pop-cost { font-size: 24rpx; font-weight: 700; margin-left: 6rpx; }
+.pop-job { font-size: 22rpx; color: var(--faint); margin-top: 8rpx; }
+.pop-bonds { margin-top: 12rpx; display: flex; flex-wrap: wrap; gap: 8rpx; }
+.pop-skill { margin-top: 18rpx; background: #F6F2E7; border-radius: 16rpx; padding: 18rpx; max-height: 280rpx; overflow-y: auto; }
+.pop-skill-n { font-size: 24rpx; font-weight: 700; color: var(--gold-hi); margin-bottom: 8rpx; }
+.pop-skill-d { font-size: 23rpx; color: var(--dim); line-height: 1.7; }
+.pop-btns { display: flex; gap: 16rpx; margin-top: 22rpx; }
+.pop-btn { flex: 1; height: 76rpx; line-height: 76rpx; text-align: center; border-radius: 20rpx; background: var(--gold); color: #FFF9EE; font-size: 25rpx; font-weight: 700; }
+.pop-btn.ghost { background: var(--panel); color: var(--dim); }
 
 .legal { text-align: center; font-size: 20rpx; color: var(--faint); padding: 26rpx 0 10rpx; }

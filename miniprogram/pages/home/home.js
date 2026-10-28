@@ -17,7 +17,7 @@ Page({
   data: {
     statusH: 40, season: null, seasons: [], sheetOn: false,
     banners: [], today: null, hotList: [], quills: QUILLS,
-    favs: {},
+    favs: {}, popUnit: null, popBond: null,
   },
 
   onShow() {
@@ -49,7 +49,7 @@ Page({
       isMain: u[0] === c.main,
     }));
     return {
-      n: c.n, author: c.author || "官方推荐", season: sid,
+      n: c.n, author: c.author || "未署名", season: sid,
       heat: fmt.wan(c.heat), tier: c.tier, popCarry: `${c.pop}${c.carry}`,
       mainArt: api.artUrl(fmt.pieceOf(c.main, sid).art, isHero ? 480 : 240),
       mainName: c.main,
@@ -89,6 +89,36 @@ Page({
     if (added) favs[name] = true; else delete favs[name];
     this.setData({ favs });
     wx.showToast({ title: added ? "已收藏" : "已取消收藏", icon: "none" });
+  },
+
+  /* ---------- 卡内弹层:侠客/羁绊速览(设计规范 3.7/3.6) ---------- */
+  noop() {},
+  onUnitTap(e) {
+    const { n, season: sid } = e.currentTarget.dataset;
+    const sidE = sid || season.get().id;
+    const p = fmt.pieceOf(n, sidE);
+    this.setData({ popBond: null, popUnit: {
+      n: p.n, c: p.c, job: p.job || "", bonds: p.bonds || [], season: sidE,
+      skill: p.skill && p.skill.d ? p.skill : null,
+      color: fmt.pack.cost.colors[p.c] || fmt.pack.cost.colors[3],
+      art: api.artUrl(p.art, 240),
+    }});
+  },
+  onBondTap(e) {
+    const { n, season: sid } = e.currentTarget.dataset;
+    const sidE = sid || season.get().id;
+    const b = fmt.data.bonds.find(x => x.n === n && x.season === sidE) || {};
+    this.setData({ popUnit: null, popBond: {
+      n: b.n || n, t: b.t || "势力", lv: b.lv || "", d: b.d || "", season: sidE,
+      icon: api.artUrl(b.icon, 120),
+    }});
+  },
+  onPopClose() { this.setData({ popUnit: null, popBond: null }); },
+  onPopDetail(e) {
+    const { type, name } = e.currentTarget.dataset;
+    const pop = this.data.popUnit || this.data.popBond || {};
+    this.setData({ popUnit: null, popBond: null });
+    wx.navigateTo({ url: `/pages/detail/detail?type=${type}&name=${encodeURIComponent(name)}&season=${pop.season || season.get().id}` });
   },
 
   /* ---------- 赛季切换弹层(沿用) ---------- */

@@ -50,26 +50,28 @@
     <view class="fc-head">
       <view class="fc-mark">✦</view>
       <text class="fc-name">{{today.n}}</text>
-      <text class="fc-author">作者：{{today.author}}</text>
-      <view class="fc-fav {{favs[today.n] ? 'on' : ''}}" catchtap="onFav" data-name="{{today.n}}" data-season="{{today.season}}">{{favs[today.n] ? "★" : "☆"}} 收藏</view>
+      <view class="fc-acts">
+        <text class="fc-author">{{today.author}}</text>
+        <view class="fc-star {{favs[today.n] ? 'on' : ''}}" catchtap="onFav" data-name="{{today.n}}" data-season="{{today.season}}">{{favs[today.n] ? "★" : "☆"}}</view>
+      </view>
     </view>
     <view class="fc-units">
       <view class="fc-main-wrap">
         <text class="fc-main-seal">{{today.mainName[0]}}</text>
         <image class="fc-main" src="{{today.mainArt}}" mode="aspectFill" lazy-load />
         <text class="fc-cbadge">主C</text>
-        <text class="fc-star">★</text>
+        <text class="fc-unit-star">★</text>
       </view>
-      <view class="fc-strip">
-        <view wx:for="{{today.units}}" wx:key="n" wx:if="{{!item.isMain}}" class="fc-unit">
+      <scroll-view class="fc-strip" scroll-x enhanced show-scrollbar="{{false}}">
+        <view wx:for="{{today.units}}" wx:key="n" wx:if="{{!item.isMain}}" class="fc-unit" catchtap="onUnitTap" data-n="{{item.n}}" data-season="{{today.season}}">
           <image src="{{item.art}}" mode="aspectFill" lazy-load />
           <text class="fc-unit-star">★</text>
         </view>
-      </view>
+      </scroll-view>
       <text class="fc-arrow">›</text>
     </view>
     <view class="fc-traits">
-      <view wx:for="{{today.traits}}" wx:key="n" class="fpill" style="border-color:{{item.color}}55">
+      <view wx:for="{{today.traits}}" wx:key="n" class="fpill" style="border-color:{{item.color}}55" catchtap="onBondTap" data-n="{{item.n}}" data-season="{{today.season}}">
         <image class="fpill-icon" src="{{item.icon}}" mode="aspectFill" />
         <text class="fpill-n" style="color:{{item.color}}">{{item.n}} {{item.count}}</text>
       </view>
@@ -85,26 +87,28 @@
     <view class="fc-head">
       <view class="fc-mark">✦</view>
       <text class="fc-name">{{item.n}}</text>
-      <text class="fc-author">者：{{item.author}}</text>
-      <view class="fc-fav {{favs[item.n] ? 'on' : ''}}" catchtap="onFav" data-name="{{item.n}}" data-season="{{item.season}}">{{favs[item.n] ? "★" : "☆"}} 收藏</view>
+      <view class="fc-acts">
+        <text class="fc-author">{{item.author}}</text>
+        <view class="fc-star {{favs[item.n] ? 'on' : ''}}" catchtap="onFav" data-name="{{item.n}}" data-season="{{item.season}}">{{favs[item.n] ? "★" : "☆"}}</view>
+      </view>
     </view>
     <view class="fc-units">
       <view class="fc-main-wrap">
         <text class="fc-main-seal">{{item.mainName[0]}}</text>
         <image class="fc-main" src="{{item.mainArt}}" mode="aspectFill" lazy-load />
         <text class="fc-cbadge">主C</text>
-        <text class="fc-star">★</text>
+        <text class="fc-unit-star">★</text>
       </view>
-      <view class="fc-strip">
-        <view wx:for="{{item.units}}" wx:for-item="u" wx:key="n" wx:if="{{!u.isMain}}" class="fc-unit">
+      <scroll-view class="fc-strip" scroll-x enhanced show-scrollbar="{{false}}">
+        <view wx:for="{{item.units}}" wx:for-item="u" wx:key="n" wx:if="{{!u.isMain}}" class="fc-unit" catchtap="onUnitTap" data-n="{{u.n}}" data-season="{{item.season}}">
           <image src="{{u.art}}" mode="aspectFill" lazy-load />
           <text class="fc-unit-star">★</text>
         </view>
-      </view>
+      </scroll-view>
       <text class="fc-arrow">›</text>
     </view>
     <view class="fc-traits">
-      <view wx:for="{{item.traits}}" wx:for-item="t" wx:key="n" class="fpill" style="border-color:{{t.color}}55">
+      <view wx:for="{{item.traits}}" wx:for-item="t" wx:key="n" class="fpill" style="border-color:{{t.color}}55" catchtap="onBondTap" data-n="{{t.n}}" data-season="{{item.season}}">
         <image class="fpill-icon" src="{{t.icon}}" mode="aspectFill" />
         <text class="fpill-n" style="color:{{t.color}}">{{t.n}} {{t.count}}</text>
       </view>
@@ -126,4 +130,50 @@
     </view>
     <text class="meta" style="font-size:23rpx;color:#8A8375">{{season.id === item.id ? "当前赛季" : "切换"}}</text>
   </button>
+</view>
+
+<!-- 侠客速览弹层 -->
+<view class="modal-mask {{popUnit ? 'on' : ''}}" bindtap="onPopClose">
+  <view class="modal pop" catchtap="noop">
+    <block wx:if="{{popUnit}}">
+      <view class="pop-head">
+        <image class="pop-art" src="{{popUnit.art}}" mode="aspectFill" />
+        <view class="pop-info">
+          <view class="pop-name">{{popUnit.n}} <text class="pop-cost" style="color:{{popUnit.color}}">{{popUnit.c}}费</text></view>
+          <view class="pop-job">{{popUnit.job}}</view>
+          <view class="pop-bonds"><text wx:for="{{popUnit.bonds}}" wx:key="*this" class="tag gold">{{item}}</text></view>
+        </view>
+      </view>
+      <view wx:if="{{popUnit.skill}}" class="pop-skill">
+        <view class="pop-skill-n">{{popUnit.skill.n}}</view>
+        <view class="pop-skill-d">{{popUnit.skill.d}}</view>
+      </view>
+      <view class="pop-btns">
+        <button class="pop-btn ghost" bindtap="onPopClose">关闭</button>
+        <button class="pop-btn" bindtap="onPopDetail" data-type="piece" data-name="{{popUnit.n}}">查看完整详情</button>
+      </view>
+    </block>
+  </view>
+</view>
+
+<!-- 羁绊速览弹层 -->
+<view class="modal-mask {{popBond ? 'on' : ''}}" bindtap="onPopClose">
+  <view class="modal pop" catchtap="noop">
+    <block wx:if="{{popBond}}">
+      <view class="pop-head">
+        <image class="pop-art" src="{{popBond.icon}}" mode="aspectFill" />
+        <view class="pop-info">
+          <view class="pop-name">{{popBond.n}}</view>
+          <view class="pop-job">{{popBond.t}}羁绊 · 激活层数 {{popBond.lv}}</view>
+        </view>
+      </view>
+      <view class="pop-skill">
+        <view class="pop-skill-d">{{popBond.d}}</view>
+      </view>
+      <view class="pop-btns">
+        <button class="pop-btn ghost" bindtap="onPopClose">关闭</button>
+        <button class="pop-btn" bindtap="onPopDetail" data-type="bond" data-name="{{popBond.n}}">查看完整详情</button>
+      </view>
+    </block>
+  </view>
 </view>
