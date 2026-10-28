@@ -181,9 +181,13 @@ def convert_bonds():
             if bo.get("lv"): lv = bo["lv"]
             if bo.get("effects"): effects = bo["effects"]
             review = [r for r in review if "档位行首数字丢失" not in r]
+        # 图标字段只存文件名,补上 羁绊图标/ 目录前缀(存在性校验,前端经 /art 服务)
+        icon = (b.get("图标") or "").strip()
+        if icon and "/" not in icon and os.path.exists(os.path.join(SRC, "羁绊图标", icon)):
+            icon = f"羁绊图标/{icon}"
         row = {
             "n": name, "t": t, "lv": lv, "d": desc,
-            "effects": effects, "icon": b.get("图标") or "", "season": SEASON,
+            "effects": effects, "icon": icon, "season": SEASON,
         }
         if review:
             row["review"] = review

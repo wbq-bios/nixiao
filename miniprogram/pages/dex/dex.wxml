@@ -19,8 +19,8 @@
 
   <view wx:for="{{list}}" wx:key="key" class="card rise" style="display:flex;align-items:center;gap:22rpx" data-key="{{item.key}}" bindtap="onOpen">
     <view class="ava" style="position:relative;overflow:hidden;background:{{item.color || 'var(--gold-dim)'}}22;color:{{item.color || 'var(--gold-hi)'}};border:3rpx solid {{item.color || 'rgba(169,134,67,.5)'}}80">
-      <image wx:if="{{item.art}}" src="{{item.art}}" mode="aspectFill" style="position:absolute;inset:0;width:100%;height:100%" binderror="onArtErr" data-key="{{item.key}}" data-idx="{{index}}" />
-      <text wx:else>{{item.ch}}</text>
+      <text>{{item.ch}}</text>
+      <view wx:if="{{item.art}}" style="position:absolute;inset:0;background-image:url('{{item.art}}');background-size:cover;background-position:center 12%"></view>
     </view>
     <view style="flex:1;min-width:0">
       <view style="display:flex;align-items:center;gap:12rpx">

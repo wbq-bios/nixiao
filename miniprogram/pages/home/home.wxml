@@ -57,7 +57,7 @@
     </view>
     <scroll-view class="fc-strip" scroll-x enhanced show-scrollbar="{{false}}">
       <view wx:for="{{today.units}}" wx:key="n" class="fc-unit" style="border-color:{{item.color}}" catchtap="onUnitTap" data-n="{{item.n}}" data-season="{{today.season}}">
-        <image class="fc-unit-img" src="{{item.art}}" mode="aspectFill" />
+        <view class="fc-unit-img" style="background-image:url('{{item.art}}');background-size:cover;background-position:center 12%"></view>
         <view wx:if="{{item.isMain}}" class="fc-cbadge">主C</view>
         <text class="fc-unit-star">★</text>
         <view wx:if="{{item.items.length}}" class="fc-items">
@@ -89,7 +89,7 @@
     </view>
     <scroll-view class="fc-strip" scroll-x enhanced show-scrollbar="{{false}}">
       <view wx:for="{{item.units}}" wx:key="n" wx:for-item="u" class="fc-unit" style="border-color:{{u.color}}" catchtap="onUnitTap" data-n="{{u.n}}" data-season="{{item.season}}">
-        <image class="fc-unit-img" src="{{u.art}}" mode="aspectFill" />
+        <view class="fc-unit-img" style="background-image:url('{{u.art}}');background-size:cover;background-position:center 12%"></view>
         <view wx:if="{{u.isMain}}" class="fc-cbadge">主C</view>
         <text class="fc-unit-star">★</text>
         <view wx:if="{{u.items.length}}" class="fc-items">
@@ -127,7 +127,7 @@
   <view class="modal pop" catchtap="noop">
     <block wx:if="{{popUnit}}">
       <view class="pop-head">
-        <image class="pop-art" src="{{popUnit.art}}" mode="aspectFill" />
+        <view class="pop-art" style="background-image:url('{{popUnit.art}}');background-size:cover;background-position:center 10%"></view>
         <view class="pop-info">
           <view class="pop-name">{{popUnit.n}} <text class="pop-cost" style="color:{{popUnit.color}}">{{popUnit.c}}费</text></view>
           <view class="pop-job">{{popUnit.job}}</view>
