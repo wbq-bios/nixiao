@@ -46,6 +46,7 @@ function compCardVM(c) {
     traitsVM: (c.traits || []).map(traitVM),
     up: c.up || 0, down: c.down || 0, net,
     heatWan: wan(c.heat),
+    stripCols: Math.min(Math.max(uv.front.length + uv.back.length, 1), 10),  // 头像条列数=人数,消灭孤行
   });
 }
 

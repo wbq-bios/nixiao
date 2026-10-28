@@ -57,3 +57,6 @@
 .circ.plus { background: var(--gold); color: #FFF9EE; }
 .eqslot { width: 106rpx; height: 106rpx; border-radius: 22rpx; border: 3rpx dashed var(--line-hi); display: grid; place-items: center; color: #B4AC99; font-family: var(--serif); font-size: 32rpx; }
 .eqslot.filled { border-style: solid; border-color: rgba(169, 134, 67, .5); background: var(--gold-dim); color: var(--gold-hi); font-size: 38rpx; }
+/* 重置降权 + 保存吸底(A1/C4) */
+.op-dim { color: var(--faint) !important; }
+.savebtn { position: sticky; bottom: calc(env(safe-area-inset-bottom) + 16rpx); z-index: 5; width: 100%; height: 90rpx; line-height: 90rpx; text-align: center; border-radius: 26rpx; margin-top: 8rpx; background: var(--gold); color: #FFF9EE; font-size: 28rpx; font-weight: 700; box-shadow: 0 8rpx 24rpx -8rpx rgba(143,111,47,.5); }

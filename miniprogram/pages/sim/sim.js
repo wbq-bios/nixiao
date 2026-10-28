@@ -28,6 +28,7 @@ Page({
     jobOpts: [{ v: "", l: "全部" }].concat(fmt.pack.jobs.map(j => ({ v: j, l: j }))),
     bondOpts: [],   // onLoad 按当前赛季填充
     hexStyle: "",   // 棋盘格 px 尺寸(onLoad 按屏宽计算,wxss 内联双保险)
+    resetAsk: false,  // 重置确认弹窗
     // 棋子设置弹窗
     modalOn: false, unit: null, unitIdx: -1, unitDetail: "",
     // 装备弹层
@@ -236,14 +237,17 @@ Page({
   /* ---------- 顶部操作 ---------- */
   onUndo() {
     const s = boardModel.undo();
-    if (!s) { wx.showToast({ title: "没有可撤销的操作", icon: "none" }); return; }
+    if (!s) { wx.showToast({ title: "没有可撤销的操作", icon: "none", position: "top" }); return; }
     state = s; this.render();
   },
-  onReset() {
+  onResetAsk() { this.setData({ resetAsk: true }); },
+  onResetCancel() { this.setData({ resetAsk: false }); },
+  onResetDo() {
+    this.setData({ resetAsk: false });
     boardModel.snapshot(state);
     state = Object.assign({}, state, { board: Array(boardModel.SIZE).fill(null), stars: {}, items: {}, main: null });
     boardModel.save(state); this.render();
-    wx.showToast({ title: "已重置 · 可撤销", icon: "none" });
+    wx.showToast({ title: "已重置 · 可撤销", icon: "none", position: "top" });
   },
   onDemo() {
     boardModel.snapshot(state);
@@ -251,17 +255,17 @@ Page({
     const sid = season.get().id;
     const c = fmt.pack.data.comps.find(x => x.season === sid) || fmt.pack.data.comps[0];
     const b = Array(boardModel.SIZE).fill(null);
-    c.front.forEach((u, k) => { b[22 + k] = u[0]; });
-    c.back.forEach((u, k) => { b[15 + k] = u[0]; });
+    const stars = {}, items = {};
+    c.front.forEach((u, k) => { b[22 + k] = u[0]; if (u[1] > 1) stars[22 + k] = u[1]; if (u[2] && u[2].length) items[22 + k] = u[2]; });
+    c.back.forEach((u, k) => { b[15 + k] = u[0]; if (u[1] > 1) stars[15 + k] = u[1]; if (u[2] && u[2].length) items[15 + k] = u[2]; });
     state.board = b; state.main = c.main;
-    state.stars = { 16: 2 };
-    state.items = { 22: ["苍玉腕"], 23: ["傲雪铠"], 16: ["两仪佩", "两仪佩", "青芒短刃"] };
+    state.stars = stars; state.items = items;
     boardModel.save(state); this.render();
-    wx.showToast({ title: `已载入示例 · ${c.n}`, icon: "none" });
+    wx.showToast({ title: `已载入示例 · ${c.n}`, icon: "none", position: "top" });
   },
   onSave() {
     const filled = state.board.filter(Boolean).length;
-    if (!filled) { wx.showToast({ title: "棋盘还空着 · 先摆几枚棋子", icon: "none" }); return; }
+    if (!filled) { wx.showToast({ title: "棋盘还空着 · 先摆几枚棋子", icon: "none", position: "top" }); return; }
     const now = new Date();
     const ok = store.addSim({
       name: `推演 · ${now.getMonth() + 1}-${now.getDate()} ${now.toTimeString().slice(0, 5)}`,
@@ -269,8 +273,8 @@ Page({
       season: season.get().id,
     });
     // addSim 返回 false = 本地已达 50 条上限，提示先清理
-    if (ok === false) { wx.showToast({ title: "存档已满 50 条 · 到我的页删几条再存", icon: "none", duration: 2200 }); return; }
-    wx.showToast({ title: `已保存到我的阵容 · ${season.get().id}`, icon: "none" });
+    if (ok === false) { wx.showToast({ title: "存档已满 50 条 · 到我的页删几条再存", icon: "none", position: "top", duration: 2200 }); return; }
+    wx.showToast({ title: `已保存到我的阵容 · ${season.get().id}`, icon: "none", position: "top" });
   },
 
   /* ---------- 长按拖拽（300ms 启拖 · 热区移除 · 格间换位） ---------- */

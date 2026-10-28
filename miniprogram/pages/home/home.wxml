@@ -1,19 +1,17 @@
 <view class="page">
-  <view class="masthead rise">
+  <view class="masthead rise" style="position:relative">
     <button class="season-bar" bindtap="onSeasonBar">
       <text class="nm">{{season.id}} · {{season.name}}<text class="curbadge">{{season.current ? "当前赛季" : "已归档"}}</text></text>
       <text class="sw">切换赛季</text>
     </button>
+    <text class="demo-badge">内测数据</text>
     <view class="h1">逆水<text class="em">小助手</text></view>
-    <view class="sub">
-      <text>今日热荐 <text class="b">{{hot.n || "—"}}</text></text>
-      <text>棋子随赛季更迭</text>
-      <text>演示数据</text>
-    </view>
+    <view class="sub"><text>备课 · 快查 · 复盘</text></view>
   </view>
 
-  <view wx:if="{{hot}}" class="card rise" bindtap="onHot">
-    <view style="display:grid;grid-template-columns:repeat(8,1fr);gap:10rpx;margin-bottom:20rpx">
+  <view wx:if="{{hot}}" class="card rise" bindtap="onHot" style="position:relative">
+    <view class="hot-badge">今日热荐</view>
+    <view style="display:grid;grid-template-columns:repeat({{hot.stripCols}},1fr);gap:10rpx;margin-bottom:20rpx">
       <view wx:for="{{hot.units}}" wx:key="n" class="u-mini" style="border-color:{{item.color}}66;color:{{item.color}}">
         <view class="inner">{{item.ch}}</view>
         <view wx:if="{{item.isMain}}" class="cmark">C</view>
@@ -36,18 +34,18 @@
   </view>
 
   <view class="quick rise" style="display:grid;grid-template-columns:repeat(4,1fr);gap:18rpx;margin-top:20rpx">
-    <button class="qk" data-url="/pages/sim/sim" bindtap="onQuick">
+    <view class="qk" hover-class="qk-hover" data-url="/pages/sim/sim" bindtap="onQuick">
       <view class="qi">摆</view><text>摆棋推演</text>
-    </button>
-    <button class="qk" data-url="/pages/comps/comps" bindtap="onQuick">
+    </view>
+    <view class="qk" hover-class="qk-hover" data-url="/pages/comps/comps" bindtap="onQuick">
       <view class="qi">阵</view><text>阵容库</text>
-    </button>
-    <button class="qk" data-url="/pages/dex/dex" bindtap="onQuick">
+    </view>
+    <view class="qk" hover-class="qk-hover" data-url="/pages/dex/dex" bindtap="onQuick">
       <view class="qi">鉴</view><text>万象图鉴</text>
-    </button>
-    <button class="qk" data-url="/pages/me/me" bindtap="onQuick">
+    </view>
+    <view class="qk" hover-class="qk-hover" data-url="/pages/me/me" bindtap="onQuick">
       <view class="qi">藏</view><text>我的收藏</text>
-    </button>
+    </view>
   </view>
 
   <view class="sec-head"><text class="h2" style="font-size:30rpx">刷牌概率</text><text class="more">等级 × 费用</text></view>

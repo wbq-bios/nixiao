@@ -7,7 +7,7 @@
     <text class="cnt">已上阵 {{filled}}</text>
     <view class="ops">
       <text bindtap="onUndo">撤销 ↺</text>
-      <text bindtap="onReset">重置</text>
+      <text class="op-dim" bindtap="onResetAsk">重置</text>
       <text bindtap="onDemo">示例</text>
     </view>
   </view>
@@ -41,7 +41,7 @@
         </view>
       </view>
     </view>
-    <view style="text-align:center;font-size:19rpx;color:var(--faint);margin-top:12rpx">拖到其他格换位 · 拖到顶部热区移除</view>
+    <view style="text-align:center;font-size:19rpx;color:var(--faint);margin-top:12rpx">点格选棋 · 长按拖拽换位/移除 · 点棋子可设置</view>
   </view>
 
   <view class="blk"><text class="bt">阵容羁绊</text><text class="cnt">{{bondsVM.length}} 个在凑</text></view>
@@ -62,6 +62,18 @@
 <!-- 拖拽视觉层 -->
 <view class="rmzone {{dragOn ? 'on' : ''}} {{rmHot ? 'hot' : ''}}">✕ 拖到此处移除</view>
 <view class="ghost {{dragOn ? 'on' : ''}}" style="left:{{gx - 29}}px;top:{{gy - 62}}px;background:{{ghostColor}}26;border-color:{{ghostColor}}9a;color:{{ghostColor}}">{{ghostCh}}</view>
+
+<!-- 重置确认弹窗(复用全局 modal) -->
+<view class="modal-mask {{resetAsk ? 'on' : ''}}" bindtap="onResetCancel">
+  <view class="modal" catchtap="noop">
+    <view class="mtop"><text class="h3">清空当前棋盘?</text></view>
+    <view style="font-size:25rpx;color:var(--dim);line-height:1.7">将移除已上阵的 {{filled}} 枚棋子及其星级装备。误操作可点「撤销」恢复。</view>
+    <view class="mrow">
+      <button class="btn-rm" bindtap="onResetCancel">再想想</button>
+      <button class="btn-ok" bindtap="onResetDo">确认清空</button>
+    </view>
+  </view>
+</view>
 
 <!-- 选棋弹窗 -->
 <view class="scrim {{pickerOn ? 'on' : ''}}" bindtap="onPickerClose"></view>

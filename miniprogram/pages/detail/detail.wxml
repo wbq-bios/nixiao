@@ -22,7 +22,7 @@
       </view>
     </view>
 
-    <view class="blk"><text class="bt">阵容站位</text><text class="cnt">主C金圈标出</text></view>
+    <view class="blk"><text class="bt">阵容构成</text><text class="cnt">主C金圈标出</text></view>
     <view class="card" style="padding:24rpx 20rpx">
       <view style="display:flex;justify-content:space-between;font-size:19rpx;color:var(--faint);letter-spacing:.18em;margin-bottom:10rpx">
         <text>上 · 后排输出</text><text>下 · 前排承伤</text>

@@ -30,10 +30,12 @@ button::after { border: none; }
 .rise { animation: rise .5s ease-out both; }
 
 .masthead { padding: 8rpx 4rpx 4rpx; }
-.masthead .h1 { font-family: var(--serif); font-weight: 700; font-size: 60rpx; letter-spacing: .1em; }
+.masthead .h1 { font-family: var(--serif); font-weight: 700; font-size: 60rpx; letter-spacing: .1em; text-shadow: 0 1rpx 0 rgba(143, 111, 47, .28); }
 .masthead .h1 .em { color: var(--gold-hi); }
 .masthead .sub { font-size: 24rpx; color: var(--faint); margin-top: 6rpx; display: flex; gap: 20rpx; }
 .masthead .sub .b { color: var(--dim); font-weight: 600; }
+.demo-badge { position: absolute; top: 10rpx; right: 0; font-size: 19rpx; padding: 4rpx 14rpx; border-radius: 99rpx; border: 1px solid var(--line-hi); background: var(--card); color: var(--faint); letter-spacing: .08em; }
+.hot-badge { position: absolute; top: -12rpx; left: 24rpx; z-index: 2; font-size: 20rpx; font-weight: 700; padding: 5rpx 18rpx; border-radius: 99rpx; background: var(--gold); color: #FFF9EE; letter-spacing: .12em; box-shadow: 0 4rpx 12rpx -4rpx rgba(143,111,47,.5); }
 
 .sec-head { display: flex; align-items: baseline; margin: 44rpx 4rpx 20rpx; }
 .sec-head .h2 { font-family: var(--serif); font-size: 34rpx; font-weight: 700; letter-spacing: .08em; }
@@ -69,7 +71,7 @@ button::after { border: none; }
 .tier.S { background: var(--ts); } .tier.A { background: var(--ta); } .tier.B { background: var(--tb); }
 .badge { font-size: 20rpx; font-weight: 700; padding: 5rpx 14rpx; border-radius: 11rpx; background: var(--gold-dim); color: var(--gold-hi); border: 1px solid rgba(169,134,67,.35); }
 .badge.solid { background: var(--gold); color: #FFF6EC; border-color: transparent; }
-.tag { font-size: 21rpx; padding: 5rpx 14rpx; border-radius: 11rpx; background: var(--panel); color: var(--dim); border: 1px solid var(--line); margin-right: 8rpx; }
+.tag { display: inline-block; white-space: nowrap; font-size: 21rpx; padding: 5rpx 14rpx; border-radius: 11rpx; background: var(--panel); color: var(--dim); border: 1px solid var(--line); margin-right: 8rpx; }
 .tag.gold { background: var(--gold-dim); color: var(--gold-hi); border-color: rgba(169,134,67,.3); }
 .cost { font-size: 21rpx; font-weight: 700; }
 .cost::before { content: "◆"; font-size: 15rpx; margin-right: 4rpx; }
@@ -154,10 +156,11 @@ button::after { border: none; }
 
 /* ---- 赞踩 ---- */
 .votes { display: flex; align-items: center; gap: 14rpx; margin-top: 18rpx; }
-.votes .hint { font-size: 19rpx; color: var(--faint); margin-right: auto; }
+.votes .hint { font-size: 19rpx; color: var(--faint); margin-right: auto; white-space: nowrap; }
 .vote { display: inline-flex; align-items: center; justify-content: center; gap: 8rpx; min-width: 96rpx; height: 64rpx; padding: 0 22rpx; border-radius: 99rpx; border: 1px solid var(--line-hi); background: var(--card); color: var(--dim); font-size: 23rpx; font-weight: 650; }
 .vote.on { background: var(--gold-dim); border-color: rgba(169,134,67,.55); color: var(--gold-hi); }
 .vote.down.on { background: rgba(196,69,60,.1); border-color: rgba(196,69,60,.4); color: var(--ts); }
+.vote.zero { opacity: .68; }
 
 /* ---- 其他 ---- */
 .empty { border: 2rpx dashed var(--line-hi); border-radius: 32rpx; padding: 54rpx 36rpx; text-align: center; color: var(--faint); font-size: 24rpx; line-height: 1.7; }
@@ -196,6 +199,7 @@ button::after { border: none; }
 .season-item.on .nm { color: #6B5426; }
 .season-item.on .meta { color: #8F6F2F; }
 .qk { display: flex; flex-direction: column; align-items: center; gap: 12rpx; padding: 24rpx 6rpx 20rpx; background: var(--card); border: 1px solid var(--line); border-radius: 26rpx; font-size: 22rpx; color: var(--dim); box-shadow: 0 4rpx 18rpx -10rpx rgba(58,50,38,.16); }
+.qk-hover { transform: scale(.96); background: var(--gold-dim); }
 .qk .qi { width: 62rpx; height: 62rpx; border-radius: 50%; background: var(--gold-dim); color: var(--gold-hi); display: grid; place-items: center; font-family: var(--serif); font-size: 30rpx; font-weight: 700; }
 .odds .th { font-size: 21rpx; color: var(--faint); font-weight: 600; padding: 14rpx 8rpx; }
 .odds .td { font-size: 24rpx; color: var(--dim); padding: 16rpx 8rpx; text-align: right; }

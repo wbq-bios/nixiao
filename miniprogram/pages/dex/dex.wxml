@@ -1,7 +1,8 @@
 <view class="page">
-  <view class="blk" style="margin-top:4rpx">
+  <view class="blk" style="margin-top:4rpx;position:relative">
     <text class="bt">万象图鉴</text>
     <text class="cnt">{{season.id}} · {{season.name}}</text>
+    <text class="demo-badge" style="position:static;margin-left:auto">内测数据</text>
   </view>
 
   <view class="search">
