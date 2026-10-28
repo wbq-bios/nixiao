@@ -67,7 +67,7 @@
     </scroll-view>
     <view class="fc-traits">
       <view wx:for="{{today.traits}}" wx:key="n" class="fpill" style="border-color:{{item.color}}55" catchtap="onBondTap" data-n="{{item.n}}" data-season="{{today.season}}">
-        <image class="fpill-icon" src="{{item.icon}}" mode="aspectFit" />
+        <image class="fpill-icon" style="background-image:url('{{item.icon}}');background-size:cover;background-position:center" />
         <text class="fpill-n" style="color:{{item.color}}">{{item.n}} {{item.count}}</text>
       </view>
     </view>
@@ -99,7 +99,7 @@
     </scroll-view>
     <view class="fc-traits">
       <view wx:for="{{item.traits}}" wx:for-item="t" wx:key="n" class="fpill" style="border-color:{{t.color}}55" catchtap="onBondTap" data-n="{{t.n}}" data-season="{{item.season}}">
-        <image class="fpill-icon" src="{{t.icon}}" mode="aspectFit" />
+        <image class="fpill-icon" style="background-image:url('{{t.icon}}');background-size:cover;background-position:center" />
         <text class="fpill-n" style="color:{{t.color}}">{{t.n}} {{t.count}}</text>
       </view>
     </view>
