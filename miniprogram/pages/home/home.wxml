@@ -55,24 +55,19 @@
         <view class="fc-star {{favs[today.n] ? 'on' : ''}}" catchtap="onFav" data-name="{{today.n}}" data-season="{{today.season}}">{{favs[today.n] ? "★" : "☆"}}</view>
       </view>
     </view>
-    <view class="fc-units">
-      <view class="fc-main-wrap">
-        <text class="fc-main-seal">{{today.mainName[0]}}</text>
-        <image class="fc-main" src="{{today.mainArt}}" mode="aspectFill" lazy-load />
-        <text class="fc-cbadge">主C</text>
+    <scroll-view class="fc-strip" scroll-x enhanced show-scrollbar="{{false}}">
+      <view wx:for="{{today.units}}" wx:key="n" class="fc-unit" style="border-color:{{item.color}}" catchtap="onUnitTap" data-n="{{item.n}}" data-season="{{today.season}}">
+        <image class="fc-unit-img" src="{{item.art}}" mode="aspectFill" />
+        <view wx:if="{{item.isMain}}" class="fc-cbadge">主C</view>
         <text class="fc-unit-star">★</text>
-      </view>
-      <scroll-view class="fc-strip" scroll-x enhanced show-scrollbar="{{false}}">
-        <view wx:for="{{today.units}}" wx:key="n" wx:if="{{!item.isMain}}" class="fc-unit" catchtap="onUnitTap" data-n="{{item.n}}" data-season="{{today.season}}">
-          <image src="{{item.art}}" mode="aspectFill" lazy-load />
-          <text class="fc-unit-star">★</text>
+        <view wx:if="{{item.items.length}}" class="fc-items">
+          <text wx:for="{{item.items}}" wx:for-item="it" wx:key="*this" class="fc-item">{{it[0]}}</text>
         </view>
-      </scroll-view>
-      <text class="fc-arrow">›</text>
-    </view>
+      </view>
+    </scroll-view>
     <view class="fc-traits">
       <view wx:for="{{today.traits}}" wx:key="n" class="fpill" style="border-color:{{item.color}}55" catchtap="onBondTap" data-n="{{item.n}}" data-season="{{today.season}}">
-        <image class="fpill-icon" src="{{item.icon}}" mode="aspectFill" />
+        <image class="fpill-icon" src="{{item.icon}}" mode="aspectFit" />
         <text class="fpill-n" style="color:{{item.color}}">{{item.n}} {{item.count}}</text>
       </view>
     </view>
@@ -92,24 +87,19 @@
         <view class="fc-star {{favs[item.n] ? 'on' : ''}}" catchtap="onFav" data-name="{{item.n}}" data-season="{{item.season}}">{{favs[item.n] ? "★" : "☆"}}</view>
       </view>
     </view>
-    <view class="fc-units">
-      <view class="fc-main-wrap">
-        <text class="fc-main-seal">{{item.mainName[0]}}</text>
-        <image class="fc-main" src="{{item.mainArt}}" mode="aspectFill" lazy-load />
-        <text class="fc-cbadge">主C</text>
+    <scroll-view class="fc-strip" scroll-x enhanced show-scrollbar="{{false}}">
+      <view wx:for="{{item.units}}" wx:key="n" wx:for-item="u" class="fc-unit" style="border-color:{{u.color}}" catchtap="onUnitTap" data-n="{{u.n}}" data-season="{{item.season}}">
+        <image class="fc-unit-img" src="{{u.art}}" mode="aspectFill" />
+        <view wx:if="{{u.isMain}}" class="fc-cbadge">主C</view>
         <text class="fc-unit-star">★</text>
-      </view>
-      <scroll-view class="fc-strip" scroll-x enhanced show-scrollbar="{{false}}">
-        <view wx:for="{{item.units}}" wx:for-item="u" wx:key="n" wx:if="{{!u.isMain}}" class="fc-unit" catchtap="onUnitTap" data-n="{{u.n}}" data-season="{{item.season}}">
-          <image src="{{u.art}}" mode="aspectFill" lazy-load />
-          <text class="fc-unit-star">★</text>
+        <view wx:if="{{u.items.length}}" class="fc-items">
+          <text wx:for="{{u.items}}" wx:for-item="it" wx:key="*this" class="fc-item">{{it[0]}}</text>
         </view>
-      </scroll-view>
-      <text class="fc-arrow">›</text>
-    </view>
+      </view>
+    </scroll-view>
     <view class="fc-traits">
       <view wx:for="{{item.traits}}" wx:for-item="t" wx:key="n" class="fpill" style="border-color:{{t.color}}55" catchtap="onBondTap" data-n="{{t.n}}" data-season="{{item.season}}">
-        <image class="fpill-icon" src="{{t.icon}}" mode="aspectFill" />
+        <image class="fpill-icon" src="{{t.icon}}" mode="aspectFit" />
         <text class="fpill-n" style="color:{{t.color}}">{{t.n}} {{t.count}}</text>
       </view>
     </view>

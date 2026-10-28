@@ -32,6 +32,25 @@ _ov = os.path.join(os.path.dirname(os.path.abspath(__file__)), "manual_overrides
 MANUAL = json.load(open(_ov, encoding="utf-8")) if os.path.exists(_ov) else {}
 MANUAL_OVERRIDES = MANUAL.get("pieces", {})
 BOND_OVERRIDES = MANUAL.get("bonds", {})
+
+# 立绘路径自动修复：部分主条目指向废弃目录（如方承意的 06-44-34 未随归档迁移），
+# 按分图映射(同名条目→文件名)找到归档里真实存在的 红框/<文件名>/立绘.png
+SPLIT = json.load(open(os.path.join(SRC, "S3_棋子提取_分图.json"), encoding="utf-8"))
+
+
+def fix_art(name, art, review):
+    rel = (art or "").replace("output\\", "").replace("output/", "")
+    if rel and os.path.exists(os.path.join(SRC, rel.replace("/", os.sep))):
+        return rel
+    for e in SPLIT:
+        if e.get("名字") == name:
+            stem = (e.get("文件名") or "").rsplit(".", 1)[0]
+            cand = f"红框/{stem}/立绘.png"
+            if os.path.exists(os.path.join(SRC, cand.replace("/", os.sep))):
+                if rel:
+                    review.append(f"立绘路径修复:{rel}→{cand}")
+                return cand
+    return rel
 # 属性表键 → 短键（未列出的原样保留）
 STAT_KEY = {"气血上限": "hp", "内力消耗": "mp", "攻击": "atk", "防御": "def",
             "攻速": "spd", "会心": "crit", "会心伤害": "cd"}
@@ -103,10 +122,10 @@ def convert_pieces(bond_universe):
             "tags": [t for t in (p.get("职业标签") or "").split() if t],
             "skill": skill,
             "stats": stats,
-            "art": p.get("立绘") or "",
             "src": p.get("文件名") or "",
             "season": SEASON,
         }
+        row["art"] = fix_art(name, p.get("立绘") or "", review)
         if review:
             row["review"] = review
         out.append(row)

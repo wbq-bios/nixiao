@@ -64,12 +64,13 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-44-34\\立绘.png",
   "src": "Snipaste_2026-10-28_06-44-34.png+Snipaste_2026-10-28_06-45-53.png+Snipaste_2026-10-28_06-46-03.png",
   "season": "S3",
+  "art": "红框/Snipaste_2026-10-28_06-45-53/立绘.png",
   "review": [
    "羁绊名归一化:明昭候→明昭侯(已确认)",
-   "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
+   "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)",
+   "立绘路径修复:红框\\Snipaste_2026-10-28_06-44-34\\立绘.png→红框/Snipaste_2026-10-28_06-45-53/立绘.png"
   ]
  },
  {
@@ -136,9 +137,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-46-14\\立绘.png",
   "src": "Snipaste_2026-10-28_06-46-14.png+Snipaste_2026-10-28_06-46-37.png+Snipaste_2026-10-28_06-46-56.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-46-14\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -208,9 +209,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-47-08\\立绘.png",
   "src": "Snipaste_2026-10-28_06-47-08.png+Snipaste_2026-10-28_06-47-21.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-47-08\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -279,9 +280,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-47-31\\立绘.png",
   "src": "Snipaste_2026-10-28_06-47-31.png+Snipaste_2026-10-28_06-47-42.png+Snipaste_2026-10-28_06-47-57.png+Snipaste_2026-10-28_06-48-05.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-47-31\\立绘.png",
   "review": [
    "称号区噪声token丢弃:S",
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
@@ -351,9 +352,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-48-14\\立绘.png",
   "src": "Snipaste_2026-10-28_06-48-14.png+Snipaste_2026-10-28_06-48-28.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-48-14\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -422,9 +423,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-48-37\\立绘.png",
   "src": "Snipaste_2026-10-28_06-48-37.png+Snipaste_2026-10-28_06-48-50.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-48-37\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -493,9 +494,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-49-00\\立绘.png",
   "src": "Snipaste_2026-10-28_06-49-00.png+Snipaste_2026-10-28_06-49-14.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-49-00\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -564,9 +565,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-49-24\\立绘.png",
   "src": "Snipaste_2026-10-28_06-49-24.png+Snipaste_2026-10-28_06-49-32.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-49-24\\立绘.png",
   "review": [
    "称号区噪声token丢弃:X",
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
@@ -636,9 +637,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-49-42\\立绘.png",
   "src": "Snipaste_2026-10-28_06-49-42.png+Snipaste_2026-10-28_06-49-51.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-49-42\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -707,9 +708,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-50-00\\立绘.png",
   "src": "Snipaste_2026-10-28_06-50-00.png+Snipaste_2026-10-28_06-50-10.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-50-00\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -779,9 +780,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-50-21\\立绘.png",
   "src": "Snipaste_2026-10-28_06-50-21.png+Snipaste_2026-10-28_06-50-30.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-50-21\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -850,9 +851,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-50-38\\立绘.png",
   "src": "Snipaste_2026-10-28_06-50-38.png+Snipaste_2026-10-28_06-50-46.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-50-38\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -922,9 +923,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-50-55\\立绘.png",
   "src": "Snipaste_2026-10-28_06-50-55.png+Snipaste_2026-10-28_06-51-02.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-50-55\\立绘.png",
   "review": [
    "称号区噪声token丢弃:X",
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
@@ -990,9 +991,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-51-10\\立绘.png",
   "src": "Snipaste_2026-10-28_06-51-10.png+Snipaste_2026-10-28_06-51-18.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-51-10\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -1061,9 +1062,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-51-26\\立绘.png",
   "src": "Snipaste_2026-10-28_06-51-26.png+Snipaste_2026-10-28_06-51-33.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-51-26\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -1132,9 +1133,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-51-41\\立绘.png",
   "src": "Snipaste_2026-10-28_06-51-41.png+Snipaste_2026-10-28_06-51-48.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-51-41\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -1203,9 +1204,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-51-56\\立绘.png",
   "src": "Snipaste_2026-10-28_06-51-56.png+Snipaste_2026-10-28_06-52-04.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-51-56\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -1274,9 +1275,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-52-12\\立绘.png",
   "src": "Snipaste_2026-10-28_06-52-12.png+Snipaste_2026-10-28_06-52-20.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-52-12\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -1345,9 +1346,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-52-30\\立绘.png",
   "src": "Snipaste_2026-10-28_06-52-30.png+Snipaste_2026-10-28_06-52-37.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-52-30\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -1416,9 +1417,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-52-47\\立绘.png",
   "src": "Snipaste_2026-10-28_06-52-47.png+Snipaste_2026-10-28_06-52-54.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-52-47\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -1487,9 +1488,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-53-03\\立绘.png",
   "src": "Snipaste_2026-10-28_06-53-03.png+Snipaste_2026-10-28_06-53-10.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-53-03\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -1558,9 +1559,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-53-19\\立绘.png",
   "src": "Snipaste_2026-10-28_06-53-19.png+Snipaste_2026-10-28_06-53-26.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-53-19\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -1629,9 +1630,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-53-35\\立绘.png",
   "src": "Snipaste_2026-10-28_06-53-35.png+Snipaste_2026-10-28_06-53-42.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-53-35\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -1700,9 +1701,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-53-49\\立绘.png",
   "src": "Snipaste_2026-10-28_06-53-49.png+Snipaste_2026-10-28_06-53-56.png",
-  "season": "S3"
+  "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-53-49\\立绘.png"
  },
  {
   "n": "朱颜",
@@ -1763,9 +1764,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-54-04\\立绘.png",
   "src": "Snipaste_2026-10-28_06-54-04.png+Snipaste_2026-10-28_06-54-11.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-54-04\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -1834,9 +1835,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-54-19\\立绘.png",
   "src": "Snipaste_2026-10-28_06-54-19.png+Snipaste_2026-10-28_06-54-27.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-54-19\\立绘.png",
   "review": [
    "称号区噪声token丢弃:X",
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
@@ -1906,9 +1907,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-54-34\\立绘.png",
   "src": "Snipaste_2026-10-28_06-54-34.png+Snipaste_2026-10-28_06-54-41.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-54-34\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -1977,9 +1978,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-54-49\\立绘.png",
   "src": "Snipaste_2026-10-28_06-54-49.png+Snipaste_2026-10-28_06-54-56.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-54-49\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -2039,9 +2040,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-55-06\\立绘.png",
   "src": "Snipaste_2026-10-28_06-55-06.png+Snipaste_2026-10-28_06-55-14.png",
-  "season": "S3"
+  "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-55-06\\立绘.png"
  },
  {
   "n": "曲河星",
@@ -2093,9 +2094,9 @@ module.exports = [
     "200%"
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-55-24\\立绘.png",
   "src": "Snipaste_2026-10-28_06-55-24.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-55-24\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -2159,9 +2160,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-55-37\\立绘.png",
   "src": "Snipaste_2026-10-28_06-55-37.png+Snipaste_2026-10-28_06-55-44.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-55-37\\立绘.png",
   "review": [
    "称号区噪声token丢弃:X",
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
@@ -2232,9 +2233,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-55-53\\立绘.png",
   "src": "Snipaste_2026-10-28_06-55-53.png+Snipaste_2026-10-28_06-56-00.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-55-53\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -2294,9 +2295,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-56-08\\立绘.png",
   "src": "Snipaste_2026-10-28_06-56-08.png+Snipaste_2026-10-28_06-56-14.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-56-08\\立绘.png",
   "review": [
    "称号区噪声token丢弃:3",
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
@@ -2366,9 +2367,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-56-26\\立绘.png",
   "src": "Snipaste_2026-10-28_06-56-26.png+Snipaste_2026-10-28_06-56-33.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-56-26\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -2432,9 +2433,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-56-41\\立绘.png",
   "src": "Snipaste_2026-10-28_06-56-41.png+Snipaste_2026-10-28_06-56-48.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-56-41\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -2503,9 +2504,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-56-56\\立绘.png",
   "src": "Snipaste_2026-10-28_06-56-56.png+Snipaste_2026-10-28_06-57-02.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-56-56\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -2554,9 +2555,9 @@ module.exports = [
     0.77
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-57-10\\立绘.png",
   "src": "Snipaste_2026-10-28_06-57-10.png+Snipaste_2026-10-28_06-57-16.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-57-10\\立绘.png",
   "review": [
    "羁绊名归一化:六冥渊→冥渊(已确认)",
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
@@ -2621,9 +2622,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-57-25\\立绘.png",
   "src": "Snipaste_2026-10-28_06-57-25.png+Snipaste_2026-10-28_06-57-33.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-57-25\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -2692,9 +2693,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-57-41\\立绘.png",
   "src": "Snipaste_2026-10-28_06-57-41.png+Snipaste_2026-10-28_06-57-48.png",
-  "season": "S3"
+  "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-57-41\\立绘.png"
  },
  {
   "n": "波波桃",
@@ -2760,9 +2761,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-58-01\\立绘.png",
   "src": "Snipaste_2026-10-28_06-58-01.png+Snipaste_2026-10-28_06-58-55.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-58-01\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -2827,9 +2828,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-59-09\\立绘.png",
   "src": "Snipaste_2026-10-28_06-59-09.png+Snipaste_2026-10-28_06-59-17.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-59-09\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -2893,9 +2894,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-59-24\\立绘.png",
   "src": "Snipaste_2026-10-28_06-59-24.png+Snipaste_2026-10-28_06-59-31.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-59-24\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -2964,9 +2965,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-59-41\\立绘.png",
   "src": "Snipaste_2026-10-28_06-59-41.png+Snipaste_2026-10-28_06-59-49.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-59-41\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -3035,9 +3036,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_06-59-57\\立绘.png",
   "src": "Snipaste_2026-10-28_06-59-57.png+Snipaste_2026-10-28_07-00-07.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_06-59-57\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -3106,9 +3107,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_07-00-15\\立绘.png",
   "src": "Snipaste_2026-10-28_07-00-15.png+Snipaste_2026-10-28_07-00-23.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_07-00-15\\立绘.png",
   "review": [
    "称号区噪声token丢弃:X"
   ]
@@ -3172,9 +3173,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_07-00-32\\立绘.png",
   "src": "Snipaste_2026-10-28_07-00-32.png+Snipaste_2026-10-28_07-00-38.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_07-00-32\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -3243,9 +3244,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_07-00-47\\立绘.png",
   "src": "Snipaste_2026-10-28_07-00-47.png+Snipaste_2026-10-28_07-00-53.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_07-00-47\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -3314,9 +3315,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_07-01-01\\立绘.png",
   "src": "Snipaste_2026-10-28_07-01-01.png+Snipaste_2026-10-28_07-01-07.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_07-01-01\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -3380,9 +3381,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_07-01-15\\立绘.png",
   "src": "Snipaste_2026-10-28_07-01-15.png+Snipaste_2026-10-28_07-01-22.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_07-01-15\\立绘.png",
   "review": [
    "称号区噪声token丢弃:S",
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
@@ -3452,9 +3453,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_07-01-30\\立绘.png",
   "src": "Snipaste_2026-10-28_07-01-30.png+Snipaste_2026-10-28_07-01-37.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_07-01-30\\立绘.png",
   "review": [
    "称号区噪声token丢弃:X",
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
@@ -3524,9 +3525,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_07-01-44\\立绘.png",
   "src": "Snipaste_2026-10-28_07-01-44.png+Snipaste_2026-10-28_07-01-51.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_07-01-44\\立绘.png",
   "review": [
    "称号区噪声token丢弃:X",
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
@@ -3596,9 +3597,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_07-02-00\\立绘.png",
   "src": "Snipaste_2026-10-28_07-02-00.png+Snipaste_2026-10-28_07-02-07.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_07-02-00\\立绘.png",
   "review": [
    "羁绊名归一化:复渊→冥渊(已确认)",
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
@@ -3668,9 +3669,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_07-02-16\\立绘.png",
   "src": "Snipaste_2026-10-28_07-02-16.png+Snipaste_2026-10-28_07-02-23.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_07-02-16\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -3739,9 +3740,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_07-02-32\\立绘.png",
   "src": "Snipaste_2026-10-28_07-02-32.png+Snipaste_2026-10-28_07-02-39.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_07-02-32\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -3810,9 +3811,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_07-02-48\\立绘.png",
   "src": "Snipaste_2026-10-28_07-02-48.png+Snipaste_2026-10-28_07-02-56.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_07-02-48\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -3881,9 +3882,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_07-03-05\\立绘.png",
   "src": "Snipaste_2026-10-28_07-03-05.png+Snipaste_2026-10-28_07-03-11.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_07-03-05\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -3952,9 +3953,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_07-03-18\\立绘.png",
   "src": "Snipaste_2026-10-28_07-03-18.png+Snipaste_2026-10-28_07-03-25.png",
-  "season": "S3"
+  "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_07-03-18\\立绘.png"
  },
  {
   "n": "墨先生",
@@ -4015,9 +4016,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_07-03-33\\立绘.png",
   "src": "Snipaste_2026-10-28_07-03-33.png+Snipaste_2026-10-28_07-03-40.png",
-  "season": "S3"
+  "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_07-03-33\\立绘.png"
  },
  {
   "n": "南问雪",
@@ -4084,9 +4085,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_07-03-47\\立绘.png",
   "src": "Snipaste_2026-10-28_07-03-47.png+Snipaste_2026-10-28_07-03-53.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_07-03-47\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]
@@ -4155,9 +4156,9 @@ module.exports = [
     40
    ]
   },
-  "art": "output\\红框\\Snipaste_2026-10-28_07-04-01\\立绘.png",
   "src": "Snipaste_2026-10-28_07-04-01.png+Snipaste_2026-10-28_07-04-07.png",
   "season": "S3",
+  "art": "红框\\Snipaste_2026-10-28_07-04-01\\立绘.png",
   "review": [
    "技能:技能含（X）占位=X攻击力系数(语义已确认,数值可选补)"
   ]

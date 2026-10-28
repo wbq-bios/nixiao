@@ -43,11 +43,16 @@ Page({
     const bondOf = n => fmt.data.bonds.find(b => b.n === n && b.season === sid) || {};
     const all = c.front.concat(c.back);
     all.sort((a, b) => (b[0] === c.main ? 1 : 0) - (a[0] === c.main ? 1 : 0));
-    const units = all.map(u => ({
-      n: u[0], star: u[1] || 1,
-      art: api.artUrl(fmt.pieceOf(u[0], sid).art, isHero ? 200 : 130),
-      isMain: u[0] === c.main,
-    }));
+    const units = all.map(u => {
+      const pc = fmt.pieceOf(u[0], sid);
+      return {
+        n: u[0], star: u[1] || 1,
+        art: api.artUrl(pc.art, isHero ? 200 : 130),
+        color: fmt.pack.cost.colors[pc.c] || fmt.pack.cost.colors[3],
+        items: u[2] || [],
+        isMain: u[0] === c.main,
+      };
+    });
     return {
       n: c.n, author: c.author || "未署名", season: sid,
       heat: fmt.wan(c.heat), tier: c.tier, popCarry: `${c.pop}${c.carry}`,
