@@ -1,0 +1,45 @@
+<view class="page">
+  <view class="blk" style="margin-top:4rpx">
+    <text class="bt">阵容库</text>
+    <text class="cnt">{{season.id}} · {{season.name}}</text>
+    <text style="margin-left:auto;font-size:21rpx;color:var(--faint)">演示数据</text>
+  </view>
+
+  <view class="chiprow">
+    <button wx:for="{{sorts}}" wx:key="key" class="chip sm {{sort === item.key ? 'on' : ''}}" data-k="{{item.key}}" bindtap="onSort">{{item.label}}</button>
+    <view style="flex:none;width:2rpx;background:var(--line-hi);margin:14rpx 6rpx"></view>
+    <button wx:for="{{filters}}" wx:key="key" class="chip sm {{filter === item.key ? 'on' : ''}}" data-k="{{item.key}}" bindtap="onFilter">{{item.label}}</button>
+  </view>
+
+  <view wx:for="{{list}}" wx:key="n" class="card rise" data-name="{{item.n}}" bindtap="onOpen">
+    <view style="display:grid;grid-template-columns:repeat(8,1fr);gap:10rpx;margin-bottom:20rpx">
+      <view wx:for="{{item.units}}" wx:for-item="u" wx:key="n" class="u-mini" style="border-color:{{u.color}}66;color:{{u.color}}">
+        <view class="inner">{{u.ch}}</view>
+        <view wx:if="{{u.isMain}}" class="cmark">C</view>
+      </view>
+    </view>
+    <view style="display:flex;align-items:center;gap:14rpx;flex-wrap:wrap">
+      <text style="font-family:var(--serif);font-size:31rpx;font-weight:700">{{item.n}}</text>
+      <text class="tier {{item.tier}}">{{item.tier}}</text>
+      <text class="badge solid">{{item.popCarry}}</text>
+      <text wx:if="{{item.colorBond}}" class="badge">✦ 彩色羁绊</text>
+    </view>
+    <view style="margin-top:14rpx">
+      <text wx:for="{{item.traitsVM}}" wx:for-item="t" wx:key="n" class="tag {{t.color ? 'gold' : ''}}">{{t.n}} {{t.count}}</text>
+    </view>
+    <view style="margin-top:14rpx;font-size:22rpx;color:var(--faint);display:flex;gap:20rpx;flex-wrap:wrap">
+      <text>主C <text style="color:var(--dim);font-weight:600">{{item.main}}</text></text>
+      <text>人口 <text style="color:var(--dim);font-weight:600">{{item.pop}} 级</text></text>
+      <text>热度 <text style="color:var(--dim);font-weight:600">{{item.heatWan}}</text></text>
+      <text>更新 <text style="color:var(--dim);font-weight:600">{{item.upd}}</text></text>
+    </view>
+    <view class="votes">
+      <text class="hint">口碑计入「口碑」排序</text>
+      <button class="vote {{item.my === 'up' ? 'on' : ''}}" catchtap="onVote" data-name="{{item.n}}" data-dir="up">👍 {{item.up}}</button>
+      <button class="vote down {{item.my === 'down' ? 'on' : ''}}" catchtap="onVote" data-name="{{item.n}}" data-dir="down">👎 {{item.down}}</button>
+    </view>
+  </view>
+
+  <view wx:if="{{!list.length}}" class="empty rise"><text class="k">此筛选下暂无阵容</text>换个筛选条件试试</view>
+  <view class="ad"><text class="t1">广 告 位 · 预 留</text><text class="t2">banner · 可配置开关</text></view>
+</view>

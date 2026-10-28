@@ -1,0 +1,32 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/comps/comps",
+    "pages/sim/sim",
+    "pages/dex/dex",
+    "pages/me/me",
+    "pages/detail/detail"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#F3EFE6",
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "逆水小助手",
+    "backgroundColor": "#F3EFE6",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#6E6555",
+    "selectedColor": "#8F6F2F",
+    "backgroundColor": "#FBF9F3",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/home/home", "text": "首页" },
+      { "pagePath": "pages/comps/comps", "text": "阵容" },
+      { "pagePath": "pages/sim/sim", "text": "摆棋" },
+      { "pagePath": "pages/dex/dex", "text": "图鉴" },
+      { "pagePath": "pages/me/me", "text": "我的" }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

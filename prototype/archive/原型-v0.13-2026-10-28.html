@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#F3EFE6">
+<title>逆水小助手 · 侠棋图鉴 原型 v0.13</title>
+<style>
+/* finesse · register=h5 · morph=A-app-shell · A=rice-paper+bronze-gold-light · B=Kaiti-display/system-body
+ * C=app-shell+push-detail+labeled-pill-tabbar+season-switcher+ad-slots · D=feedback-only-rise+push · E=silk-paper-wuxia
+ * SOUL=7 SPECTACLE=3 DENSITY=8 */
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow-x: clip; }
+body {
+  overflow: hidden;
+  background: #CFC8B8;
+  display: flex; align-items: center; justify-content: center;
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+  color: #26221A;
+}
+:root {
+  --bg:#F3EFE6; --panel:#ECE6D8; --card:#FBF9F3; --card-hi:#FFFDF8;
+  --line:rgba(38,34,28,.09); --line-hi:rgba(38,34,28,.17);
+  --txt:#26221A; --dim:#5C554A; --faint:#6E6555;
+  --gold:#A98643; --gold-hi:#8F6F2F; --gold-dim:rgba(169,134,67,.13);
+  --c1:#6E7680; --c2:#3F7D52; --c3:#2F6DA8; --c4:#7C50C8; --c5:#96700F;
+  --c5b:#C9962B;
+  --ts:#C4453C; --ta:#B8741F; --tb:#2F6DA8;
+  --green:#2DA44E;
+  --ease:cubic-bezier(.32,.86,.28,1);
+  --serif:"Kaiti SC","STKaiti",KaiTi,"FangSong","Noto Serif SC",serif;
+}
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+
+.phone {
+  position: relative; width: 100%; height: 100%; overflow: hidden;
+  background: var(--bg);
+  display: flex; flex-direction: column;
+}
+.grain {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: .045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@media (min-width: 560px) {
+  body { background: radial-gradient(120% 90% at 50% 0%, #EFE9DB 0%, #CFC8B8 62%); }
+  .phone {
+    width: 406px; height: min(880px, 94vh);
+    border-radius: 46px;
+    border: 1px solid rgba(38,34,28,.18);
+    box-shadow: 0 46px 120px -30px rgba(58,50,38,.55), 0 0 0 10px #35302A;
+  }
+}
+
+/* ---------- 状态栏 ---------- */
+.status {
+  flex: none; z-index: 40;
+  height: calc(env(safe-area-inset-top) + 46px);
+  padding: env(safe-area-inset-top) 24px 0;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12.5px; font-weight: 600; color: var(--txt);
+  letter-spacing: .02em;
+}
+.status svg { display: block; }
+
+/* ---------- 视图 ---------- */
+#views { position: relative; flex: 1; min-height: 0; z-index: 5; }
+.view {
+  position: absolute; inset: 0; overflow-y: auto; overflow-x: clip;
+  padding: 6px 20px calc(env(safe-area-inset-bottom) + 122px);
+  display: none;
+}
+.view.on { display: block; }
+.view::-webkit-scrollbar { width: 0; }
+
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.rise { animation: rise .6s var(--ease) both; }
+.rise[data-i] { animation-delay: calc(var(--i) * 60ms); }
+
+/* ---------- 首页头部 ---------- */
+.masthead { padding: 8px 2px 2px; }
+.season-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  height: 42px; padding: 0 14px; border-radius: 99px;
+  border: 1px solid rgba(169,134,67,.4); background: var(--gold-dim);
+  color: var(--gold-hi); font-size: 12.5px; font-weight: 650; letter-spacing: .06em;
+  transition: transform .18s var(--ease);
+}
+.season-btn:active { transform: scale(.94); }
+.season-btn .cur { font-size: 10.5px; font-weight: 500; opacity: .8; }
+.masthead h1 {
+  font-family: var(--serif); font-weight: 700;
+  font-size: 30px; letter-spacing: .1em; margin: 10px 0 2px; color: var(--txt);
+}
+.masthead h1 em { font-style: normal; color: var(--gold-hi); }
+.masthead .sub { font-size: 12px; color: var(--faint); display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.masthead .sub b { color: var(--dim); font-weight: 600; }
+
+/* ---------- 通用 ---------- */
+.sec-head { display: flex; align-items: baseline; justify-content: space-between; margin: 24px 2px 12px; }
+.sec-head h2 { font-family: var(--serif); font-size: 19px; font-weight: 700; letter-spacing: .08em; }
+.sec-head .more { font-size: 12px; color: var(--gold); }
+
+.chiprow { display: flex; gap: 8px; overflow-x: auto; margin: 0 -20px; padding: 2px 20px 6px; scrollbar-width: none; }
+.chiprow::-webkit-scrollbar { display: none; }
+.chip {
+  flex: none; height: 40px; padding: 0 15px; border-radius: 99px;
+  border: 1px solid var(--line-hi); color: var(--dim); font-size: 13px;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: all .2s var(--ease); background: var(--card);
+}
+.chip:active { transform: scale(.94); }
+.chip.on { background: var(--gold-dim); border-color: rgba(169,134,67,.55); color: var(--gold-hi); font-weight: 650; }
+
+/* 赛季筛选胶囊（我的页）——选中金底米白字，全部=虚线弱化，归档带小字 */
+.s-chip {
+  flex: none; height: 40px; padding: 0 14px; border-radius: 99px;
+  border: 1px solid rgba(169,134,67,.4); background: var(--gold-dim);
+  color: var(--gold-hi); font-size: 12.5px; font-weight: 650; letter-spacing: .04em;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: all .2s var(--ease);
+}
+.s-chip small { font-size: 10px; font-weight: 500; opacity: .75; }
+.s-chip.ghost { background: transparent; border-style: dashed; color: var(--faint); font-weight: 500; }
+.s-chip.on { background: var(--gold); color: #FFF9EE; border-color: transparent; box-shadow: 0 6px 16px -8px rgba(169,134,67,.7); }
+.s-chip.on small { opacity: .85; }
+.s-chip:active { transform: scale(.94); }
+
+/* 我的页：赛季入口行（画之灵|切换赛季›式） + 全部/当前 分段滑块 */
+.me-season-bar {
+  width: 100%; display: flex; align-items: center; gap: 10px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+  padding: 15px 16px; margin: 6px 0 10px;
+  box-shadow: 0 2px 10px -6px rgba(58,50,38,.14);
+  transition: transform .18s var(--ease);
+}
+.me-season-bar:active { transform: scale(.985); }
+.me-season-bar b { font-family: var(--serif); font-size: 16.5px; letter-spacing: .04em; color: var(--txt); }
+.me-season-bar .sw { margin-left: auto; display: inline-flex; align-items: center; gap: 3px; color: var(--gold-hi); font-size: 13px; font-weight: 600; }
+.slider-seg {
+  position: relative; display: flex;
+  background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 4px;
+  box-shadow: 0 2px 10px -6px rgba(58,50,38,.14);
+}
+.slider-seg .thumb {
+  position: absolute; top: 4px; bottom: 4px; left: 0; z-index: 0;
+  width: calc(50% - 4px);
+  background: #E4D9BE; border-radius: 10px;
+  transition: transform .38s var(--ease);
+  will-change: transform;
+}
+.slider-seg button {
+  position: relative; z-index: 1; flex: 1; height: 44px;
+  border-radius: 10px; text-align: center;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--dim); font-size: 14px; font-weight: 600;
+  transition: color .25s ease; white-space: nowrap;
+}
+.slider-seg button.on { color: #6B5426; font-weight: 700; }
+.slider-seg button:active { opacity: .8; }
+
+.card {
+  background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+  padding: 16px; margin-bottom: 12px;
+  box-shadow: 0 2px 10px -6px rgba(58,50,38,.14);
+  transition: transform .18s var(--ease);
+}
+.card:active { transform: scale(.976); }
+
+/* 广告位 —— 正式版替换为小程序 ad 组件，可配置开关 */
+.ad {
+  height: 78px; margin: 14px 0; border-radius: 14px;
+  border: 1px dashed rgba(169,134,67,.45);
+  background: repeating-linear-gradient(135deg, rgba(169,134,67,.06) 0 10px, transparent 10px 20px);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  color: var(--faint);
+}
+.ad span { font-size: 12.5px; letter-spacing: .2em; }
+.ad em { font-style: normal; font-size: 10.5px; opacity: .75; }
+
+/* 阵容卡 v2（参考金铲小助手式棋子条） */
+.comp .strip { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; margin-bottom: 12px; }
+.comp .u-mini {
+  position: relative; aspect-ratio: 1; border-radius: 8px;
+  border: 2px solid color-mix(in srgb, var(--cost) 60%, transparent);
+  background: color-mix(in srgb, var(--cost) 10%, #FBF9F3);
+  display: grid; place-items: center;
+  font-family: var(--serif); font-size: 15px; font-weight: 700; color: var(--cost);
+}
+.comp .u-mini i {
+  position: absolute; top: -6px; left: -5px; width: 17px; height: 17px; border-radius: 50%;
+  background: #E0862F; color: #FFF6EC; font-style: normal; font-size: 10px; font-weight: 800;
+  display: grid; place-items: center; font-family: inherit;
+}
+.comp .nm { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.comp .nm h3 { font-family: var(--serif); font-size: 17.5px; font-weight: 700; letter-spacing: .04em; }
+.tier { flex: none; width: 22px; height: 22px; border-radius: 6px; font-size: 12.5px; font-weight: 800; display: grid; place-items: center; color: #FFF6EC; }
+.t-S { background: var(--ts); } .t-A { background: var(--ta); } .t-B { background: var(--tb); }
+.badge {
+  font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px;
+  background: var(--gold-dim); color: var(--gold-hi); border: 1px solid rgba(169,134,67,.35);
+}
+.badge.solid { background: var(--gold); color: #FFF6EC; border-color: transparent; }
+.comp .bonds { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 5px; }
+.tag { font-size: 11px; padding: 3px 8px; border-radius: 6px; background: var(--panel); color: var(--dim); border: 1px solid var(--line); }
+.tag.gold { background: var(--gold-dim); color: var(--gold-hi); border-color: rgba(169,134,67,.3); }
+.comp .meta { margin-top: 8px; font-size: 12px; color: var(--faint); display: flex; gap: 12px; flex-wrap: wrap; }
+.comp .meta b { color: var(--dim); font-weight: 600; }
+.comp .votes { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.comp .v-hint { font-size: 10.5px; color: var(--faint); margin-right: auto; }
+.vote {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-width: 44px; height: 38px; padding: 0 13px; border-radius: 99px;
+  border: 1px solid var(--line-hi); background: var(--card); color: var(--dim);
+  font-size: 12.5px; font-weight: 650; transition: all .2s var(--ease);
+}
+.vote svg { display: block; }
+.vote:active { transform: scale(.92); }
+.vote.on { background: var(--gold-dim); border-color: rgba(169,134,67,.55); color: var(--gold-hi); }
+.vote.down.on { background: rgba(196,69,60,.1); border-color: rgba(196,69,60,.4); color: var(--ts); }
+
+/* 首页快捷入口 */
+.quick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 12px; }
+.quick button {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 13px 4px 11px; background: var(--card); border: 1px solid var(--line);
+  border-radius: 14px; font-size: 11.5px; color: var(--dim);
+  box-shadow: 0 2px 10px -6px rgba(58,50,38,.14); transition: transform .18s var(--ease);
+}
+.quick button:active { transform: scale(.94); }
+.quick .qi { width: 34px; height: 34px; border-radius: 50%; background: var(--gold-dim); color: var(--gold-hi); display: grid; place-items: center; }
+
+/* 摆棋推演 */
+.u-box.empty { border-style: dashed; border-color: var(--line-hi); background: transparent; color: var(--faint); font-size: 17px; }
+.unit.off { opacity: .35; pointer-events: none; }
+button.unit { cursor: pointer; padding: 0; }
+.trait .pg { font-size: 11px; color: var(--faint); font-weight: 600; margin-left: 1px; }
+.trait.color .pg { color: var(--gold-hi); }
+
+/* 摆棋拖拽：幽灵棋子 + 顶部移除热区 */
+.ghost {
+  position: absolute; left: 0; top: 0; z-index: 66; width: 58px; height: 58px; border-radius: 12px;
+  border: 2.5px solid color-mix(in srgb, var(--cost) 62%, transparent);
+  background: color-mix(in srgb, var(--cost) 14%, #FBF9F3);
+  display: grid; place-items: center; font-family: var(--serif); font-size: 24px; font-weight: 700; color: var(--cost);
+  pointer-events: none; box-shadow: 0 14px 30px -10px rgba(58,50,38,.5);
+  opacity: 0; transform: translate3d(-100px,-100px,0); transition: opacity .15s ease;
+}
+.rm-zone {
+  position: absolute; left: 20px; right: 20px; top: calc(env(safe-area-inset-top) + 54px); z-index: 65;
+  height: 60px; border-radius: 16px; border: 1.5px dashed rgba(196,69,60,.55); background: rgba(196,69,60,.10);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  color: var(--ts); font-size: 13.5px; font-weight: 700; letter-spacing: .08em;
+  transform: translateY(-130px); transition: transform .32s var(--ease), background .18s ease, box-shadow .18s ease;
+}
+.rm-zone.on { transform: none; }
+.rm-zone.hot { background: rgba(196,69,60,.26); border-style: solid; box-shadow: 0 8px 24px -10px rgba(196,69,60,.55); }
+.unit.dragging { opacity: .3; }
+.unit.drop .u-box { border-color: var(--gold) !important; box-shadow: 0 0 0 3px var(--gold-dim); }
+
+/* 蜂窝棋盘（固定 4 排 × 7 列 = 28 格，前排朝下） */
+.hexrow { display: flex; justify-content: center; }
+.hexrow + .hexrow { margin-top: -11px; }
+.hexrow.odd { margin-left: 23px; }
+.hex {
+  position: relative; flex: none; width: 44px; height: 50px; margin: 0 1px;
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  background: #C9C2B2; transition: background .2s, opacity .2s;
+}
+.hex .in {
+  position: absolute; inset: 2px;
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  background: #F7F4EC;
+  display: grid; place-items: center;
+  font-family: var(--serif); font-size: 15px; font-weight: 700; color: var(--cost, var(--faint));
+}
+.hex.empty .in { color: #B4AC99; font-size: 13px; }
+.hex.drop { background: var(--gold); }
+.hex.dragging { opacity: .3; }
+.hex .hstars { position: absolute; top: 5px; left: 0; right: 0; text-align: center; font-size: 7px; color: #E7A93C; letter-spacing: -1px; }
+.hex .hcmark {
+  position: absolute; top: 7px; left: 7px; width: 14px; height: 14px; border-radius: 50%;
+  background: #E0862F; color: #FFF6EC; font-size: 8.5px; font-weight: 800; display: grid; place-items: center;
+}
+.hex .hitems { position: absolute; bottom: 5px; left: 0; right: 0; display: flex; justify-content: center; gap: 2px; }
+.hex .hitems i {
+  width: 11px; height: 11px; border-radius: 3px; background: rgba(38,34,28,.72); color: #F5F1E6;
+  font-style: normal; font-size: 7px; font-family: var(--serif); display: grid; place-items: center;
+}
+.boardtips { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--faint); letter-spacing: .18em; margin: 2px 6px; }
+
+/* 区块标题（▎竖条式，参考图1/图4） */
+.blk { display: flex; align-items: center; gap: 8px; margin: 18px 2px 10px; }
+.blk::before { content: ""; width: 4px; height: 16px; border-radius: 2px; background: var(--gold); }
+.blk b { font-family: var(--serif); font-size: 16.5px; letter-spacing: .04em; }
+.blk .cnt { font-size: 10.5px; padding: 3px 8px; border-radius: 8px; background: var(--gold-dim); color: var(--gold-hi); }
+.blk .ops { margin-left: auto; display: flex; gap: 10px; font-size: 12.5px; color: var(--dim); }
+.blk .ops button { color: var(--dim); display: inline-flex; align-items: center; min-height: 44px; }
+.blk .ops button:active { color: var(--gold-hi); }
+.savebtn {
+  width: 100%; height: 50px; border-radius: 14px; margin-top: 4px;
+  background: var(--gold); color: #FFF9EE; font-size: 15px; font-weight: 700;
+  transition: transform .18s var(--ease);
+}
+.savebtn:active { transform: scale(.97); }
+
+/* 选棋弹窗（图3式：六列 + 计数 + 双下拉） */
+.pick6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px 5px; }
+.p6 { text-align: center; }
+.p6 .ph {
+  position: relative; width: 100%; aspect-ratio: 1; border-radius: 8px;
+  border: 2px solid color-mix(in srgb, var(--cost) 65%, transparent);
+  background: color-mix(in srgb, var(--cost) 8%, #FBF9F3);
+  display: grid; place-items: center;
+  font-family: var(--serif); font-size: 15px; font-weight: 700; color: var(--cost);
+  transition: transform .15s var(--ease);
+}
+.p6 .ph:active { transform: scale(.9); }
+.p6 .ph .cb {
+  position: absolute; top: 0; right: 0; padding: 1px 4px;
+  background: rgba(38,34,28,.75); color: #F5F1E6; font-size: 9.5px; font-weight: 600;
+  border-radius: 0 6px 0 7px;
+}
+.p6 .ph.onboard { border-color: #2DA44E; }
+.p6 > span { display: block; font-size: 10.5px; color: var(--dim); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ddrow { display: flex; gap: 8px; margin-bottom: 10px; }
+.dd {
+  flex: 1; height: 40px; border: 1px solid var(--line-hi); border-radius: 10px; background: var(--card);
+  display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; color: var(--dim);
+}
+.dd:active { color: var(--gold-hi); }
+.dd .ar { font-size: 9px; opacity: .6; }
+.ddpanel { display: none; flex-wrap: wrap; gap: 6px; margin: -2px 0 10px; max-height: 108px; overflow-y: auto; }
+.ddpanel.open { display: flex; }
+.ddpanel .chip { height: 32px; padding: 0 12px; font-size: 12px; }
+.sheet .pcount { position: absolute; right: 14px; top: 14px; font-size: 11.5px; color: #8A8375; }
+
+/* 棋子设置弹窗（图2式居中卡片） */
+.modal-mask {
+  position: absolute; inset: 0; z-index: 78; background: rgba(30,26,18,.46);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity .28s ease;
+}
+.modal-mask.on { opacity: 1; pointer-events: auto; }
+.modal {
+  width: 87%; max-height: 82%; overflow-y: auto;
+  background: #FFFDF8; border-radius: 20px; padding: 16px;
+  transform: scale(.94) translateY(12px); transition: transform .3s var(--ease);
+}
+.modal-mask.on .modal { transform: none; }
+.modal::-webkit-scrollbar { width: 0; }
+.mtop { display: flex; align-items: center; margin-bottom: 14px; }
+.mtop h3 { font-size: 17px; font-weight: 800; }
+.mtop .x { margin-left: auto; width: 44px; height: 44px; display: grid; place-items: center; color: var(--faint); margin: -8px -10px 0 0; }
+.mhead { display: flex; gap: 13px; align-items: flex-start; }
+.mhead .mh-ava {
+  flex: none; width: 64px; height: 64px; border-radius: 12px;
+  border: 2.5px solid color-mix(in srgb, var(--cost) 62%, transparent);
+  background: color-mix(in srgb, var(--cost) 9%, #FBF9F3);
+  display: grid; place-items: center; font-family: var(--serif); font-size: 27px; font-weight: 700; color: var(--cost);
+}
+.mhead .mh-info { flex: 1; min-width: 0; }
+.mhead .mh-nm { font-size: 17px; font-weight: 750; display: flex; align-items: center; gap: 8px; }
+.mhead .mh-bonds { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.mtgl { display: flex; align-items: center; gap: 8px; }
+.mtgl span { font-size: 12.5px; color: var(--gold-hi); font-weight: 650; }
+.tgl { width: 44px; height: 26px; border-radius: 99px; background: #D8D2C4; position: relative; transition: background .2s; flex: none; }
+.tgl::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #FFFDF8; transition: left .2s; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+.tgl.on { background: var(--gold); }
+.tgl.on::after { left: 21px; }
+.mcard { background: #F6F2E7; border-radius: 14px; padding: 12px; margin-top: 12px; }
+.mcard .t { font-size: 12.5px; font-weight: 700; margin-bottom: 8px; display: flex; justify-content: space-between; }
+.mcard .t em { font-style: normal; font-weight: 400; font-size: 10.5px; color: var(--faint); }
+.starrow { display: flex; align-items: center; justify-content: center; gap: 18px; }
+.starrow .circ { width: 38px; height: 38px; border-radius: 50%; background: #ECE6D8; color: var(--dim); font-size: 19px; display: grid; place-items: center; }
+.starrow .circ:active { filter: brightness(.92); }
+.starrow .circ.plus { background: var(--gold); color: #FFF9EE; }
+.starrow .sv { color: #E7A93C; font-size: 19px; letter-spacing: 3px; min-width: 66px; text-align: center; }
+.eqslots { display: flex; gap: 10px; justify-content: center; }
+.eqslot {
+  width: 58px; height: 58px; border-radius: 12px; border: 1.5px dashed var(--line-hi);
+  display: grid; place-items: center; color: #B4AC99; font-family: var(--serif); font-size: 17px;
+  transition: transform .15s var(--ease);
+}
+.eqslot:active { transform: scale(.92); }
+.eqslot.filled { border-style: solid; border-color: rgba(169,134,67,.5); background: var(--gold-dim); color: var(--gold-hi); font-size: 20px; }
+.note {
+  width: 100%; min-height: 60px; border-radius: 12px; border: 1px solid var(--line-hi);
+  background: #F6F2E7; padding: 10px 12px; font: inherit; font-size: 13px; color: var(--txt);
+  resize: none; outline: none;
+}
+.mrow { display: flex; gap: 10px; margin-top: 14px; }
+.btn-rm { flex: 1; height: 46px; border-radius: 14px; background: #F6E3DC; color: #B04A3E; font-weight: 700; font-size: 14px; transition: transform .18s var(--ease); }
+.btn-ok { flex: 2; height: 46px; border-radius: 14px; background: var(--gold); color: #FFF9EE; font-weight: 700; font-size: 14px; transition: transform .18s var(--ease); }
+.btn-rm:active, .btn-ok:active { transform: scale(.96); }
+
+/* 图鉴行 */
+.row { display: flex; align-items: center; gap: 12px; padding: 11px 14px; }
+.ava {
+  flex: none; width: 44px; height: 44px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-family: var(--serif); font-size: 19px; font-weight: 700;
+  background: color-mix(in srgb, var(--cost) 13%, #FBF9F3);
+  color: var(--cost); border: 1.5px solid color-mix(in srgb, var(--cost) 50%, transparent);
+}
+.ava.main { box-shadow: 0 0 0 2.5px var(--card), 0 0 0 4px var(--gold); }
+.row .info { flex: 1; min-width: 0; }
+.row .nm { font-size: 15.5px; font-weight: 650; display: flex; align-items: center; gap: 7px; }
+.cost { font-size: 11px; font-weight: 700; color: var(--cost); }
+.cost::before { content: "◆"; font-size: 8px; vertical-align: 1px; margin-right: 2px; }
+.row .desc { font-size: 12px; color: var(--faint); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row .go { color: var(--faint); flex: none; }
+.bondrow .nm { font-family: var(--serif); }
+.bondrow .lv { font-size: 11px; color: var(--gold-hi); letter-spacing: .06em; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { font-size: 11.5px; color: var(--faint); font-weight: 600; text-align: right; padding: 8px 6px; border-bottom: 1px solid var(--line); }
+th:first-child, td:first-child { text-align: left; }
+td { padding: 10px 6px; text-align: right; border-bottom: 1px solid var(--line); color: var(--dim); font-variant-numeric: tabular-nums; }
+td.lvl { color: var(--gold-hi); font-weight: 700; font-family: var(--serif); }
+td.hot { color: var(--txt); font-weight: 650; }
+
+.tl { list-style: none; }
+.tl li { position: relative; padding: 0 0 20px 20px; }
+.tl li::before { content: ""; position: absolute; left: 3px; top: 8px; width: 7px; height: 7px; border-radius: 50%; background: var(--gold); }
+.tl li::after { content: ""; position: absolute; left: 6px; top: 20px; bottom: 0; width: 1px; background: var(--line-hi); }
+.tl li:last-child::after { display: none; }
+.tl time { font-size: 11.5px; color: var(--gold-hi); letter-spacing: .08em; }
+.tl p { font-size: 13.5px; color: var(--dim); margin-top: 3px; line-height: 1.55; }
+.tl b { color: var(--txt); font-weight: 650; }
+
+.me-head { text-align: center; padding: 18px 0 6px; }
+.me-head .ava { width: 62px; height: 62px; margin: 0 auto 10px; font-size: 26px; --cost: var(--gold); }
+.me-head h2 { font-family: var(--serif); font-size: 20px; letter-spacing: .06em; }
+.me-head p { font-size: 12px; color: var(--faint); margin-top: 4px; }
+/* 我的 · 阵容卡 */
+.me-fav-top { display: flex; align-items: center; gap: 8px; }
+.me-fav-name { font-family: var(--serif); font-size: 16.5px; font-weight: 700; letter-spacing: .03em; }
+.me-fav-del { margin-left: auto; flex: none; width: 40px; height: 40px; display: grid; place-items: center; color: var(--faint); border-radius: 50%; }
+.me-fav-del:active { color: var(--ts); transform: scale(.88); }
+.me-fav-strip { display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; margin-top: 11px; }
+.me-fav-strip .u-mini {
+  position: relative; aspect-ratio: 1; border-radius: 7px;
+  border: 1.5px solid color-mix(in srgb, var(--cost) 60%, transparent);
+  background: color-mix(in srgb, var(--cost) 10%, #FBF9F3);
+  display: grid; place-items: center;
+  font-family: var(--serif); font-size: 13px; font-weight: 700; color: var(--cost);
+}
+.me-fav-strip .u-mini i {
+  position: absolute; top: -5px; left: -4px; width: 15px; height: 15px; border-radius: 50%;
+  background: #E0862F; color: #FFF6EC; font-style: normal; font-size: 9px; font-weight: 800;
+  display: grid; place-items: center; font-family: inherit;
+}
+.me-fav-meta { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+.me-fav-meta .chip { height: 34px; padding: 0 13px; font-size: 12px; }
+.empty { border: 1px dashed var(--line-hi); border-radius: 18px; padding: 30px 20px; text-align: center; color: var(--faint); font-size: 13px; line-height: 1.7; }
+.empty .k { font-family: var(--serif); font-size: 16px; color: var(--dim); display: block; margin-bottom: 5px; }
+.legal { font-size: 11.5px; color: var(--faint); line-height: 1.8; text-align: center; margin-top: 22px; }
+
+.seg { display: flex; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 3px; margin: 4px 0 12px; }
+.seg button { flex: 1; height: 40px; border-radius: 9px; font-size: 14px; color: var(--dim); transition: all .22s var(--ease); }
+.seg button.on { background: var(--card); color: var(--gold-hi); font-weight: 650; box-shadow: 0 1px 6px -3px rgba(58,50,38,.3); }
+.seg button:active { filter: brightness(1.06); }
+
+.search { display: flex; align-items: center; gap: 8px; height: 44px; background: var(--card); border: 1px solid var(--line-hi); border-radius: 12px; padding: 0 14px; margin-bottom: 12px; color: var(--faint); }
+.search input { flex: 1; background: none; border: none; outline: none; color: var(--txt); font: inherit; font-size: 14px; }
+.search input::placeholder { color: var(--faint); }
+
+/* ---------- 详情层 ---------- */
+.detail { position: absolute; inset: 0; z-index: 60; background: var(--bg); transform: translateX(100%); transition: transform .42s var(--ease); display: flex; flex-direction: column; }
+.detail.on { transform: none; }
+.detail .dtop { flex: none; display: flex; align-items: center; gap: 6px; padding: calc(env(safe-area-inset-top) + 10px) 12px 10px; }
+.detail .dtop .back { width: 44px; height: 44px; display: grid; place-items: center; color: var(--dim); }
+.detail .dtop .back:active { transform: scale(.9); }
+.detail .dtop h2 { font-family: var(--serif); font-size: 19px; letter-spacing: .06em; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.detail .dtop .fav { width: 44px; height: 44px; display: grid; place-items: center; color: var(--gold); }
+.detail .dtop .fav:active { transform: scale(.88); }
+.detail .dbody { flex: 1; overflow-y: auto; overflow-x: clip; padding: 4px 20px calc(env(safe-area-inset-bottom) + 40px); }
+.detail .dbody::-webkit-scrollbar { width: 0; }
+
+.d-hero { display: flex; gap: 15px; align-items: center; margin-bottom: 6px; }
+.d-hero h3 { font-family: var(--serif); font-size: 23px; letter-spacing: .05em; }
+.d-hero .sub { font-size: 12.5px; color: var(--faint); margin-top: 5px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.d-sec { font-size: 12px; color: var(--gold-hi); letter-spacing: .18em; margin: 22px 2px 10px; }
+.d-sec::after { content: ""; display: block; width: 100%; height: 1px; margin-top: 8px; background: linear-gradient(to right, rgba(169,134,67,.4), transparent); }
+.d-txt { font-size: 14px; color: var(--dim); line-height: 1.8; }
+.d-txt b { color: var(--txt); font-weight: 650; }
+
+/* 羁绊胶囊（图标 + 层数徽章 + 名称） */
+.traits { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.trait { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px 4px 5px; border-radius: 99px; background: var(--card); border: 1px solid var(--line-hi); font-size: 12.5px; color: var(--dim); }
+.trait .ic {
+  position: relative; width: 24px; height: 24px; border-radius: 6px;
+  background: var(--panel); border: 1px solid var(--line-hi);
+  display: grid; place-items: center; font-family: var(--serif); font-size: 13px; color: var(--dim);
+}
+.trait .ct {
+  position: absolute; right: -6px; bottom: -6px; min-width: 15px; height: 15px; padding: 0 3px;
+  border-radius: 99px; background: #3A342B; color: #F5F1E6; font-size: 9.5px; font-weight: 700;
+  display: grid; place-items: center;
+}
+.trait.color { border-color: rgba(169,134,67,.5); background: var(--gold-dim); color: var(--gold-hi); font-weight: 650; }
+.trait.color .ic { background: linear-gradient(140deg, #D8B56A, #A98643); border-color: transparent; color: #FFF6EC; }
+.trait.color .ct { background: var(--gold-hi); }
+
+/* 棋子格（方形头像 + 星级 + C 标 + 装备 + 名称） */
+.units { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px 8px; }
+.u-label { font-size: 10.5px; color: var(--faint); letter-spacing: .24em; margin: 12px 2px 0; }
+.u-label:first-child { margin-top: 0; }
+.unit { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.u-box {
+  position: relative; width: 100%; aspect-ratio: 1; border-radius: 10px;
+  border: 2.5px solid color-mix(in srgb, var(--cost) 62%, transparent);
+  background: color-mix(in srgb, var(--cost) 9%, #FBF9F3);
+  display: grid; place-items: center;
+  font-family: var(--serif); font-size: 24px; font-weight: 700; color: var(--cost);
+}
+.u-box .stars { position: absolute; top: 4px; left: 0; right: 0; text-align: center; font-size: 9px; letter-spacing: -1px; color: #E7A93C; text-shadow: 0 0 2px #FBF9F3, 0 0 3px #FBF9F3; }
+.u-box .cmark {
+  position: absolute; top: -7px; left: -7px; width: 19px; height: 19px; border-radius: 50%;
+  background: #E0862F; color: #FFF6EC; font-size: 10.5px; font-weight: 800; font-family: inherit;
+  display: grid; place-items: center; border: 2px solid var(--card);
+}
+.u-box .items { position: absolute; bottom: 3px; left: 0; right: 0; display: flex; justify-content: center; gap: 2px; }
+.u-box .items i {
+  width: 14px; height: 14px; border-radius: 4px; background: var(--card);
+  border: 1px solid var(--line-hi); font-style: normal; font-size: 8.5px; font-family: var(--serif);
+  display: grid; place-items: center; color: var(--dim);
+}
+.unit > span { font-size: 11px; color: var(--dim); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* 四列数据 */
+.strow { display: grid; grid-template-columns: repeat(4, 1fr); padding: 14px 6px; }
+.strow div { text-align: center; }
+.strow b { font-size: 18px; font-family: var(--serif); color: var(--txt); display: block; }
+.strow b.good { color: var(--green); }
+.strow span { font-size: 10.5px; color: var(--faint); }
+
+.pickrow { display: flex; align-items: center; gap: 11px; padding: 10px 2px; }
+.pickrow .no { flex: none; width: 24px; height: 24px; border-radius: 50%; border: 1px solid rgba(169,134,67,.4); color: var(--gold-hi); font-size: 12px; display: grid; place-items: center; }
+.pickrow .nm { font-size: 14.5px; font-weight: 620; }
+.pickrow .why { font-size: 12px; color: var(--faint); margin-top: 2px; }
+.rar { font-size: 10.5px; padding: 2px 7px; border-radius: 5px; flex: none; }
+.r-白 { background: rgba(110,118,128,.14); color: #5B636D; }
+.r-紫 { background: rgba(124,80,200,.13); color: #6E46B8; }
+.r-独珍 { background: rgba(47,109,168,.13); color: #2A6392; }
+.r-橙武 { background: rgba(169,134,67,.18); color: #8F6F2F; }
+
+.beats { list-style: none; }
+.beats li { display: flex; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 13.5px; color: var(--dim); line-height: 1.65; }
+.beats li:last-child { border-bottom: none; }
+.beats time { flex: none; font-family: var(--serif); color: var(--gold-hi); font-weight: 700; width: 44px; }
+
+/* ---------- TabBar（图标 + 文字） ---------- */
+.tabbar {
+  position: absolute; z-index: 50; left: 18px; right: 18px;
+  bottom: calc(env(safe-area-inset-bottom) + 16px);
+  height: 66px; border-radius: 99px;
+  background: rgba(251,249,243,.92); backdrop-filter: blur(22px) saturate(150%);
+  border: 1px solid var(--line-hi);
+  display: flex; align-items: center; justify-content: space-around; padding: 0 8px;
+  box-shadow: 0 18px 40px -18px rgba(58,50,38,.5);
+}
+.tabbar button {
+  width: 64px; height: 56px; border-radius: 18px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  color: var(--faint); transition: all .26s var(--ease);
+}
+.tabbar button span { font-size: 10.5px; letter-spacing: .06em; }
+.tabbar button:active { transform: scale(.9); }
+.tabbar button.on { background: var(--gold-dim); color: var(--gold-hi); }
+.tabbar button.on span { font-weight: 700; }
+.home-ind { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom) + 5px); width: 118px; height: 4px; border-radius: 99px; background: var(--txt); opacity: .18; z-index: 51; }
+
+/* ---------- 弹层 ---------- */
+.scrim { position: absolute; inset: 0; z-index: 81; background: rgba(30,26,18,.38); opacity: 0; pointer-events: none; transition: opacity .3s ease; }
+.scrim.on { opacity: 1; pointer-events: auto; }
+.sheet {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 82;
+  background: #FFFDF8; color: #26221A; border-radius: 28px 28px 0 0;
+  padding: 12px 22px calc(env(safe-area-inset-bottom) + 22px);
+  transform: translateY(102%); transition: transform .44s var(--ease);
+  max-height: 88%; overflow-y: auto;
+  box-shadow: 0 -18px 50px -20px rgba(58,50,38,.4);
+}
+.sheet.on { transform: none; }
+.sheet::-webkit-scrollbar { width: 0; }
+.sheet .grab { width: 42px; height: 4px; border-radius: 99px; background: rgba(38,34,28,.18); margin: 0 auto 16px; }
+.sheet h3 { font-family: var(--serif); font-size: 19px; letter-spacing: .05em; margin-bottom: 4px; }
+.sheet .sp { font-size: 12px; color: #8A8375; margin-bottom: 16px; }
+.sheet .sharebtn { width: 100%; height: 50px; border-radius: 14px; margin-top: 6px; background: #A98643; color: #FFF9EE; font-size: 15px; font-weight: 700; transition: transform .18s var(--ease); }
+.sheet .sharebtn:active { transform: scale(.96); }
+
+/* 赛季切换弹层列表（画之灵|自然之力式） */
+.season-item { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 18px 16px; border-radius: 14px; border: 1.5px solid var(--line); background: #FFFFFF; margin-bottom: 10px; transition: transform .16s var(--ease); }
+.season-item:active { transform: scale(.98); }
+.season-item .info { flex: 1; min-width: 0; }
+.season-item .nm { font-size: 16.5px; font-weight: 650; color: var(--txt); display: flex; align-items: center; gap: 8px; }
+.season-item .rg { font-size: 11.5px; color: #8A8375; margin-top: 3px; }
+.season-item .meta { flex: none; font-size: 12.5px; color: #8A8375; }
+.season-item.on { background: #F3E9CF; border-color: rgba(169,134,67,.65); }
+.season-item.on .nm { color: #6B5426; }
+.season-item.on .meta { color: #8F6F2F; }
+
+.toast {
+  position: absolute; left: 50%; bottom: calc(env(safe-area-inset-bottom) + 100px);
+  transform: translate(-50%, 14px); z-index: 85;
+  background: rgba(38,34,28,.94); color: #F3EFE6;
+  font-size: 13px; font-weight: 600; padding: 10px 18px; border-radius: 99px;
+  opacity: 0; pointer-events: none; transition: all .3s var(--ease);
+}
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="grain"></div>
+
+  <div class="status">
+    <span id="clock">--:--</span>
+    <span style="display:flex;gap:6px;align-items:center">
+      <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1" opacity=".35"/></svg>
+      <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><path d="M8 10.4 1 3.6A9.8 9.8 0 0 1 15 3.6L8 10.4Z" opacity=".9"/><circle cx="8" cy="3" r="1.4"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0" y="0" width="21" height="12" rx="3.5" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="14" height="8" rx="2" fill="currentColor"/><path d="M23 4v4a2.2 2.2 0 0 0 0-4Z" fill="currentColor" opacity=".45"/></svg>
+    </span>
+  </div>
+
+  <main id="views">
+    <section class="view on" id="v-home"></section>
+    <section class="view" id="v-comp"></section>
+    <section class="view" id="v-sim"></section>
+    <section class="view" id="v-dex"></section>
+    <section class="view" id="v-me"></section>
+  </main>
+
+  <nav class="tabbar" id="tabbar">
+    <button data-v="v-home" class="on">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-7 8 7"/><path d="M6 9.5V20h12V9.5"/><path d="M10 20v-5h4v5" opacity=".6"/></svg>
+      <span>首页</span>
+    </button>
+    <button data-v="v-comp">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4h13l-3 4 3 4H8"/><path d="M8 8h4" opacity=".6"/></svg>
+      <span>阵容</span>
+    </button>
+    <button data-v="v-sim">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>
+      <span>摆棋</span>
+    </button>
+    <button data-v="v-dex">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13Z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M9 8h7M9 11.5h4" opacity=".6"/></svg>
+      <span>图鉴</span>
+    </button>
+    <button data-v="v-me">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/></svg>
+      <span>我的</span>
+    </button>
+  </nav>
+  <div class="home-ind"></div>
+
+  <div class="rm-zone" id="rmzone">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    拖到此处移除
+  </div>
+  <div class="ghost" id="ghost"></div>
+
+  <div class="modal-mask" id="mmask"><div class="modal" id="mbody"></div></div>
+
+  <div class="detail" id="detail">
+    <div class="dtop">
+      <button class="back" id="dback" aria-label="返回">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <h2 id="dtitle"></h2>
+      <button class="fav" id="dfav" aria-label="收藏">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8L3.6 9.7l5.8-.8L12 3.6Z"/></svg>
+      </button>
+    </div>
+    <div class="dbody" id="dbody"></div>
+  </div>
+
+  <div class="scrim" id="scrim"></div>
+  <div class="sheet" id="sheet">
+    <div class="grab"></div>
+    <div id="sheet-body"></div>
+  </div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+/* ============ 演示数据（调研整理，非游戏内完整数值） ============ */
+const SEASONS = [
+  { id:"S4", n:"盈虚化象", range:"2026-02 至今", cur:true },
+  { id:"S3", n:"寒烽",     range:"2025-09 ~ 2026-02", arch:true },
+  { id:"S2", n:"明星回归", range:"2025-05 ~ 2025-09", arch:true },
+];
+let curSeason = SEASONS[0];
+
+const PIECES = [
+  { n:"方承意", c:5, job:"近战战士", bonds:["明昭侯府","浴火"], note:"追击控制流核心，佩橙武后二段伤害质变", hot:1 },
+  { n:"无情",   c:5, job:"迅捷射手", bonds:["四大名捕","御剑"], note:"气剑叠满 6 层触发真实伤害，攻速收益极高", hot:1 },
+  { n:"凤朝歌", c:5, job:"强攻射手", bonds:["凤城","射手"],   note:"普攻弹射，五辅体系最优主 C 之一", hot:1 },
+  { n:"墨不逆", c:5, job:"前排力士", bonds:["非命阁","力士"], note:"召唤傀王，傀王属性吃同羁绊总星级", hot:1 },
+  { n:"戚少商", c:5, job:"近战战士", bonds:["连云寨","血甲"], note:"血甲体系核心，半血护盾+防御翻倍" },
+  { n:"韩飞瑛", c:5, job:"近战刺客", bonds:["天野盟","刺客"], note:"火鸟重伤+斩杀线，克制回复阵容" },
+  { n:"风少微", c:5, job:"远程谋士", bonds:["怒潮阁","谋士"], note:"海浪护盾+全场会心加成" },
+  { n:"柳沧海", c:5, job:"远程输出", bonds:["镜天阁","重鸣"], note:"技能重复释放，高阶开局满内力" },
+  { n:"公孙大娘",c:5,job:"近战战士", bonds:["武林风云录","战士"], note:"全队会心/攻速/防御按棋子数叠加" },
+  { n:"叶雪青", c:5, job:"近战输出", bonds:["初涉江湖"],     note:"次元斩击杀后炸全场真伤" },
+  { n:"叶问舟", c:5, job:"远程辅助", bonds:["初涉江湖"],     note:"与叶雪青同场有额外增益" },
+  { n:"冷血",   c:4, job:"迅捷射手", bonds:["四大名捕","御剑"], note:"佩戴神侯令强化至 100% 会心" },
+  { n:"韩雪瑛", c:4, job:"强攻射手", bonds:["凤城","射手"],   note:"五辅体系高星主 C 首选" },
+  { n:"顾惜朝", c:4, job:"近战刺客", bonds:["天野盟","刺客"], note:"对位魔天凤城偏劣，慎作主 C" },
+  { n:"叶惊弦", c:3, job:"迅捷射手", bonds:["射手"],         note:"三费过渡射手，稳血利器" },
+  { n:"楚行之", c:3, job:"强攻射手", bonds:["凤城"],         note:"凤城染料叠层的低费挂件" },
+  { n:"柳星闻", c:3, job:"远程谋士", bonds:["谋士"],         note:"谋士体系过渡位" },
+  { n:"天演兽", c:4, job:"前排力士", bonds:["非命阁","力士"], note:"前排核心之二，与墨不逆双坦" },
+  { n:"日月双兽",c:4,job:"前排力士", bonds:["武林风云录"],   note:"可选增强位，双坦后排保 C" },
+  { n:"柳大业", c:3, job:"远程辅助", bonds:["辅阵"],         note:"辅阵必拿，凑五辅的基石" },
+  { n:"连云寨众",c:2,job:"前排力士", bonds:["连云寨","力士"], note:"前期固守系过渡前排" },
+  { n:"舞阳旧部",c:2,job:"近战战士", bonds:["浴火"],         note:"浴火体系低费前排" },
+  { n:"三清弟子",c:1,job:"远程辅助", bonds:["初涉江湖"],     note:"1 费打工，连败过渡可留对子" },
+  { n:"捕快新丁",c:1,job:"近战战士", bonds:["四大名捕"],     note:"四大名捕体系最低费拼图" },
+];
+const BONDS = [
+  { n:"四大名捕", t:"势力", lv:"2/3/4", d:"佩戴神侯令后每启动 1 个羁绊获 6% 伤害、3% 减免，伤害至多叠加 150%；对冷血强化至 100% 会心。", color:1 },
+  { n:"凤城", t:"势力", lv:"2/4/6", d:"按染料数叠加 1%–6% 伤害提高与 1%–3% 伤害减免。", color:1 },
+  { n:"连云寨", t:"势力", lv:"2/3/5", d:"积累豪气与酒提升伤害/减免，战斗胜利额外获 100% 豪气。" },
+  { n:"非命阁", t:"势力", lv:"2/3", d:"召唤傀王作战，等级提升解锁爆裂护盾/冲锋等形态，傀王吃同羁绊总星级加成。" },
+  { n:"天野盟", t:"势力", lv:"2/3/4", d:"召唤带重伤的火鸟，吸血 15%–60%，并提高伤害与真实伤害。" },
+  { n:"怒潮阁", t:"势力", lv:"2/3/4", d:"海浪提供 300–400 护盾、8%–35% 攻击加成与减伤，高阶全场触发。" },
+  { n:"镜天阁", t:"势力", lv:"2/3", d:"星辰随机落伤，月光每 7–10 秒 40% 减伤+15% 回血。" },
+  { n:"明昭侯府", t:"势力", lv:"2", d:"追击宋尧目标，延长控制并附加额外伤害。" },
+  { n:"初涉江湖", t:"势力", lv:"2/3", d:"+15% 伤害、+10% 减免，回合结束随机获 1 名同阵营棋子。" },
+  { n:"武林风云录", t:"势力", lv:"3/5", d:"全队获会心、攻速、防御加成，按棋子数叠加 1–3 倍。" },
+  { n:"射手", t:"职业", lv:"2/4/6", d:"最高 +35% 攻击与 +35% 技能增伤，普攻可弹射（100%–180% 倍率）。" },
+  { n:"刺客", t:"职业", lv:"2/4", d:"施加 20%–60% 流血，可斩杀气血 100–500 以下的低血目标。" },
+  { n:"血甲", t:"职业", lv:"2/3", d:"气血首次 ≤50% 时获 300–1200 护盾及 40%–160% 防御加成。" },
+  { n:"力士", t:"职业", lv:"2/4", d:"固守系前排，受击攒内力，双坦体系基石。" },
+  { n:"御剑", t:"职业", lv:"2/4", d:"普攻叠气剑，满 6 层触发真实伤害，最高 +80% 攻速、1000 点真伤。" },
+  { n:"谋士", t:"职业", lv:"2/4", d:"最高 +50% 会心与 50% 会心伤害，或 400% 会心伤害+2 格攻击距离。" },
+  { n:"重鸣", t:"职业", lv:"2/3", d:"+20%–80% 攻击，技能 50%–100% 概率重复释放，高阶开局满内力。" },
+  { n:"辅阵", t:"职业", lv:"3/5", d:"五辅体系：5 名辅阵棋子在场为核心高强度羁绊让路。", color:1 },
+];
+const EQUIPS = [
+  { n:"神侯令", r:"橙武", d:"四大名捕专属令牌，每启动 1 个羁绊获强化，冷血佩戴至 100% 会心。", who:"冷血 / 无情" },
+  { n:"万职书·射手", r:"独珍", d:"转职装备：佩戴棋子获得「射手」羁绊，阵容转型关键。", who:"主 C 或前排补羁绊" },
+  { n:"傲雪铠", r:"独珍", d:"防御型独珍，血甲/力士前排核心装。", who:"戚少商 / 天演兽" },
+  { n:"苍玉腕", r:"独珍", d:"攻防双修，泛用前排装。", who:"墨不逆" },
+  { n:"血奠枪", r:"紫", d:"击杀回内力（调整后 30→20），连杀型战士过渡装。", who:"浴火战士" },
+  { n:"两仪佩", r:"紫", d:"后排攻速加成（更新后加强）。", who:"射手主 C" },
+  { n:"精铁护腕", r:"白", d:"前期白装过渡，后期卖掉换独珍。", who:"任意前排" },
+  { n:"青芒短刃", r:"白", d:"前期攻击白装，打工专用。", who:"任意输出" },
+];
+const AUGMENTS = [
+  { n:"血甲·专属心悟", t:"专属", d:"血甲体系质变心悟，出现必拿。" },
+  { n:"神侯令·天命", t:"专属", d:"四大名捕专属强化，配合神侯令成型。" },
+  { n:"万职书", t:"转职", d:"拿到转职即可大幅提升成型率，五魔天/五辅通用必选。" },
+  { n:"利钱滚滚", t:"经济", d:"利息类心悟，攒钱升人口首选。" },
+  { n:"连败之资", t:"经济", d:"连败运营时收益最大化。" },
+  { n:"会心淬锋", t:"属性", d:"会心/会伤类属性补强，无专属与经济时顺延选取。" },
+  { n:"攻速·疾风", t:"属性", d:"攻速类补强，御剑/射手体系优先级上调。" },
+];
+/* units: [名称, 星级, 装备[]]；front/back 各 4 */
+const COMPS = [
+  { n:"五辅·魔天凤城", tier:"S", pop:9, carry:5, colorBond:true, heat:98, upd:"10-26", main:"凤朝歌", up:412, down:35,
+    style:["9级成型","上分主流"],
+    traits:[["五辅",5,1],["凤城",6,1],["射手",4,0],["非命阁",2,0]],
+    front:[["墨不逆",1,["苍玉腕"]],["天演兽",2,["傲雪铠"]],["日月双兽",1,[]],["戚少商",1,[]]],
+    back:[["韩雪瑛",2,[]],["凤朝歌",2,["两仪佩","两仪佩","青芒短刃"]],["柳沧海",1,[]],["冷血",1,[]]],
+    stats:{ avg:"2.1", pick:"12.4%", top1:"18.6%", top4:"64.2%" },
+    eq:[["凤朝歌","两仪佩","后排攻速叠加，弹射质变"],["墨不逆","苍玉腕","傀王承伤核心"]],
+    aug:[["万职书","转职必拿，补射手/辅阵羁绊"],["利钱滚滚","经济类，攒 50 金吃利息"]],
+    beats:[["2-1","开三场人机局，按商城棋子定方向，优先固守系/力士前排"],["3-2","升 6 级，攒钱至 50 金吃利息，辅阵单位必拿"],["4-1","8 级启动：搜高星四/五费远程主 C 与双坦"],["后期","9 级后金币全投主 C 升星，替换低强度单位"]],
+    tip:"主 C 首选凤朝歌/韩雪瑛；对上魔天同行抢卡时转柳沧海重鸣流。" },
+  { n:"血甲初涉", tier:"A", pop:8, carry:5, colorBond:false, heat:81, upd:"10-22", main:"戚少商", up:168, down:22,
+    style:["8级D牌","保下限"],
+    traits:[["血甲",3,0],["初涉江湖",3,0],["连云寨",3,0],["力士",2,0]],
+    front:[["戚少商",2,["傲雪铠","精铁护腕"]],["连云寨众",2,[]],["天演兽",1,[]],["日月双兽",1,[]]],
+    back:[["叶雪青",1,["苍玉腕"]],["叶问舟",1,[]],["柳大业",2,[]],["楚行之",1,[]]],
+    stats:{ avg:"3.4", pick:"9.1%", top1:"11.2%", top4:"51.7%" },
+    eq:[["戚少商","傲雪铠","半血护盾+防御翻倍的核心件"],["叶雪青","苍玉腕","次元斩真伤收割"]],
+    aug:[["血甲·专属心悟","出现必拿，体系质变"],["万职书","补初涉江湖/力士羁绊"]],
+    beats:[["前期","血甲低费前排连败或稳血均可，保留 50 金"],["中期","3-2 升 6，凑出血甲 3 层"],["后期","8 级搜叶雪青/叶问舟双五费，血量健康可冲 9"]],
+    tip:"保下限体系：8 人口未必有大哥，攒钱连升两级是容错打法。" },
+  { n:"四大名捕·御剑", tier:"A", pop:8, carry:4, colorBond:true, heat:76, upd:"10-18", main:"冷血", up:203, down:58,
+    style:["8级D牌","装备依赖"],
+    traits:[["四大名捕",4,1],["御剑",4,0],["射手",2,0]],
+    front:[["方承意",1,[]],["公孙大娘",1,[]],["天演兽",1,[]],["日月双兽",1,[]]],
+    back:[["冷血",2,["神侯令","两仪佩","青芒短刃"]],["无情",1,[]],["捕快新丁",3,[]],["柳沧海",1,[]]],
+    stats:{ avg:"3.1", pick:"7.6%", top1:"13.8%", top4:"55.0%" },
+    eq:[["冷血","神侯令","体系唯一神装，会心拉满"],["冷血","两仪佩","神侯令强化后 100% 会心"]],
+    aug:[["神侯令·天命","专属强化，配合令牌成型"],["攻速·疾风","气剑叠层加速"]],
+    beats:[["前期","捕快新丁+冷血对子过渡，剑系装备先给冷血"],["中期","3-2 升 6 补四大名捕层数"],["后期","8 级 D 二星冷血；血量健康上 9 换无情主 C"]],
+    tip:"神侯令是体系命门，拿不到令牌时建议转御剑射手混搭。" },
+  { n:"镜天重鸣法", tier:"B", pop:8, carry:5, colorBond:false, heat:62, upd:"10-12", main:"柳沧海", up:96, down:41,
+    style:["连败过渡","一波流"],
+    traits:[["镜天阁",2,0],["重鸣",2,0],["谋士",4,0]],
+    front:[["墨不逆",1,[]],["天演兽",1,[]],["连云寨众",2,[]],["日月双兽",1,[]]],
+    back:[["柳沧海",1,["苍玉腕"]],["风少微",1,["两仪佩"]],["柳星闻",2,[]],["楚行之",1,[]]],
+    stats:{ avg:"4.2", pick:"4.3%", top1:"8.9%", top4:"43.6%" },
+    eq:[["柳沧海","苍玉腕","开局满内力先手大招"],["风少微","两仪佩","会心体系补攻速"]],
+    aug:[["会心淬锋","谋士会伤流核心"],["利钱滚滚","慢运营攒钱"]],
+    beats:[["前期","谋士低费牌稳血，可连败拿选秀"],["中期","3-2 升 6，凑重鸣 2 层"],["后期","8 级搜柳沧海，高阶重鸣开局满内力一波流"]],
+    tip:"过渡强、上限看二星柳沧海；决赛圈怕刺客对位跳后排。" },
+];
+const ODDS = [
+  ["伍", "50%","35%","15%","—","—"],
+  ["陆", "30%","40%","25%"," 5%","—"],
+  ["柒", "19%","30%","35%","15%"," 1%"],
+  ["捌", "15%","20%","35%","24%"," 6%"],
+  ["玖", "10%","15%","30%","30%","15%"],
+];
+const NOTES = [
+  ["2026-10-28","原型 v0.13：我的页对齐参考交互——「当前赛季 | 切换赛季›」入口行 + 「全部阵容 | 当前赛季」分段滑块；赛季弹层列表改为选中米黄底金边、右侧 当前/切换。"],
+  ["2026-10-28","原型 v0.12：我的页赛季筛选改为滑块式分段选择器（金色滑块平滑滑动，选中项自动居中）。"],
+  ["2026-10-28","原型 v0.11：我的页赛季筛选改为赛季胶囊样式（选中金底米白、全部虚线弱化、当前/归档小字）。"],
+  ["2026-10-28","原型 v0.10：我的页拆分为「我的阵容」（摆棋保存的推演）与「我的收藏」（阵容推荐☆收藏）两个分区，新增赛季筛选（全部/S4/S3/S2），存档均带赛季标记；摆棋页头带赛季标识。"],
+  ["2026-10-28","原型 v0.9：摆棋「保存到我的」存完整棋盘快照；「我的」页只保留我的阵容（阵容卡带棋子条/载入摆棋/删除），移除对局记录与胜率。"],
+  ["2026-10-28","原型 v0.8：人口改为实时统计棋盘棋子数（移除档位选择）；棋子设置的备注替换为棋子详解。"],
+  ["2026-10-28","原型 v0.7：棋盘改为固定 4×7=28 格蜂窝全量显示，人口档位仅作上阵计数不再锁格。"],
+  ["2026-10-28","原型 v0.6：摆棋对齐金铲小助手模拟器——蜂窝棋盘、点空格弹选棋（搜索/费用/职业/羁绊四维筛选、六列网格、已上阵绿框）、点棋子弹「棋子设置」（主C开关、星级±、装备三槽、备注、移除），支持撤销/重置/保存收藏。"],
+  ["2026-10-28","原型 v0.5：摆棋改为金铲小助手式交互——点格子弹选棋弹窗，长按拖出顶出移除热区，拖到其他格子换位。"],
+  ["2026-10-28","原型 v0.4：新增首页 Tab（热荐/快捷入口/刷牌概率/更新志）；摆棋推演独立成 Tab，支持上阵、移除、切人口、羁绊实时推算。"],
+  ["2026-10-28","原型 v0.3：阵容列表新增点赞/踩，一票可改不可叠加，口碑计入排序。"],
+  ["2026-10-28","原型 v0.2：浅色宣纸风、TabBar 文字、赛季更迭切换、广告位预留、阵容排序筛选（彩色羁绊/84/95）。<b>演示数据</b>。"],
+  ["2026-10-28","原型 v0.1 发布：四大图鉴 + 阵容库 + D 牌概率表。"],
+  ["2026-09","「寒烽」版本：平衡性调整，镜天阁/重鸣体系强度上调。"],
+  ["2026-02","甄嬛传联动棋子限时回归，初涉江湖体系补强。"],
+  ["2025-11","赛季「盈虚化象」：明星棋子回归，转职书获取概率提升，等级 10 强度上限开放。"],
+];
+const costColor = { 1:"var(--c1)", 2:"var(--c2)", 3:"var(--c3)", 4:"var(--c4)", 5:"var(--c5)" };
+const $ = s => document.querySelector(s);
+const piece = n => PIECES.find(p => p.n === n) || { n, c:3, job:"", bonds:[], note:"" };
+const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const avaHTML = (n, cls="") => {
+  const p = piece(n);
+  return `<div class="ava ${cls}" style="--cost:${costColor[p.c]}">${n[0]}</div>`;
+};
+const stars = s => s >= 2 ? "★".repeat(s) : "";
+
+/* 点赞/踩（原型存 localStorage；正式版按 openid 在云端去重统计） */
+const ICON_UP = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v11"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg>`;
+const ICON_DOWN = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V3"/><path d="m9 18.12-1-4.12H3.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 5.5 2H19a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"/></svg>`;
+function getVotes() { try { return JSON.parse(localStorage.getItem("xq-votes") || "{}"); } catch { return {}; } }
+function getVote(n) { return getVotes()[n] || ""; }
+function setVote(n, k) {
+  const v = getVotes();
+  if (k) v[n] = k; else delete v[n];
+  localStorage.setItem("xq-votes", JSON.stringify(v));
+}
+function voteCount(c, kind) {
+  const uv = getVote(c.n);
+  return c[kind] + (uv === (kind === "up" ? "up" : "down") ? 1 : 0);
+}
+function voteNet(c) { return voteCount(c, "up") - voteCount(c, "down"); }
+
+/* ============ 阵容库 ============ */
+let homeSort = "str", homeFilter = "all";
+function compMatches(c) {
+  if (homeFilter === "color") return c.colorBond;
+  if (homeFilter === "84") return c.pop === 8 && c.carry === 4;
+  if (homeFilter === "95") return c.pop === 9 && c.carry === 5;
+  return true;
+}
+function sortComps(list) {
+  const t = { S:0, A:1, B:2 };
+  const arr = [...list];
+  if (homeSort === "str") arr.sort((a,b) => t[a.tier]-t[b.tier] || b.heat-a.heat);
+  if (homeSort === "heat") arr.sort((a,b) => b.heat-a.heat);
+  if (homeSort === "new") arr.sort((a,b) => b.upd.localeCompare(a.upd));
+  if (homeSort === "vote") arr.sort((a,b) => voteNet(b) - voteNet(a));
+  return arr;
+}
+function renderComps() {
+  const sorts = [["str","强度"],["heat","热度"],["vote","口碑"],["new","最新"]];
+  const filters = [["all","全部"],["color","彩色羁绊"],["84","84阵容"],["95","95阵容"]];
+  const list = sortComps(COMPS.filter(compMatches));
+  $("#v-comp").innerHTML = `
+    <div class="sec-head rise" style="margin-top:2px"><h2>阵容库</h2><span class="more">${curSeason.id} · ${curSeason.n} · 演示数据</span></div>
+    <div class="chiprow rise" data-i="1" style="margin-top:2px">
+      ${sorts.map(([k,l]) => `<button class="chip ${homeSort===k?"on":""}" data-sort="${k}">${l}</button>`).join("")}
+      <span style="flex:none;width:1px;background:var(--line-hi);margin:8px 2px"></span>
+      ${filters.map(([k,l]) => `<button class="chip ${homeFilter===k?"on":""}" data-filter="${k}">${l}</button>`).join("")}
+    </div>
+    ${list.length ? list.map((c,i) => `
+      <div class="card comp rise" data-i="${i+2}" data-comp="${c.n}">
+        <div class="strip">
+          ${[...c.front, ...c.back].map(u => {
+            const p = piece(u[0]);
+            return `<div class="u-mini" style="--cost:${costColor[p.c]}">${u[0]===c.main ? "<i>C</i>" : ""}${u[0][0]}</div>`;
+          }).join("")}
+        </div>
+        <div class="nm">
+          <h3>${c.n}</h3><span class="tier t-${c.tier}">${c.tier}</span>
+          <span class="badge solid">${c.pop}${c.carry}</span>
+          ${c.colorBond ? '<span class="badge">✦ 彩色羁绊</span>' : ""}
+        </div>
+        <div class="bonds">${c.traits.map(t => `<span class="tag ${t[2]?"gold":""}">${t[0]} ${t[1]}</span>`).join("")}</div>
+        <div class="meta"><span>主 C <b>${c.main}</b></span><span>人口 <b>${c.pop} 级</b></span><span>热度 <b>${c.heat}</b></span><span>更新 <b>${c.upd}</b></span></div>
+        <div class="votes">
+          <span class="v-hint">口碑计入「口碑」排序</span>
+          <button class="vote ${getVote(c.n)==="up"?"on":""}" data-vote="up" data-vcomp="${c.n}" aria-label="点赞">${ICON_UP}<b>${voteCount(c,"up")}</b></button>
+          <button class="vote down ${getVote(c.n)==="down"?"on":""}" data-vote="down" data-vcomp="${c.n}" aria-label="踩">${ICON_DOWN}<b>${voteCount(c,"down")}</b></button>
+        </div>
+      </div>`).join("")
+    : `<div class="empty rise" data-i="2" style="margin-top:14px"><span class="k">此筛选下暂无阵容</span>换个筛选条件试试</div>`}
+    <div class="ad rise"><span>广 告 位 · 预 留</span><em>banner · 正式版可配置开关</em></div>
+    <p class="legal rise">非官方工具 · 数据为原型演示 · 《逆水寒》及相关版权归网易所有</p>`;
+  document.querySelectorAll("[data-sort]").forEach(b => b.addEventListener("click", () => { homeSort = b.dataset.sort; renderComps(); }));
+  document.querySelectorAll("[data-filter]").forEach(b => b.addEventListener("click", () => { homeFilter = b.dataset.filter; renderComps(); }));
+  document.querySelectorAll("[data-vote]").forEach(b => b.addEventListener("click", e => {
+    e.stopPropagation();
+    const n = b.dataset.vcomp, k = b.dataset.vote;
+    setVote(n, getVote(n) === k ? "" : k);
+    renderComps();
+  }));
+}
+
+/* ============ 首页 ============ */
+function renderHome() {
+  const hot = COMPS[0];
+  $("#v-home").innerHTML = `
+    <header class="masthead rise">
+      <button class="season-btn" id="seasonbtn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"/><path d="M18.5 2v4h-4M5.5 22v-4h4"/></svg>
+        ${curSeason.id} · ${curSeason.n}<span class="cur">${curSeason.cur ? "当前赛季" : "已归档"}</span>
+      </button>
+      <h1>逆水<em>小助手</em></h1>
+      <div class="sub"><span>今日热荐 <b>${hot.n}</b></span><span>棋子随赛季更迭</span><span>演示数据</span></div>
+    </header>
+    <div class="card comp rise" data-i="1" id="hotcard" style="margin-top:14px">
+      <div class="strip">
+        ${[...hot.front, ...hot.back].map(u => { const p = piece(u[0]); return `<div class="u-mini" style="--cost:${costColor[p.c]}">${u[0]===hot.main ? "<i>C</i>" : ""}${u[0][0]}</div>`; }).join("")}
+      </div>
+      <div class="nm">
+        <h3>${hot.n}</h3><span class="tier t-${hot.tier}">${hot.tier}</span>
+        <span class="badge solid">${hot.pop}${hot.carry}</span>
+        ${hot.colorBond ? '<span class="badge">✦ 彩色羁绊</span>' : ""}
+      </div>
+      <div class="bonds">${hot.traits.map(t => `<span class="tag ${t[2]?"gold":""}">${t[0]} ${t[1]}</span>`).join("")}</div>
+      <div class="meta"><span>主 C <b>${hot.main}</b></span><span>人口 <b>${hot.pop} 级</b></span><span>热度 <b>${hot.heat}</b></span></div>
+    </div>
+    <div class="quick rise" data-i="2">
+      <button data-go="v-sim"><span class="qi"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg></span>摆棋推演</button>
+      <button data-go="v-comp"><span class="qi"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4h13l-3 4 3 4H8"/></svg></span>阵容库</button>
+      <button data-go="v-dex"><span class="qi"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13Z"/></svg></span>万象图鉴</button>
+      <button data-go="v-me"><span class="qi"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8L3.6 9.7l5.8-.8L12 3.6Z"/></svg></span>我的收藏</button>
+    </div>
+    <div class="sec-head"><h2 style="font-size:16px">刷牌概率</h2><span style="font-size:11.5px;color:var(--faint)">等级 × 费用</span></div>
+    <div class="card rise" data-i="3" style="padding:6px 14px">
+      <table><thead><tr><th>等级</th><th>1费</th><th>2费</th><th>3费</th><th>4费</th><th>5费</th></tr></thead>
+      <tbody>${ODDS.map(r => `<tr><td class="lvl">${r[0]}</td>${r.slice(1).map((v,i) => `<td class="${i===3||i===4 ? "hot":""}">${v}</td>`).join("")}</tr>`).join("")}</tbody></table>
+    </div>
+    <div class="ad rise" data-i="4"><span>广 告 位 · 预 留</span><em>banner · 正式版可配置开关</em></div>
+    <div class="sec-head"><h2 style="font-size:16px">更新志</h2></div>
+    <div class="card rise" data-i="5"><ul class="tl">${NOTES.map(n => `<li><time>${n[0]}</time><p>${n[1]}</p></li>`).join("")}</ul></div>
+    <p class="legal rise">非官方工具 · 数据为原型演示 · 《逆水寒》及相关版权归网易所有</p>`;
+  $("#seasonbtn").addEventListener("click", openSeasonSheet);
+  $("#hotcard").addEventListener("click", () => compDetail(hot));
+  document.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", () => goTab(b.dataset.go)));
+}
+
+/* ============ 摆棋推演（阵容模拟器） ============ */
+/* 棋盘固定 4 排 × 7 列 = 28 格；索引 i = 排(displayRow 0 顶..3 底) * 7 + 列，底排为前排 */
+let sim = { board: Array(28).fill(null), stars: {}, items: {}, main: null };
+try {
+  const s = JSON.parse(localStorage.getItem("xq-sim3") || "null");
+  if (s && Array.isArray(s.board)) sim = {
+    board: s.board.slice(0, 28).map(x => x || null).concat(Array(Math.max(0, 28 - s.board.length)).fill(null)),
+    stars: s.stars || {}, items: s.items || {}, main: s.main || null,
+  };
+} catch {}
+function simSave() { localStorage.setItem("xq-sim3", JSON.stringify(sim)); }
+const simUndo = [];
+function simSnapshot() { simUndo.push(JSON.stringify(sim)); if (simUndo.length > 30) simUndo.shift(); }
+function simUndoPop() {
+  if (!simUndo.length) { toast("没有可撤销的操作"); return; }
+  sim = JSON.parse(simUndo.pop());
+  simSave(); renderSim();
+}
+let pickSlot = -1, pickQ = "", pickCost = 0, pickJob = "", pickBond = "", unitSlot = -1, eqCtx = null;
+function simBonds() {
+  const counts = {};
+  sim.board.filter(Boolean).forEach(n => piece(n).bonds.forEach(b => { counts[b] = (counts[b] || 0) + 1; }));
+  return BONDS.map(b => ({ ...b, count: counts[b.n] || 0 })).filter(b => b.count > 0).sort((a,b) => b.count - a.count);
+}
+function simHex(n, i) {
+  if (!n) return `<div class="hex empty" data-slot="${i}"><div class="in">＋</div></div>`;
+  const p = piece(n);
+  const star = sim.stars[i] || 1;
+  const items = (sim.items[i] || []).filter(Boolean).map(it => `<i>${it[0]}</i>`).join("");
+  const isMain = sim.main === n && sim.board.indexOf(n) === i;
+  const cc = costColor[p.c];
+  return `<div class="hex" data-slot="${i}" data-drag="${i}" style="--cost:${cc}; background:color-mix(in srgb, ${cc} 55%, transparent)">
+    <div class="in" style="background:color-mix(in srgb, ${cc} 8%, #F7F4EC)">${n[0]}${star >= 2 ? `<div class="hstars">${"★".repeat(star)}</div>` : ""}${isMain ? '<div class="hcmark">C</div>' : ""}${items ? `<div class="hitems">${items}</div>` : ""}</div>
+  </div>`;
+}
+function simRow(idxs, odd) {
+  return `<div class="hexrow ${odd ? "odd" : ""}">${idxs.map(i => simHex(sim.board[i], i)).join("")}</div>`;
+}
+/* 长按拖拽：幽灵棋子跟手，顶部顶出移除热区，拖到其他格子换位 */
+let drag = null, simSuppressed = false;
+function startDrag(idx, x, y) {
+  const n = sim.board[idx]; const p = piece(n);
+  const phone = document.querySelector(".phone").getBoundingClientRect();
+  const g = $("#ghost");
+  g.style.setProperty("--cost", costColor[p.c]);
+  g.textContent = n[0];
+  drag = { idx, phone, rmHot: false, dropIdx: -1 };
+  g.style.opacity = "1";
+  moveGhost(x, y);
+  $("#rmzone").classList.add("on");
+  const o = document.querySelector(`[data-slot="${idx}"]`); if (o) o.classList.add("dragging");
+  $("#v-sim").style.overflow = "hidden";
+  simSuppressed = true; setTimeout(() => { simSuppressed = false; }, 600);
+}
+function moveGhost(x, y) {
+  $("#ghost").style.transform = `translate3d(${x - drag.phone.left - 29}px, ${y - drag.phone.top - 62}px, 0) scale(1.06)`;
+}
+function dragMove(x, y) {
+  moveGhost(x, y);
+  const rm = $("#rmzone").getBoundingClientRect();
+  const overRm = x >= rm.left && x <= rm.right && y >= rm.top && y <= rm.bottom;
+  if (overRm !== drag.rmHot) { drag.rmHot = overRm; $("#rmzone").classList.toggle("hot", overRm); }
+  const el = document.elementFromPoint(x, y);
+  const slotEl = el && el.closest ? el.closest("[data-slot]") : null;
+  const ni = slotEl ? +slotEl.dataset.slot : -1;
+  if (ni !== drag.dropIdx) {
+    if (drag.dropIdx >= 0) { const d = document.querySelector(`[data-slot="${drag.dropIdx}"]`); if (d) d.classList.remove("drop"); }
+    if (ni >= 0 && ni !== drag.idx) slotEl.classList.add("drop");
+    drag.dropIdx = ni;
+  }
+}
+function cleanupDrag() {
+  const g = $("#ghost");
+  g.style.opacity = "0";
+  g.style.transform = "translate3d(-100px,-100px,0)";
+  $("#rmzone").classList.remove("on", "hot");
+  document.querySelectorAll(".hex.drop, .hex.dragging, .unit.drop, .unit.dragging").forEach(el => el.classList.remove("drop", "dragging"));
+  $("#v-sim").style.overflow = "";
+  drag = null;
+}
+function endDrag(x, y) {
+  const { idx, dropIdx, rmHot } = drag;
+  cleanupDrag();
+  if (rmHot) sim.board[idx] = null;
+  else if (dropIdx >= 0 && dropIdx !== idx) {
+    const t = sim.board[dropIdx];
+    sim.board[dropIdx] = sim.board[idx];
+    sim.board[idx] = t;
+  }
+  simSave(); renderSim();
+}
+/* 选棋弹窗（点空格子弹出，图3式） */
+function openPiecePicker(i) {
+  pickSlot = i; pickQ = ""; pickCost = 0; pickJob = ""; pickBond = "";
+  renderPicker();
+  openSheet();
+}
+const RARITY_COLOR = { "白":"#7A838C", "紫":"#7C50C8", "独珍":"#2F6DA8", "橙武":"#B48324" };
+function renderPicker() {
+  const cur = pickSlot >= 0 ? sim.board[pickSlot] : null;
+  const jobs = ["战士","射手","刺客","谋士","力士","辅助"];
+  const onBoard = new Set(sim.board.filter(Boolean));
+  const pool = PIECES.filter(p =>
+    (!pickCost || p.c === pickCost) &&
+    (!pickJob || p.job.includes(pickJob)) &&
+    (!pickBond || p.bonds.includes(pickBond)) &&
+    (!pickQ || p.n.includes(pickQ) || p.bonds.join().includes(pickQ) || p.job.includes(pickQ)));
+  $("#sheet-body").innerHTML = `
+    <h3>选择棋子</h3>
+    <p class="sp">第 ${4 - Math.floor(pickSlot / 7)} 排 · ${pickSlot % 7 + 1} 号位 · 当前：${cur || "空位"}</p>
+    <span class="pcount">${pool.length} 位</span>
+    <div class="search" style="background:#F3EEE1">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+      <input id="pickq" placeholder="搜索棋子名称或羁绊" value="${pickQ}">
+    </div>
+    <div class="chiprow" style="margin:0 0 10px">
+      ${[0,1,2,3,4,5].map(c => `<button class="chip ${pickCost===c?"on":""}" data-pcost="${c}" style="height:34px">${c ? c+"费" : "全部"}</button>`).join("")}
+    </div>
+    <div class="ddrow">
+      <button class="dd" data-dd="job">${pickJob || "全部职业"}<span class="ar">▾</span></button>
+      <button class="dd" data-dd="bond">${pickBond || "全部羁绊"}<span class="ar">▾</span></button>
+    </div>
+    <div class="ddpanel" id="ddjob">
+      ${["",...jobs].map(j => `<button class="chip ${pickJob===j?"on":""}" data-pjob="${j}" style="height:32px">${j || "全部"}</button>`).join("")}
+    </div>
+    <div class="ddpanel" id="ddbond">
+      ${["",...BONDS.map(b => b.n)].map(b => `<button class="chip ${pickBond===b?"on":""}" data-pbond="${b}" style="height:32px">${b || "全部"}</button>`).join("")}
+    </div>
+    <div class="pick6">
+      ${pool.map(p => `<button class="p6" data-pick="${p.n}">
+        <span class="ph ${onBoard.has(p.n) ? "onboard" : ""}" style="--cost:${costColor[p.c]}">${p.n[0]}<span class="cb">${p.c}费</span></span>
+        <span>${p.n}</span></button>`).join("")}
+    </div>
+    ${pool.length ? "" : `<div class="empty" style="padding:18px"><span class="k">未寻得此侠</span>换个关键字试试</div>`}
+    <p style="font-size:11px;color:#8A8375;text-align:center;margin-top:12px">点选棋子上阵 · 绿框为已上阵棋子</p>`;
+  $("#pickq").addEventListener("input", e => { pickQ = e.target.value.trim(); renderPicker(); const v = $("#pickq"); v.focus(); v.setSelectionRange(v.value.length,v.value.length); });
+}
+/* 棋子设置弹窗（点有棋子的格子弹出，图2式） */
+function openUnitModal(i) {
+  unitSlot = i;
+  const n = sim.board[i]; const p = piece(n);
+  const star = sim.stars[i] || 1;
+  const its = sim.items[i] || [null, null, null];
+  const isMain = sim.main === n && sim.board.indexOf(n) === i;
+  $("#mbody").innerHTML = `
+    <div class="mtop">
+      <h3>棋子设置</h3>
+      <button class="x" data-mact="close" aria-label="关闭">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="mhead">
+      <div class="mh-ava" style="--cost:${costColor[p.c]}">${n[0]}</div>
+      <div class="mh-info">
+        <div class="mh-nm">${n}<span class="cost" style="--cost:${costColor[p.c]}">${p.c}费</span></div>
+        <div class="mh-bonds"><span class="tag">${p.job}</span>${p.bonds.map(b => `<span class="tag gold">${b}</span>`).join("")}</div>
+      </div>
+      <div class="mtgl"><span>主C</span><button class="tgl ${isMain ? "on" : ""}" data-mact="main" aria-label="标记主C"></button></div>
+    </div>
+    <div class="mcard">
+      <div class="t">棋子星级<em>3 枚同名合一升星</em></div>
+      <div class="starrow">
+        <button class="circ" data-mact="starm" aria-label="降星">−</button>
+        <span class="sv">${"★".repeat(star)}</span>
+        <button class="circ plus" data-mact="starp" aria-label="升星">＋</button>
+      </div>
+    </div>
+    <div class="mcard">
+      <div class="t">棋子装备<em>至多 3 件 · 点空槽选择 / 点已装卸下</em></div>
+      <div class="eqslots">
+        ${[0,1,2].map(k => `<button class="eqslot ${its[k] ? "filled" : ""}" data-mact="eq" data-k="${k}">${its[k] ? its[k][0] : "＋"}</button>`).join("")}
+      </div>
+    </div>
+    <div class="mcard">
+      <div class="t">棋子详解</div>
+      <p style="font-size:13.5px;color:var(--dim);line-height:1.75">${p.note || "（演示数据待补，正式版展示技能与数值）"}</p>
+    </div>
+    <div class="mrow">
+      <button class="btn-rm" data-mact="remove">移除英雄</button>
+      <button class="btn-ok" data-mact="done">完成设置</button>
+    </div>`;
+  $("#mmask").classList.add("on");
+}
+/* 装备选择（从设置弹窗的空装备槽打开） */
+function renderEqPicker() {
+  $("#sheet-body").innerHTML = `
+    <h3>选择装备</h3>
+    <p class="sp">装入第 ${eqCtx.k + 1} 槽 · 按品阶点选</p>
+    <div class="pick6">
+      ${EQUIPS.map(e => `<button class="p6" data-eqp="${e.n}">
+        <span class="ph" style="--cost:${RARITY_COLOR[e.r] || "var(--gold)"}">${e.n[0]}<span class="cb">${e.r}</span></span>
+        <span>${e.n}</span></button>`).join("")}
+    </div>`;
+}
+function renderSim() {
+  const bonds = simBonds();
+  const filled = sim.board.filter(Boolean).length;
+  const totalCost = sim.board.filter(Boolean).reduce((s, n) => s + piece(n).c, 0);
+  const active = bonds.filter(b => { const th = b.lv.split("/").map(Number); return th.some(t => t <= b.count); }).length;
+  $("#v-sim").innerHTML = `
+    <div class="blk" style="margin-top:2px">
+      <b>摆棋推演</b><span class="cnt">${curSeason.id} · ${curSeason.n}</span><span class="cnt">已上阵 ${filled}</span>
+      <span class="ops">
+        <button id="simundo">撤销 ↺</button>
+        <button id="simreset">重置</button>
+        <button id="simdemo">示例</button>
+      </span>
+    </div>
+    <div class="blk">
+      <b>阵容站位</b><span class="cnt">人口 ${filled}</span>
+      <span style="margin-left:auto;font-size:11px;color:var(--faint)">总费用 ${totalCost} · 点格选棋 · 长按拖出移除</span>
+    </div>
+    <div class="card rise" style="padding:12px 6px">
+      <div class="boardtips"><span>上 · 后排输出</span><span>下 · 前排承伤</span></div>
+      <div style="margin-top:6px">
+        ${simRow([21,22,23,24,25,26,27], false)}
+        ${simRow([14,15,16,17,18,19,20], true)}
+        ${simRow([7,8,9,10,11,12,13], false)}
+        ${simRow([0,1,2,3,4,5,6], true)}
+      </div>
+    </div>
+    <div class="blk">
+      <b>阵容羁绊</b><span class="cnt">${active} 个已激活</span>
+    </div>
+    <div class="card rise" data-i="1" style="padding:14px">
+      ${bonds.length ? `<div class="traits">${bonds.map(b => {
+        const th = b.lv.split("/").map(Number);
+        const tier = th.filter(t => t <= b.count).length;
+        const next = th.find(t => t > b.count);
+        return `<span class="trait ${tier && b.color ? "color" : ""}" style="${tier ? "" : "opacity:.45"}"><span class="ic">${b.n[0]}<span class="ct">${b.count}</span></span>${b.n}<span class="pg">${next ? `${b.count}/${next}` : `${b.count} 满`}</span></span>`;
+      }).join("")}</div>`
+      : `<div class="empty" style="padding:22px 16px"><span class="k">棋盘尚虚</span>点击棋盘空格选择棋子，羁绊实时推算</div>`}
+    </div>
+    <button class="savebtn" id="simsave">保存到我的</button>
+    <p class="legal">推演存于本机 · 正式版随赛季云端同步棋子数据</p>`;
+}
+
+/* 赛季切换（更迭版） */
+function openSeasonSheet() {
+  $("#sheet-body").innerHTML = `
+    <h3>赛季更迭</h3>
+    <p class="sp">每个赛季棋子与羁绊会更换；归档赛季数据只读可查</p>
+    ${SEASONS.map(s => `
+      <button class="season-item ${curSeason.id===s.id ? "on" : ""}" data-season="${s.id}" style="width:100%">
+        <span class="info"><span class="nm">${s.id} · ${s.n}</span><span class="rg">${s.range}</span></span>
+        <span class="meta">${curSeason.id===s.id ? "当前赛季" : "切换"}</span>
+      </button>`).join("")}`;
+  openSheet();
+  document.querySelectorAll("[data-season]").forEach(b => b.addEventListener("click", () => {
+    const s = SEASONS.find(x => x.id === b.dataset.season);
+    curSeason = s; meSeason = "cur"; closeSheet(); renderHome(); renderComps(); renderDex(); renderSim();
+    toast(s.cur ? `已切换至 ${s.id}·${s.n}（当前赛季）` : `已切换至 ${s.id}·${s.n}（归档只读）`);
+  }));
+}
+
+/* ============ 图鉴 ============ */
+let dexSeg = "piece", dexQ = "", dexCost = 0;
+function renderDex() {
+  const segs = [["piece","棋子"],["bond","羁绊"],["equip","装备"],["aug","心悟"]];
+  const costs = [0,1,2,3,4,5];
+  let list = "";
+  if (dexSeg === "piece") {
+    const ps = PIECES.filter(p => (!dexCost || p.c === dexCost) && (!dexQ || p.n.includes(dexQ) || p.bonds.join().includes(dexQ) || p.job.includes(dexQ)));
+    list = ps.length ? ps.map((p,i) => `
+      <div class="card row rise" data-i="${i}" data-piece="${p.n}" style="--cost:${costColor[p.c]}">
+        ${avaHTML(p.n)}
+        <div class="info">
+          <div class="nm">${p.n}<span class="cost">${p.c}费</span>${p.hot ? '<span class="tag gold">热门</span>' : ""}</div>
+          <div class="desc">${p.job} · ${p.bonds.join(" / ")}</div>
+        </div>
+        <svg class="go" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 5l7 7-7 7"/></svg>
+      </div>`).join("")
+    : `<div class="empty" style="margin-top:20px"><span class="k">未寻得此侠</span>换个关键字试试</div>`;
+  } else if (dexSeg === "bond") {
+    const bs = BONDS.filter(b => !dexQ || b.n.includes(dexQ) || b.d.includes(dexQ));
+    list = bs.map((b,i) => `
+      <div class="card row bondrow rise" data-i="${i}" data-bond="${b.n}">
+        <div class="ava" style="--cost:${b.color ? "var(--gold)" : "var(--c3)"}">${b.n[0]}</div>
+        <div class="info">
+          <div class="nm">${b.n}${b.color ? '<span class="tag gold">✦ 彩色</span>' : ""}<span class="lv">${b.lv}</span></div>
+          <div class="desc">${b.d}</div>
+        </div>
+      </div>`).join("");
+  } else if (dexSeg === "equip") {
+    const es = EQUIPS.filter(e => !dexQ || e.n.includes(dexQ) || e.d.includes(dexQ));
+    list = es.map((e,i) => `
+      <div class="card row rise" data-i="${i}" data-equip="${e.n}">
+        <div class="ava" style="--cost:var(--gold)">${e.n[0]}</div>
+        <div class="info">
+          <div class="nm">${e.n}<span class="rar r-${e.r}">${e.r}</span></div>
+          <div class="desc">${e.d}</div>
+        </div>
+      </div>`).join("");
+  } else {
+    const as = AUGMENTS.filter(a => !dexQ || a.n.includes(dexQ) || a.d.includes(dexQ));
+    list = as.map((a,i) => `
+      <div class="card row rise" data-i="${i}" data-aug="${a.n}">
+        <div class="ava" style="--cost:${a.t === "专属" ? "var(--ts)" : a.t === "转职" ? "var(--gold)" : a.t === "经济" ? "var(--c2)" : "var(--c3)"}">${a.n[0]}</div>
+        <div class="info">
+          <div class="nm">${a.n}<span class="tag">${a.t}</span></div>
+          <div class="desc">${a.d}</div>
+        </div>
+      </div>`).join("");
+  }
+  $("#v-dex").innerHTML = `
+    <div class="sec-head" style="margin-top:2px"><h2>万象图鉴</h2><span class="more">${curSeason.id} · ${curSeason.n}</span></div>
+    <div class="search rise">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+      <input id="dexq" placeholder="搜棋子 / 羁绊 / 装备 / 心悟" value="${dexQ}">
+    </div>
+    <div class="seg rise" data-i="1">${segs.map(([k,l]) => `<button data-seg="${k}" class="${dexSeg===k?"on":""}">${l}</button>`).join("")}</div>
+    ${dexSeg === "piece" ? `<div class="chiprow rise" data-i="2">${costs.map(c => `<button class="chip ${dexCost===c?"on":""}" data-cost="${c}">${c ? c+"费" : "全部"}</button>`).join("")}</div>` : ""}
+    <div id="dexlist">${list}</div>
+    ${dexSeg === "piece" ? `<div class="ad"><span>广 告 位 · 预 留</span><em>banner · 正式版可配置开关</em></div>` : ""}`;
+  $("#dexq").addEventListener("input", e => { dexQ = e.target.value.trim(); renderDex(); const v=$("#dexq"); v.focus(); v.setSelectionRange(v.value.length,v.value.length); });
+  document.querySelectorAll("[data-seg]").forEach(b => b.addEventListener("click", () => { dexSeg = b.dataset.seg; renderDex(); }));
+  document.querySelectorAll("[data-cost]").forEach(b => b.addEventListener("click", () => { dexCost = +b.dataset.cost; renderDex(); }));
+  wireDexRows();
+}
+
+/* ============ 我的 ============ */
+function getMySims() { try { return JSON.parse(localStorage.getItem("xq-mysims") || "[]"); } catch { return []; } }
+function setMySims(a) { localStorage.setItem("xq-mysims", JSON.stringify(a)); }
+let meSeason = "cur"; // "cur" = 跟随当前赛季；"all" = 全部赛季
+function renderMe() {
+  const sel = meSeason;
+  const allFavs = getFavs().filter(f => COMPS.some(c => c.n === f.n));
+  const allSims = getMySims();
+  const favs = sel === "all" ? allFavs : allFavs.filter(f => (f.season || "S4") === curSeason.id);
+  const sims = sel === "all" ? allSims : allSims.filter(s => (s.season || "S4") === curSeason.id);
+  const stripHTML = (units, main, mainIdx) => `<div class="me-fav-strip">${units.map(u => {
+    const p = piece(u.n);
+    const isC = main && main === u.n && (mainIdx === undefined || mainIdx === u.i);
+    return `<span class="u-mini" style="--cost:${costColor[p.c]}">${isC ? "<i>C</i>" : ""}${u.n[0]}</span>`;
+  }).join("")}</div>`;
+  const delSVG = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 5v2"/></svg>`;
+  $("#v-me").innerHTML = `
+    <div class="me-head rise">
+      <div class="ava">侠</div>
+      <h2>少侠请留步</h2>
+      <p>登录后云端同步我的阵容与收藏（原型占位）</p>
+    </div>
+    <button class="me-season-bar rise" id="meseasonbar">
+      <b>${curSeason.id} · ${curSeason.n}</b>
+      <span class="sw">切换赛季
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+      </span>
+    </button>
+    <div class="slider-seg rise" id="meseasonseg">
+      <span class="thumb" id="meseasonthumb"></span>
+      <button data-meseason="all" class="${sel==="all"?"on":""}">全部阵容</button>
+      <button data-meseason="cur" class="${sel==="cur"?"on":""}">当前赛季</button>
+    </div>
+    <div class="blk">
+      <b>我的阵容</b><span class="cnt">${sims.length} 套</span>
+      <span style="margin-left:auto;font-size:11px;color:var(--faint)">摆棋页「保存到我的」生成</span>
+    </div>
+    ${sims.length ? sims.slice().reverse().map((s, r) => {
+      const k = allSims.indexOf(s);
+      const units = s.board.map((n, i) => n ? { n, i } : null).filter(Boolean);
+      const cost = units.reduce((t, u) => t + piece(u.n).c, 0);
+      return `<div class="card rise" data-i="${r + 1}">
+        <div class="me-fav-top">
+          <span class="me-fav-name">${s.name}</span>
+          <span class="tag plain">${s.season || "S4"}</span>
+          <button class="me-fav-del" data-delsim="${k}" aria-label="删除">${delSVG}</button>
+        </div>
+        ${stripHTML(units, s.main)}
+        <div class="me-fav-meta">
+          <span class="tag">${units.length} 枚 · 费用 ${cost}</span>
+          ${s.main ? `<span class="tag gold">主C ${s.main}</span>` : ""}
+          <button class="chip" data-loadsim="${k}" style="margin-left:auto">载入摆棋</button>
+        </div>
+      </div>`;
+    }).join("")
+    : `<div class="empty rise" data-i="1"><span class="k">尚无自己的阵容</span>在摆棋页摆好棋子后点「保存到我的」，棋盘快照会收进这里</div>`}
+    <div class="blk">
+      <b>我的收藏</b><span class="cnt">${favs.length} 套</span>
+      <span style="margin-left:auto;font-size:11px;color:var(--faint)">阵容推荐页点 ☆ 收藏</span>
+    </div>
+    ${favs.length ? favs.slice().reverse().map((f, r) => {
+      const c = COMPS.find(x => x.n === f.n);
+      const units = [...c.front, ...c.back].map(u => ({ n: u[0] }));
+      return `<div class="card rise" data-i="${r + 1}" data-comp="${c.n}">
+        <div class="me-fav-top">
+          <span class="me-fav-name">${c.n}</span>
+          <span class="tier t-${c.tier}">${c.tier}</span>
+          <span class="tag plain">${f.season || "S4"}</span>
+          <button class="me-fav-del" data-del="${f.n}" aria-label="删除">${delSVG}</button>
+        </div>
+        ${stripHTML(units, c.main)}
+        <div class="me-fav-meta">${c.bonds.slice(0, 4).map(b => `<span class="tag ${b[2] ? "gold" : ""}">${b[0]} ${b[1]}</span>`).join("")}</div>
+      </div>`;
+    }).join("")
+    : `<div class="empty rise" data-i="2"><span class="k">暂无收藏</span>看阵容推荐时点 ☆，把别人的阵容收进这里随时翻看</div>`}
+    <div class="sec-head"><h2>关于</h2></div>
+    <div class="card d-txt rise" data-i="3" style="line-height:1.8">
+      本工具为<b>非官方玩家工具</b>，与网易无关联。当前展示为原型演示数据，
+      正式版数据来自官方公告与社区整理，随赛季云端热更新、赛季更迭后可回看归档数据。
+    </div>
+    <p class="legal">逆水小助手 · 原型 v0.13 · 2026-10-28</p>`;
+  document.querySelectorAll("[data-meseason]").forEach(b => b.addEventListener("click", () => {
+    meSeason = b.dataset.meseason;
+    renderMe();
+  }));
+  $("#meseasonbar").addEventListener("click", openSeasonSheet);
+  /* 滑块对齐选中项（两段等宽，0/100% 平移） */
+  const thumb = $("#meseasonthumb");
+  const onBtn = $("#meseasonseg button.on");
+  if (thumb && onBtn) {
+    thumb.style.width = onBtn.offsetWidth + "px";
+    thumb.style.transform = `translateX(${onBtn.offsetLeft - 4}px)`;
+  }
+  document.querySelectorAll("#v-me [data-comp]").forEach(el => el.addEventListener("click", e => {
+    if (e.target.closest(".me-fav-del")) return;
+    const c = COMPS.find(x => x.n === el.dataset.comp);
+    if (c) compDetail(c);
+  }));
+  document.querySelectorAll("[data-del]").forEach(b => b.addEventListener("click", e => {
+    e.stopPropagation();
+    const f = getFavs(); const i = f.findIndex(x => x.n === b.dataset.del);
+    if (i >= 0) { f.splice(i, 1); localStorage.setItem("xq-favs", JSON.stringify(f)); }
+    renderMe(); toast("已删除 · " + b.dataset.del);
+  }));
+  document.querySelectorAll("[data-delsim]").forEach(b => b.addEventListener("click", e => {
+    e.stopPropagation();
+    const arr = getMySims(); arr.splice(+b.dataset.delsim, 1);
+    setMySims(arr); renderMe(); toast("已删除推演存档");
+  }));
+  document.querySelectorAll("[data-loadsim]").forEach(b => b.addEventListener("click", e => {
+    e.stopPropagation();
+    const s = getMySims()[+b.dataset.loadsim];
+    if (!s) return;
+    simSnapshot();
+    sim = {
+      board: (s.board || []).slice(0, 28).map(x => x || null).concat(Array(Math.max(0, 28 - (s.board || []).length)).fill(null)),
+      stars: s.stars || {}, items: s.items || {}, main: s.main || null,
+    };
+    simSave(); goTab("v-sim"); renderSim(); toast("已载入到摆棋");
+  }));
+}
+
+/* ============ 详情层 ============ */
+function openDetail(title, html, favKey) {
+  $("#dtitle").textContent = title;
+  $("#dbody").innerHTML = html;
+  $("#detail").dataset.fav = favKey || "";
+  $("#detail").classList.add("on");
+  $("#dbody").scrollTop = 0;
+}
+function closeDetail() { $("#detail").classList.remove("on"); }
+
+function unitHTML(u, main) {
+  const p = piece(u[0]);
+  const items = (u[2] || []).map(it => `<i title="${it}">${it[0]}</i>`).join("");
+  return `<div class="unit">
+    <div class="u-box" style="--cost:${costColor[p.c]}">
+      ${u[1] >= 2 ? `<div class="stars">${stars(u[1])}</div>` : ""}
+      ${u[0] === main ? '<div class="cmark">C</div>' : ""}
+      ${items ? `<div class="items">${items}</div>` : ""}
+      ${u[0][0]}
+    </div>
+    <span>${u[0]}</span>
+  </div>`;
+}
+function compDetail(c) {
+  openDetail(c.n, `
+    <div class="d-hero">
+      <span class="tier t-${c.tier}" style="width:34px;height:34px;font-size:17px;border-radius:10px">${c.tier}</span>
+      <div><h3>${c.n}</h3><div class="sub"><span>主 C ${c.main}（${c.carry}费）</span><span>·</span><span>${c.pop} 级成型</span></div></div>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+      ${c.style.map(s => `<span class="tag">${s}</span>`).join("")}
+      <span class="tag">热度 ${c.heat}</span><span class="tag">更新 ${c.upd}</span>
+      ${c.colorBond ? '<span class="tag gold">✦ 彩色羁绊体系</span>' : ""}
+    </div>
+    <div class="traits">${c.traits.map(t => `
+      <span class="trait ${t[2]?"color":""}"><span class="ic">${t[0][0]}<span class="ct">${t[1]}</span></span>${t[0]}</span>`).join("")}
+    </div>
+    <div class="d-sec">阵 容 棋 子</div>
+    <div class="card" style="padding:14px 12px">
+      <div class="u-label">前 排 · 承 伤</div>
+      <div class="units" style="margin-top:8px">${c.front.map(u => unitHTML(u, c.main)).join("")}</div>
+      <div class="u-label">后 排 · 输 出</div>
+      <div class="units" style="margin-top:8px">${c.back.map(u => unitHTML(u, c.main)).join("")}</div>
+    </div>
+    <div class="card strow">
+      <div><b>${c.stats.avg}</b><span>平均排名</span></div>
+      <div><b>${c.stats.pick}</b><span>出场率</span></div>
+      <div><b class="good">${c.stats.top1}</b><span>登顶率</span></div>
+      <div><b class="good">${c.stats.top4}</b><span>前四率</span></div>
+    </div>
+    <p style="font-size:11px;color:var(--faint);text-align:center;margin-top:-4px">对局统计为演示数据 · 正式版接云端按赛季聚合</p>
+    <div class="d-sec">核 心 装 备</div>
+    ${c.eq.map(e => `<div class="pickrow"><div class="no">◈</div><div><div class="nm">${e[0]} <span class="tag">优先</span></div><div class="why">${e[1]}</div></div></div>`).join("")}
+    <div class="d-sec">心 悟 选 择</div>
+    ${c.aug.map((a,i) => `<div class="pickrow"><div class="no">${i+1}</div><div><div class="nm">${a[0]}</div><div class="why">${a[1]}</div></div></div>`).join("")}
+    <div class="d-sec">运 营 节 奏</div>
+    <ul class="beats">${c.beats.map(b => `<li><time>${b[0]}</time><span>${b[1]}</span></li>`).join("")}</ul>
+    <div class="d-sec">对 局 提 示</div>
+    <p class="d-txt">${c.tip}</p>
+    <button id="sharecomp" style="width:100%;height:50px;border-radius:14px;margin-top:20px;background:var(--gold);color:#FFF9EE;font-size:15px;font-weight:700;transition:transform .18s var(--ease)">生成分享卡片</button>
+  `, c.n);
+  $("#sharecomp").addEventListener("click", () => {
+    $("#sheet-body").innerHTML = `
+      <h3>${c.n}</h3>
+      <p class="sp">分享到微信群 · 好友点击即可查看完整阵容（原型演示）</p>
+      <div style="background:#F3EEE1;border-radius:14px;padding:18px;margin-bottom:14px;text-align:center">
+        <div style="font-family:var(--serif);font-size:21px;color:#26221A;letter-spacing:.05em">${c.n}</div>
+        <div style="font-size:11.5px;color:#8A8375;margin-top:6px">${c.traits.map(t => `${t[0]}×${t[1]}`).join(" · ")}</div>
+        <div style="font-size:26px;margin-top:12px;display:flex;justify-content:center;gap:2px">
+          ${[...c.front, ...c.back].map(u => { const p = piece(u[0]); return `<span style="color:${p.c===5 ? "#B48324" : p.c===4 ? "#8B66C8" : p.c===3 ? "#4A85C0" : p.c===2 ? "#5A9A6E" : "#98A1A8"}">◆</span>`; }).join("")}
+        </div>
+      </div>
+      <button class="sharebtn" id="doshare">保存图片并分享</button>`;
+    openSheet();
+    $("#doshare").addEventListener("click", () => { closeSheet(); toast("已生成（原型演示）"); });
+  });
+}
+function pieceDetail(n) {
+  const p = piece(n);
+  openDetail(n, `
+    <div class="d-hero">${avaHTML(n)}<div><h3>${n}</h3>
+      <div class="sub"><span class="cost" style="--cost:${costColor[p.c]}">${p.c}费</span><span>·</span><span>${p.job}</span></div></div></div>
+    <div class="d-sec">羁 纹</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">${p.bonds.map(b => `<span class="tag gold" style="font-size:13px;padding:7px 13px" data-bondjump="${b}">${b}</span>`).join("")}</div>
+    <div class="d-sec">棋 谱</div>
+    <p class="d-txt">${p.note || "（演示数据待补）"}</p>
+    <div class="d-sec">升 星</div>
+    <ul class="beats"><li><time>三星</time><span>3 枚同名棋子合一升二星，3 枚二星升三星；牌库数量固定，注意同行卡牌。</span></li></ul>
+  `, n);
+  document.querySelectorAll("[data-bondjump]").forEach(el => el.addEventListener("click", () => bondDetail(el.dataset.bondjump)));
+}
+function bondDetail(n) {
+  const b = BONDS.find(x => x.n === n);
+  const members = PIECES.filter(p => p.bonds.includes(n));
+  openDetail(n, `
+    <div class="d-hero"><div class="ava" style="--cost:${b.color ? "var(--gold)" : "var(--c3)"}">${n[0]}</div>
+      <div><h3>${n}</h3><div class="sub"><span>${b.t}羁绊</span><span>·</span><span>层数 ${b.lv}</span>${b.color ? '<span class="tag gold">✦ 彩色</span>' : ""}</div></div></div>
+    <div class="d-sec">效 果</div>
+    <p class="d-txt">${b.d}</p>
+    <div class="d-sec">同 纹 棋 子</div>
+    ${members.map(m => `<div class="row" style="padding:10px 2px;--cost:${costColor[m.c]}" data-piecejump="${m.n}">
+      ${avaHTML(m.n)}<div class="info"><div class="nm">${m.n}<span class="cost">${m.c}费</span></div><div class="desc">${m.job}</div></div></div>`).join("") || `<p class="d-txt">（演示数据待补）</p>`}
+  `, n);
+  document.querySelectorAll("[data-piecejump]").forEach(el => el.addEventListener("click", () => pieceDetail(el.dataset.piecejump)));
+}
+function equipDetail(n) {
+  const e = EQUIPS.find(x => x.n === n);
+  openDetail(n, `
+    <div class="d-hero"><div class="ava" style="--cost:var(--gold)">${n[0]}</div>
+      <div><h3>${n}</h3><div class="sub"><span class="rar r-${e.r}">${e.r}</span></div></div></div>
+    <div class="d-sec">辞 条</div>
+    <p class="d-txt">${e.d}</p>
+    <div class="d-sec">推 荐 佩 戴</div>
+    <p class="d-txt">${e.who}</p>
+    <div class="d-sec">规 矩</div>
+    <ul class="beats"><li><time>三件</time><span>每棋子至多 3 件；战斗开始后不可卸下，神装务必先给核心。</span></li></ul>
+  `, n);
+}
+function augDetail(n) {
+  const a = AUGMENTS.find(x => x.n === n);
+  openDetail(n, `
+    <div class="d-hero"><div class="ava" style="--cost:var(--gold)">${a.n[0]}</div>
+      <div><h3>${a.n}</h3><div class="sub"><span class="tag">${a.t}心悟</span></div></div></div>
+    <div class="d-sec">心 法</div>
+    <p class="d-txt">${a.d}</p>
+    <div class="d-sec">择 法</div>
+    <ul class="beats">
+      <li><time>回合</time><span>特定回合（2-1、3-2…）三选一。</span></li>
+      <li><time>次序</time><span>专属 / 转职 → 经济 → 属性补强，顺延而取。</span></li>
+    </ul>
+  `, n);
+}
+function wireDexRows() {
+  document.querySelectorAll("#v-dex [data-piece]").forEach(el => el.addEventListener("click", () => pieceDetail(el.dataset.piece)));
+  document.querySelectorAll("#v-dex [data-bond]").forEach(el => el.addEventListener("click", () => bondDetail(el.dataset.bond)));
+  document.querySelectorAll("#v-dex [data-equip]").forEach(el => el.addEventListener("click", () => equipDetail(el.dataset.equip)));
+  document.querySelectorAll("#v-dex [data-aug]").forEach(el => el.addEventListener("click", () => augDetail(el.dataset.aug)));
+}
+
+/* ============ 收藏 ============ */
+function getFavs() {
+  try {
+    const raw = JSON.parse(localStorage.getItem("xq-favs") || "[]");
+    return raw.map(x => typeof x === "string" ? { n: x, season: "S4" } : x);
+  } catch { return []; }
+}
+function toggleFav(k, season) {
+  const f = getFavs(); const i = f.findIndex(x => x.n === k);
+  if (i >= 0) f.splice(i, 1); else f.push({ n: k, season: season || curSeason.id });
+  localStorage.setItem("xq-favs", JSON.stringify(f));
+  return i < 0;
+}
+
+/* ============ 弹层 / toast ============ */
+function openSheet() { $("#scrim").classList.add("on"); $("#sheet").classList.add("on"); }
+function closeSheet() { $("#scrim").classList.remove("on"); $("#sheet").classList.remove("on"); }
+let toastT;
+function toast(msg) {
+  const t = $("#toast"); t.textContent = msg; t.classList.add("on");
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("on"), 2200);
+}
+
+/* ============ 事件 ============ */
+$("#tabbar").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  goTab(b.dataset.v);
+});
+function goTab(vid) {
+  document.querySelectorAll("#tabbar button").forEach(x => x.classList.toggle("on", x.dataset.v === vid));
+  document.querySelectorAll(".view").forEach(v => v.classList.toggle("on", v.id === vid));
+  if (vid === "v-me") renderMe();
+}
+$("#v-sim").addEventListener("click", e => {
+  if (simSuppressed) return; // 长按拖拽结束后的那次 click 不当点击处理
+  const slot = e.target.closest("[data-slot]");
+  if (slot) {
+    const i = +slot.dataset.slot;
+    if (sim.board[i]) openUnitModal(i); else openPiecePicker(i);
+    return;
+  }
+  if (e.target.closest("#simundo")) { simUndoPop(); return; }
+  if (e.target.closest("#simreset")) {
+    simSnapshot();
+    sim = { ...sim, board: Array(28).fill(null), stars: {}, items: {}, main: null };
+    simSave(); renderSim(); toast("已重置 · 可撤销"); return;
+  }
+  if (e.target.closest("#simdemo")) {
+    simSnapshot();
+    const c = COMPS[0];
+    const b = Array(28).fill(null);
+    c.front.forEach((u, k) => { b[22 + k] = u[0]; });
+    c.back.forEach((u, k) => { b[15 + k] = u[0]; });
+    sim.board = b; sim.main = c.main;
+    sim.stars = { 16: 2 };
+    sim.items = { 22: ["苍玉腕"], 23: ["傲雪铠"], 16: ["两仪佩","两仪佩","青芒短刃"] };
+    simSave(); renderSim(); toast("已载入示例 · " + c.n); return;
+  }
+  if (e.target.closest("#simsave")) {
+    const filled = sim.board.filter(Boolean).length;
+    if (!filled) { toast("棋盘还空着 · 先摆几枚棋子"); return; }
+    const now = new Date();
+    const arr = getMySims();
+    arr.push({
+      name: `推演 · ${now.getMonth()+1}-${now.getDate()} ${now.toTimeString().slice(0,5)}`,
+      board: sim.board, stars: sim.stars, items: sim.items, main: sim.main,
+      season: curSeason.id,
+    });
+    setMySims(arr);
+    toast(`已保存到我的阵容 · ${curSeason.id}`); return;
+  }
+});
+/* 长按 300ms 进入拖拽；未到时长移动超过 8px 视为滚动，取消 */
+$("#v-sim").addEventListener("pointerdown", e => {
+  const box = e.target.closest("[data-drag]");
+  if (!box || drag) return;
+  const idx = +box.dataset.drag;
+  if (!sim.board[idx]) return;
+  const x0 = e.clientX, y0 = e.clientY;
+  let engaged = false, dead = false, blocked = false;
+  const blockScroll = ev => { if (blocked) ev.preventDefault(); };
+  const timer = setTimeout(() => { engaged = true; blocked = true; startDrag(idx, x0, y0); }, 300);
+  const move = ev => {
+    if (!engaged) { if (Math.hypot(ev.clientX - x0, ev.clientY - y0) > 8) kill(); return; }
+    dragMove(ev.clientX, ev.clientY);
+  };
+  const up = ev => { kill(); if (engaged) endDrag(ev.clientX, ev.clientY); };
+  const cancel = () => { kill(); if (engaged) { cleanupDrag(); renderSim(); } };
+  function kill() {
+    if (dead) return; dead = true;
+    clearTimeout(timer);
+    document.removeEventListener("pointermove", move);
+    document.removeEventListener("pointerup", up);
+    document.removeEventListener("pointercancel", cancel);
+    document.removeEventListener("touchmove", blockScroll);
+  }
+  document.addEventListener("pointermove", move, { passive: false });
+  document.addEventListener("pointerup", up);
+  document.addEventListener("pointercancel", cancel);
+  document.addEventListener("touchmove", blockScroll, { passive: false });
+});
+/* 底部弹层：装备选择 / 选棋 / 下拉筛选 */
+$("#sheet").addEventListener("click", e => {
+  if (eqCtx) {
+    const eq = e.target.closest("[data-eqp]");
+    if (eq) {
+      const its = sim.items[eqCtx.i] || [null, null, null];
+      its[eqCtx.k] = eq.dataset.eqp; sim.items[eqCtx.i] = its;
+      simSave(); eqCtx = null; closeSheet(); renderSim();
+      openUnitModal(unitSlot);
+      return;
+    }
+  }
+  if (pickSlot < 0) return;
+  const pk = e.target.closest("[data-pick]");
+  if (pk) {
+    simSnapshot();
+    sim.board[pickSlot] = pk.dataset.pick;
+    if (!sim.stars[pickSlot]) sim.stars[pickSlot] = 1;
+    simSave(); pickSlot = -1; closeSheet(); renderSim(); return;
+  }
+  const pc = e.target.closest("[data-pcost]");
+  if (pc) { pickCost = +pc.dataset.pcost; renderPicker(); return; }
+  const pj = e.target.closest("[data-pjob]");
+  if (pj) { pickJob = pj.dataset.pjob; renderPicker(); return; }
+  const pb = e.target.closest("[data-pbond]");
+  if (pb) { pickBond = pb.dataset.pbond; renderPicker(); return; }
+  const dd = e.target.closest("[data-dd]");
+  if (dd) {
+    const which = dd.dataset.dd;
+    const panel = $(which === "job" ? "#ddjob" : "#ddbond");
+    const other = $(which === "job" ? "#ddbond" : "#ddjob");
+    other.classList.remove("open");
+    panel.classList.toggle("open");
+    return;
+  }
+});
+/* 棋子设置弹窗（居中卡片） */
+$("#mmask").addEventListener("click", e => {
+  const actEl = e.target.closest("[data-mact]");
+  if (e.target.id === "mmask" || (actEl && ["close","done"].includes(actEl.dataset.mact))) { $("#mmask").classList.remove("on"); return; }
+  if (!actEl || unitSlot < 0) return;
+  const i = unitSlot, n = sim.board[i];
+  const act = actEl.dataset.mact;
+  if (act === "main") {
+    simSnapshot();
+    const on = !(sim.main === n && sim.board.indexOf(n) === i);
+    sim.main = on ? n : null;
+    simSave(); openUnitModal(i); renderSim(); return;
+  }
+  if (act === "starp" || act === "starm") {
+    simSnapshot();
+    sim.stars[i] = Math.max(1, Math.min(3, (sim.stars[i] || 1) + (act === "starp" ? 1 : -1)));
+    simSave(); openUnitModal(i); renderSim(); return;
+  }
+  if (act === "remove") {
+    simSnapshot();
+    sim.board[i] = null; delete sim.stars[i]; delete sim.items[i];
+    if (sim.main && !sim.board.includes(sim.main)) sim.main = null;
+    simSave(); $("#mmask").classList.remove("on"); renderSim(); return;
+  }
+  if (act === "eq") {
+    const k = +actEl.dataset.k;
+    const its = sim.items[i] || [null, null, null];
+    if (its[k]) { simSnapshot(); its[k] = null; sim.items[i] = its; simSave(); openUnitModal(i); renderSim(); }
+    else { eqCtx = { i, k }; renderEqPicker(); openSheet(); }
+    return;
+  }
+});
+$("#v-comp").addEventListener("click", e => {
+  const c = e.target.closest("[data-comp]"); if (c) compDetail(COMPS.find(x => x.n === c.dataset.comp));
+});
+$("#dback").addEventListener("click", closeDetail);
+$("#dfav").addEventListener("click", () => {
+  const k = $("#detail").dataset.fav; if (!k) return;
+  const added = toggleFav(k, curSeason.id);
+  toast(added ? "已收藏 · 我的页面可查" : "已取消收藏");
+});
+$("#scrim").addEventListener("click", closeSheet);
+addEventListener("keydown", e => { if (e.key === "Escape") { closeSheet(); closeDetail(); } });
+
+function tick() { $("#clock").textContent = new Date().toTimeString().slice(0,5); }
+tick(); setInterval(tick, 15000);
+
+renderHome(); renderComps(); renderSim(); renderDex(); renderMe();
+</script>
+</body>
+</html>

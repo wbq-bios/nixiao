@@ -1,0 +1,16 @@
+{
+  "name": "nixiao-backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "逆水小助手 MySQL 后端：Express API（auth/content/user/vote/admin）",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "seed": "node scripts/seed.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "mysql2": "^3.11.0"
+  }
+}

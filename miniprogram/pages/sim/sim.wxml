@@ -1,0 +1,159 @@
+<page-meta page-style="{{dragOn ? 'overflow:hidden;' : ''}}" />
+
+<view class="page">
+  <view class="blk" style="margin-top:4rpx">
+    <text class="bt">摆棋推演</text>
+    <text class="cnt">{{season.id}} · {{season.name}}</text>
+    <text class="cnt">已上阵 {{filled}}</text>
+    <view class="ops">
+      <text bindtap="onUndo">撤销 ↺</text>
+      <text bindtap="onReset">重置</text>
+      <text bindtap="onDemo">示例</text>
+    </view>
+  </view>
+
+  <view class="blk">
+    <text class="bt">阵容站位</text>
+    <text class="cnt">人口 {{filled}}</text>
+    <text style="margin-left:auto;font-size:20rpx;color:var(--faint)">总费用 {{totalCost}} · 点格选棋 · 长按拖出移除</text>
+  </view>
+
+  <view class="card" style="padding:20rpx 10rpx">
+    <view style="display:flex;justify-content:space-between;font-size:19rpx;color:var(--faint);letter-spacing:.18em;padding:0 8rpx">
+      <text>上 · 后排输出</text><text>下 · 前排承伤</text>
+    </view>
+    <view class="board" bindtouchmove="onBoardMove" bindtouchend="onBoardEnd" bindtouchcancel="onBoardCancel">
+      <view wx:for="{{rows}}" wx:for-item="row" wx:key="ri" class="hexrow {{index % 2 === 1 ? 'odd' : ''}}">
+        <view wx:for="{{row.cells}}" wx:for-item="cell" wx:key="i"
+          class="hex {{cell.empty ? 'empty' : ''}} {{dropIdx === cell.i ? 'drop' : ''}}"
+          style="{{hexStyle}};{{cell.color ? 'background:' + cell.color + '8c;' : ''}}"
+          data-i="{{cell.i}}"
+          bindtouchstart="onHexStart"
+          bindtap="onSlotTap">
+          <view class="hin" style="{{cell.color ? 'background:' + cell.color + '14;color:' + cell.color : ''}}">
+            {{cell.empty ? "＋" : cell.ch}}
+            <view wx:if="{{cell.stars}}" class="hstars">{{cell.stars}}</view>
+            <view wx:if="{{cell.isMain}}" class="hcmark">C</view>
+            <view wx:if="{{cell.items.length}}" class="hitems">
+              <text wx:for="{{cell.items}}" wx:for-item="it" wx:key="name" class="hit">{{it.ch}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view style="text-align:center;font-size:19rpx;color:var(--faint);margin-top:12rpx">拖到其他格换位 · 拖到顶部热区移除</view>
+  </view>
+
+  <view class="blk"><text class="bt">阵容羁绊</text><text class="cnt">{{bondsVM.length}} 个在凑</text></view>
+  <view class="card rise">
+    <view wx:if="{{bondsVM.length}}" class="traits">
+      <view wx:for="{{bondsVM}}" wx:key="n" class="trait {{item.color ? 'color' : ''}} {{item.dim ? 'dim' : ''}}">
+        <view class="ic">{{item.ch}}<text class="ct">{{item.count}}</text></view>
+        {{item.n}}<text class="pg">{{item.pg}}</text>
+      </view>
+    </view>
+    <view wx:else class="empty" style="padding:40rpx 30rpx"><text class="k">棋盘尚虚</text>点击棋盘空格选择棋子，羁绊实时推算</view>
+  </view>
+
+  <button class="savebtn" bindtap="onSave">保存到我的</button>
+  <view class="legal">推演存于本机 · 正式版随赛季云端同步</view>
+</view>
+
+<!-- 拖拽视觉层 -->
+<view class="rmzone {{dragOn ? 'on' : ''}} {{rmHot ? 'hot' : ''}}">✕ 拖到此处移除</view>
+<view class="ghost {{dragOn ? 'on' : ''}}" style="left:{{gx - 29}}px;top:{{gy - 62}}px;background:{{ghostColor}}26;border-color:{{ghostColor}}9a;color:{{ghostColor}}">{{ghostCh}}</view>
+
+<!-- 选棋弹窗 -->
+<view class="scrim {{pickerOn ? 'on' : ''}}" bindtap="onPickerClose"></view>
+<view class="sheet {{pickerOn ? 'on' : ''}}">
+  <view class="grab"></view>
+  <view class="h3">选择棋子</view>
+  <view class="sp">第 {{picker.row}} 排 · {{picker.col}} 号位 · 当前：{{picker.cur}}</view>
+  <text class="pcount">{{picker.count}} 位</text>
+  <view class="search">
+    <input placeholder="搜索棋子名称或羁绊" value="{{picker.q}}" bindinput="onPickerQ" />
+  </view>
+  <view class="chiprow">
+    <button wx:for="{{costs}}" wx:key="*this" class="chip sm {{picker.cost === item ? 'on' : ''}}" data-v="{{item}}" bindtap="onPickerCost">{{item === 0 ? "全部" : item + "费"}}</button>
+  </view>
+  <view class="ddrow">
+    <button class="dd {{picker.job ? 'on' : ''}}" data-v="job" bindtap="onPickerDD">{{picker.job || "全部职业"}}<text class="ar">▾</text></button>
+    <button class="dd {{picker.bond ? 'on' : ''}}" data-v="bond" bindtap="onPickerDD">{{picker.bond || "全部羁绊"}}<text class="ar">▾</text></button>
+  </view>
+  <view class="ddpanel {{picker.dd === 'job' ? 'open' : ''}}">
+    <button wx:for="{{jobOpts}}" wx:key="v" class="chip sm {{picker.job === item.v ? 'on' : ''}}" data-v="{{item.v}}" bindtap="onPickerJob">{{item.l}}</button>
+  </view>
+  <view class="ddpanel {{picker.dd === 'bond' ? 'open' : ''}}">
+    <button wx:for="{{bondOpts}}" wx:key="v" class="chip sm {{picker.bond === item.v ? 'on' : ''}}" data-v="{{item.v}}" bindtap="onPickerBond">{{item.l}}</button>
+  </view>
+  <view class="pick6">
+    <button wx:for="{{picker.pool}}" wx:key="n" class="p6" data-n="{{item.n}}" bindtap="onPick">
+      <view class="ph {{item.onboard ? 'onboard' : ''}}" style="border-color:{{item.color}}a6;background:{{item.color}}17;color:{{item.color}}">
+        <view class="inner">{{item.ch}}</view>
+        <text class="cb">{{item.cost}}费</text>
+      </view>
+      <text class="pn">{{item.n}}</text>
+    </button>
+  </view>
+  <view wx:if="{{!picker.pool.length}}" class="empty" style="padding:30rpx"><text class="k">未寻得此侠</text>换个关键字试试</view>
+  <view style="font-size:20rpx;color:#8A8375;text-align:center;margin-top:20rpx">点选棋子上阵 · 绿框为已上阵棋子</view>
+</view>
+
+<!-- 棋子设置弹窗 -->
+<view class="modal-mask {{modalOn ? 'on' : ''}}" bindtap="onModalClose">
+  <view class="modal" catchtap="noop">
+    <block wx:if="{{unit}}">
+      <view class="mtop">
+        <text class="h3">棋子设置</text>
+        <text class="x" bindtap="onModalClose">✕</text>
+      </view>
+      <view style="display:flex;gap:24rpx">
+        <view class="ava" style="width:118rpx;height:118rpx;border-radius:22rpx;font-size:48rpx;background:{{unit.color}}17;color:{{unit.color}};border:4rpx solid {{unit.color}}80">{{unit.ch}}</view>
+        <view style="flex:1;min-width:0">
+          <view style="font-size:32rpx;font-weight:750">{{unit.n}} <text class="cost" style="color:{{unit.color}}">{{unit.cost}}费</text></view>
+          <view style="margin-top:14rpx"><text class="tag">{{unit.job}}</text><text wx:for="{{unit.bonds}}" wx:key="*this" class="tag gold">{{item}}</text></view>
+        </view>
+        <view class="tgl-wrap">
+          <text class="lb">主C</text>
+          <view class="tgl {{unit.isMain ? 'on' : ''}}" bindtap="onToggleMain"></view>
+        </view>
+      </view>
+      <view class="mcard">
+        <view class="t">棋子星级<text class="hint">3枚同名合一升星</text></view>
+        <view style="display:flex;align-items:center;justify-content:center;gap:34rpx">
+          <button class="circ" data-d="-1" bindtap="onStar">−</button>
+          <text style="color:#E7A93C;font-size:36rpx;letter-spacing:6rpx;min-width:124rpx;text-align:center">{{unit.stars}}</text>
+          <button class="circ plus" data-d="1" bindtap="onStar">＋</button>
+        </view>
+      </view>
+      <view class="mcard">
+        <view class="t">棋子装备<text class="hint">至多3件 · 点空槽选择 / 点已装卸下</text></view>
+        <view style="display:flex;gap:18rpx;justify-content:center">
+          <button wx:for="{{unit.slots}}" wx:key="k" class="eqslot {{item.name ? 'filled' : ''}}" data-k="{{item.k}}" bindtap="onEqSlot">{{item.name ? item.ch : "＋"}}</button>
+        </view>
+      </view>
+      <view class="mcard">
+        <view class="t">棋子详解</view>
+        <view style="font-size:26rpx;color:var(--dim);line-height:1.75">{{unitDetail}}</view>
+      </view>
+      <view class="mrow">
+        <button class="btn-rm" bindtap="onRemoveUnit">移除英雄</button>
+        <button class="btn-ok" bindtap="onModalClose">完成设置</button>
+      </view>
+    </block>
+  </view>
+</view>
+
+<!-- 装备选择弹层 -->
+<view class="scrim {{eqOn ? 'on' : ''}}" bindtap="onEqClose"></view>
+<view class="sheet {{eqOn ? 'on' : ''}}">
+  <view class="grab"></view>
+  <view class="h3">选择装备</view>
+  <view class="sp">按品阶点选</view>
+  <view class="pick6">
+    <button wx:for="{{equipsVM}}" wx:key="n" class="p6" data-n="{{item.n}}" bindtap="onEqPick">
+      <view class="ph" style="border-color:rgba(169,134,67,.6);background:var(--gold-dim);color:var(--gold-hi)">{{item.ch}}<text class="cb">{{item.r}}</text></view>
+      <text class="pn">{{item.n}}</text>
+    </button>
+  </view>
+</view>

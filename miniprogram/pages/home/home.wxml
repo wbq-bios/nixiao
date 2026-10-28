@@ -1,0 +1,98 @@
+<view class="page">
+  <view class="masthead rise">
+    <button class="season-bar" bindtap="onSeasonBar">
+      <text class="nm">{{season.id}} · {{season.name}}<text class="curbadge">{{season.current ? "当前赛季" : "已归档"}}</text></text>
+      <text class="sw">切换赛季</text>
+    </button>
+    <view class="h1">逆水<text class="em">小助手</text></view>
+    <view class="sub">
+      <text>今日热荐 <text class="b">{{hot.n || "—"}}</text></text>
+      <text>棋子随赛季更迭</text>
+      <text>演示数据</text>
+    </view>
+  </view>
+
+  <view wx:if="{{hot}}" class="card rise" bindtap="onHot">
+    <view style="display:grid;grid-template-columns:repeat(8,1fr);gap:10rpx;margin-bottom:20rpx">
+      <view wx:for="{{hot.units}}" wx:key="n" class="u-mini" style="border-color:{{item.color}}66;color:{{item.color}}">
+        <view class="inner">{{item.ch}}</view>
+        <view wx:if="{{item.isMain}}" class="cmark">C</view>
+      </view>
+    </view>
+    <view style="display:flex;align-items:center;gap:14rpx;flex-wrap:wrap">
+      <text style="font-family:var(--serif);font-size:31rpx;font-weight:700">{{hot.n}}</text>
+      <text class="tier {{hot.tier}}">{{hot.tier}}</text>
+      <text class="badge solid">{{hot.popCarry}}</text>
+      <text wx:if="{{hot.colorBond}}" class="badge">✦ 彩色羁绊</text>
+    </view>
+    <view style="margin-top:14rpx">
+      <text wx:for="{{hot.traitsVM}}" wx:key="n" class="tag {{item.color ? 'gold' : ''}}">{{item.n}} {{item.count}}</text>
+    </view>
+    <view style="margin-top:14rpx;font-size:22rpx;color:var(--faint);display:flex;gap:20rpx">
+      <text>主C <text style="color:var(--dim);font-weight:600">{{hot.main}}</text></text>
+      <text>人口 <text style="color:var(--dim);font-weight:600">{{hot.pop}} 级</text></text>
+      <text>热度 <text style="color:var(--dim);font-weight:600">{{hot.heatWan}}</text></text>
+    </view>
+  </view>
+
+  <view class="quick rise" style="display:grid;grid-template-columns:repeat(4,1fr);gap:18rpx;margin-top:20rpx">
+    <button class="qk" data-url="/pages/sim/sim" bindtap="onQuick">
+      <view class="qi">摆</view><text>摆棋推演</text>
+    </button>
+    <button class="qk" data-url="/pages/comps/comps" bindtap="onQuick">
+      <view class="qi">阵</view><text>阵容库</text>
+    </button>
+    <button class="qk" data-url="/pages/dex/dex" bindtap="onQuick">
+      <view class="qi">鉴</view><text>万象图鉴</text>
+    </button>
+    <button class="qk" data-url="/pages/me/me" bindtap="onQuick">
+      <view class="qi">藏</view><text>我的收藏</text>
+    </button>
+  </view>
+
+  <view class="sec-head"><text class="h2" style="font-size:30rpx">刷牌概率</text><text class="more">等级 × 费用</text></view>
+  <view class="card rise" style="padding:10rpx 26rpx">
+    <view class="odds">
+      <view class="tr" style="display:flex;border-bottom:1px solid var(--line)">
+        <text class="th" style="flex:1.2;text-align:left">等级</text>
+        <text class="th" style="flex:1">1费</text><text class="th" style="flex:1">2费</text>
+        <text class="th" style="flex:1">3费</text><text class="th" style="flex:1">4费</text><text class="th" style="flex:1">5费</text>
+      </view>
+      <view wx:for="{{odds}}" wx:key="lvl" class="tr" style="display:flex;border-bottom:1px solid var(--line)">
+        <text class="td lvl" style="flex:1.2">{{item.lvl}}</text>
+        <text class="td" style="flex:1">{{item.p[0]}}</text>
+        <text class="td" style="flex:1">{{item.p[1]}}</text>
+        <text class="td" style="flex:1">{{item.p[2]}}</text>
+        <text class="td hot" style="flex:1">{{item.p[3]}}</text>
+        <text class="td hot" style="flex:1">{{item.p[4]}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="ad rise"><text class="t1">广 告 位 · 预 留</text><text class="t2">banner · 可配置开关</text></view>
+
+  <view class="sec-head"><text class="h2" style="font-size:30rpx">更新志</text></view>
+  <view class="card rise">
+    <view class="tl">
+      <view wx:for="{{notes}}" wx:key="date" class="li">
+        <view class="tlt">{{item.date}}</view>
+        <view class="p"><rich-text nodes="{{item.nodes}}"></rich-text></view>
+      </view>
+    </view>
+  </view>
+  <view class="legal">{{pack.legal}}</view>
+</view>
+
+<view class="scrim {{sheetOn ? 'on' : ''}}" bindtap="onScrim"></view>
+<view class="sheet {{sheetOn ? 'on' : ''}}">
+  <view class="grab"></view>
+  <view class="h3">赛季更迭</view>
+  <view class="sp">每个赛季棋子与羁绊会更换；归档赛季数据只读可查</view>
+  <button wx:for="{{seasons}}" wx:key="id" class="season-item {{season.id === item.id ? 'on' : ''}}" data-id="{{item.id}}" bindtap="onPickSeason" style="text-align:left">
+    <view class="info" style="flex:1">
+      <view class="nm" style="font-size:30rpx;font-weight:650">{{item.id}} · {{item.name}}</view>
+      <view class="rg" style="font-size:21rpx;color:#8A8375;margin-top:4rpx">{{item.range}}</view>
+    </view>
+    <text class="meta" style="font-size:23rpx;color:#8A8375">{{season.id === item.id ? "当前赛季" : "切换"}}</text>
+  </button>
+</view>

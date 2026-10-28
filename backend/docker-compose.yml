@@ -1,0 +1,39 @@
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root-pass
+      MYSQL_DATABASE: xiaqi
+      MYSQL_USER: xiaqi
+      MYSQL_PASSWORD: xiaqi-pass
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql          # ← 数据落盘在这里（Docker 卷）
+      - ./sql/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot-pass"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  api:
+    image: node:20-alpine
+    restart: unless-stopped
+    working_dir: /app
+    env_file: .env
+    environment:
+      DB_HOST: mysql
+    command: sh -c "npm install --omit=dev && npm run seed && npm start"
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  mysql_data:

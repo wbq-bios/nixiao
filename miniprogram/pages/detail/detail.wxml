@@ -1,0 +1,188 @@
+<view class="page" wx:if="{{d}}">
+
+  <!-- ============ 阵容详情 ============ -->
+  <block wx:if="{{type === 'comp'}}">
+    <view style="display:flex;gap:24rpx;align-items:center">
+      <text class="tier {{d.tier}}" style="width:62rpx;height:62rpx;font-size:31rpx;border-radius:18rpx">{{d.tier}}</text>
+      <view>
+        <view style="font-family:var(--serif);font-size:41rpx;font-weight:700">{{d.n}}</view>
+        <view style="font-size:23rpx;color:var(--faint);margin-top:6rpx">主C {{d.main}}（{{d.carry}}费） · {{d.pop}} 级成型</view>
+      </view>
+      <button class="vote" style="margin-left:auto" bindtap="onFav">{{fav ? "★ 已藏" : "☆ 收藏"}}</button>
+    </view>
+    <view style="display:flex;gap:10rpx;flex-wrap:wrap;margin-top:16rpx">
+      <text wx:for="{{d.styleTags}}" wx:key="*this" class="tag">{{item}}</text>
+      <text class="tag">热度 {{d.heatWan}}</text>
+      <text class="tag">更新 {{d.upd}}</text>
+      <text wx:if="{{d.colorBond}}" class="tag gold">✦ 彩色羁绊体系</text>
+    </view>
+    <view class="traits" style="margin-top:18rpx">
+      <view wx:for="{{d.traitsVM}}" wx:key="n" class="trait {{item.color ? 'color' : ''}}">
+        <view class="ic">{{item.ch}}<text class="ct">{{item.count}}</text></view>{{item.n}}
+      </view>
+    </view>
+
+    <view class="blk"><text class="bt">阵容站位</text><text class="cnt">主C金圈标出</text></view>
+    <view class="card" style="padding:24rpx 20rpx">
+      <view style="display:flex;justify-content:space-between;font-size:19rpx;color:var(--faint);letter-spacing:.18em;margin-bottom:10rpx">
+        <text>上 · 后排输出</text><text>下 · 前排承伤</text>
+      </view>
+      <view class="units" style="margin-top:12rpx" wx:if="{{d.back.length}}">
+        <view wx:for="{{d.back}}" wx:key="n" class="unit">
+          <view class="u-box" style="border-color:{{item.color}}9a;background:{{item.color}}17;color:{{item.color}}">
+            <view class="inner">
+              {{item.ch}}
+              <view wx:if="{{item.stars}}" class="stars">{{item.stars}}</view>
+              <view wx:if="{{item.isMain}}" class="cmark">C</view>
+              <view wx:if="{{item.items.length}}" class="items">
+                <text wx:for="{{item.items}}" wx:for-item="it" wx:key="name" class="it">{{it.ch}}</text>
+              </view>
+            </view>
+          </view>
+          <text class="u-name">{{item.n}}</text>
+        </view>
+      </view>
+      <view class="units" style="margin-top:24rpx" wx:if="{{d.front.length}}">
+        <view wx:for="{{d.front}}" wx:key="n" class="unit">
+          <view class="u-box" style="border-color:{{item.color}}9a;background:{{item.color}}17;color:{{item.color}}">
+            <view class="inner">
+              {{item.ch}}
+              <view wx:if="{{item.stars}}" class="stars">{{item.stars}}</view>
+              <view wx:if="{{item.isMain}}" class="cmark">C</view>
+              <view wx:if="{{item.items.length}}" class="items">
+                <text wx:for="{{item.items}}" wx:for-item="it" wx:key="name" class="it">{{it.ch}}</text>
+              </view>
+            </view>
+          </view>
+          <text class="u-name">{{item.n}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="card" style="display:grid;grid-template-columns:repeat(4,1fr);padding:26rpx 8rpx">
+      <view style="text-align:center"><view style="font-family:var(--serif);font-size:33rpx">{{d.stats.avg}}</view><text style="font-size:19rpx;color:var(--faint)">平均排名</text></view>
+      <view style="text-align:center"><view style="font-family:var(--serif);font-size:33rpx">{{d.stats.pick}}</view><text style="font-size:19rpx;color:var(--faint)">出场率</text></view>
+      <view style="text-align:center"><view style="font-family:var(--serif);font-size:33rpx;color:var(--green)">{{d.stats.top1}}</view><text style="font-size:19rpx;color:var(--faint)">登顶率</text></view>
+      <view style="text-align:center"><view style="font-family:var(--serif);font-size:33rpx;color:var(--green)">{{d.stats.top4}}</view><text style="font-size:19rpx;color:var(--faint)">前四率</text></view>
+    </view>
+    <view style="font-size:19rpx;color:var(--faint);text-align:center" wx:if="{{!d.stats.pick || d.stats.pick === '—'}}">对局统计暂缺 · 待正式数据聚合</view>
+
+    <view class="blk" wx:if="{{d.eq.length}}"><text class="bt">核心装备</text></view>
+    <view wx:for="{{d.eq}}" wx:key="index" style="display:flex;gap:18rpx;padding:14rpx 4rpx">
+      <view style="flex:none;width:40rpx;height:40rpx;border-radius:50%;border:1px solid rgba(169,134,67,.4);color:var(--gold-hi);font-size:21rpx;display:grid;place-items:center">◈</view>
+      <view><view style="font-size:26rpx;font-weight:620">{{item[0]}} <text class="tag">优先</text></view><view style="font-size:21rpx;color:var(--faint);margin-top:4rpx">{{item[2]}}</view></view>
+    </view>
+
+    <view class="blk" wx:if="{{d.aug.length}}"><text class="bt">心悟选择</text></view>
+    <view wx:for="{{d.aug}}" wx:key="index" style="display:flex;gap:18rpx;padding:14rpx 4rpx">
+      <view style="flex:none;width:40rpx;height:40rpx;border-radius:50%;border:1px solid rgba(169,134,67,.4);color:var(--gold-hi);font-size:21rpx;display:grid;place-items:center">{{index + 1}}</view>
+      <view><view style="font-size:26rpx;font-weight:620">{{item[0]}}</view><view style="font-size:21rpx;color:var(--faint);margin-top:4rpx">{{item[1]}}</view></view>
+    </view>
+
+    <view class="blk" wx:if="{{d.beats.length}}"><text class="bt">运营节奏</text></view>
+    <view class="card"><view class="beats">
+      <view wx:for="{{d.beats}}" wx:key="index" class="li"><text class="tm">{{item[0]}}</text><text>{{item[1]}}</text></view>
+    </view></view>
+
+    <view class="blk" wx:if="{{d.tip}}"><text class="bt">对局提示</text></view>
+    <view wx:if="{{d.tip}}" style="font-size:25rpx;color:var(--dim);line-height:1.8">{{d.tip}}</view>
+    <button class="savebtn" bindtap="onShareUnit">生成分享卡片</button>
+  </block>
+
+  <!-- ============ 棋子详情 ============ -->
+  <block wx:if="{{type === 'piece'}}">
+    <view style="display:flex;gap:26rpx;align-items:center">
+      <view class="ava main" style="position:relative;overflow:hidden;background:{{d.color}}22;color:{{d.color}};border:3rpx solid {{d.color}}80;font-size:44rpx">
+        <image wx:if="{{d.art}}" src="{{d.art}}" mode="aspectFill" style="position:absolute;inset:0;width:100%;height:100%" binderror="onArtErr" />
+        <text wx:else>{{d.ch}}</text>
+      </view>
+      <view>
+        <view style="font-family:var(--serif);font-size:41rpx;font-weight:700">{{d.n}}</view>
+        <view style="margin-top:8rpx"><text class="cost" style="color:{{d.color}}">{{d.c}}费</text> <text style="color:var(--faint);font-size:23rpx"> · {{d.job}}</text></view>
+      </view>
+      <button class="vote" style="margin-left:auto" bindtap="onFav">{{fav ? "★ 已藏" : "☆ 收藏"}}</button>
+    </view>
+    <view class="blk"><text class="bt">羁纹</text></view>
+    <view style="display:flex;gap:14rpx;flex-wrap:wrap">
+      <text wx:for="{{d.bondsVM}}" wx:key="n" class="tag gold" style="font-size:24rpx;padding:12rpx 24rpx" data-type="bond" data-name="{{item.n}}" bindtap="onJump">{{item.n}}{{item.color ? " ✦" : ""}}</text>
+    </view>
+    <view class="blk" wx:if="{{d.skill && d.skill.d}}"><text class="bt">技能 · {{d.skill.n || "详情"}}</text></view>
+    <view wx:if="{{d.skill && d.skill.d}}" style="font-size:26rpx;color:var(--dim);line-height:1.8">{{d.skill.d}}</view>
+    <view class="blk"><text class="bt">棋谱</text></view>
+    <view style="font-size:26rpx;color:var(--dim);line-height:1.8">{{d.note || "（演示数据待补）"}}</view>
+    <view class="blk"><text class="bt">升星</text></view>
+    <view class="card"><view class="beats">
+      <view class="li"><text class="tm">三星</text><text>3枚同名合一升二星，3枚二星升三星；牌库数量固定，注意同行卡牌。</text></view>
+    </view></view>
+  </block>
+
+  <!-- ============ 羁绊详情 ============ -->
+  <block wx:if="{{type === 'bond'}}">
+    <view style="display:flex;gap:26rpx;align-items:center">
+      <view class="ava" style="background:{{d.color ? 'rgba(169,134,67,.15)' : 'rgba(47,109,168,.12)'}};color:{{d.colorStr}};border:3rpx solid {{d.colorStr}}66;font-size:44rpx">{{d.ch}}</view>
+      <view>
+        <view style="font-family:var(--serif);font-size:41rpx;font-weight:700">{{d.n}}</view>
+        <view style="margin-top:8rpx;font-size:23rpx;color:var(--faint)">{{d.t}}羁绊 · 层数 {{d.lv}}{{d.color ? " · ✦ 彩色" : ""}}</view>
+      </view>
+      <button class="vote" style="margin-left:auto" bindtap="onFav">{{fav ? "★ 已藏" : "☆ 收藏"}}</button>
+    </view>
+    <view class="blk"><text class="bt">效果</text></view>
+    <view style="font-size:26rpx;color:var(--dim);line-height:1.8">{{d.d}}</view>
+    <view class="blk"><text class="bt">同纹棋子</text></view>
+    <view class="card" wx:if="{{d.members.length}}">
+      <view class="units">
+        <view wx:for="{{d.members}}" wx:key="n" class="unit" data-type="piece" data-name="{{item.n}}" bindtap="onJump">
+          <view class="u-box" style="border-color:{{item.color}}9a;background:{{item.color}}17;color:{{item.color}}"><view class="inner">{{item.ch}}</view></view>
+          <text class="u-name">{{item.n}}</text>
+        </view>
+      </view>
+    </view>
+    <view wx:else style="font-size:24rpx;color:var(--faint)">（演示数据待补）</view>
+  </block>
+
+  <!-- ============ 装备详情 ============ -->
+  <block wx:if="{{type === 'equip'}}">
+    <view style="display:flex;gap:26rpx;align-items:center">
+      <view class="ava" style="background:rgba(169,134,67,.15);color:var(--gold-hi);border:3rpx solid rgba(169,134,67,.5);font-size:44rpx">{{d.ch}}</view>
+      <view>
+        <view style="font-family:var(--serif);font-size:41rpx;font-weight:700">{{d.n}}</view>
+        <view style="margin-top:8rpx" wx:if="{{d.r}}"><text class="rar {{d.rcls}}">{{d.r}}</text></view>
+      </view>
+      <button class="vote" style="margin-left:auto" bindtap="onFav">{{fav ? "★ 已藏" : "☆ 收藏"}}</button>
+    </view>
+    <view class="blk"><text class="bt">辞条</text></view>
+    <view style="font-size:26rpx;color:var(--dim);line-height:1.8">{{d.d}}</view>
+    <view class="blk" wx:if="{{d.who}}"><text class="bt">推荐佩戴</text></view>
+    <view wx:if="{{d.who}}" style="font-size:26rpx;color:var(--dim)">{{d.who}}</view>
+    <view class="blk"><text class="bt">规矩</text></view>
+    <view class="card"><view class="beats">
+      <view class="li"><text class="tm">三件</text><text>每棋子至多3件；战斗开始后不可卸下，神装务必先给核心。</text></view>
+    </view></view>
+  </block>
+
+  <!-- ============ 心悟详情 ============ -->
+  <block wx:if="{{type === 'augment'}}">
+    <view style="display:flex;gap:26rpx;align-items:center">
+      <view class="ava" style="background:rgba(169,134,67,.15);color:var(--gold-hi);border:3rpx solid rgba(169,134,67,.5);font-size:44rpx">{{d.ch}}</view>
+      <view>
+        <view style="font-family:var(--serif);font-size:41rpx;font-weight:700">{{d.n}}</view>
+        <view style="margin-top:8rpx" wx:if="{{d.t}}"><text class="tag">{{d.t}}心悟</text></view>
+      </view>
+      <button class="vote" style="margin-left:auto" bindtap="onFav">{{fav ? "★ 已藏" : "☆ 收藏"}}</button>
+    </view>
+    <view class="blk"><text class="bt">心法</text></view>
+    <view style="font-size:26rpx;color:var(--dim);line-height:1.8">{{d.d}}</view>
+    <view class="blk"><text class="bt">择法</text></view>
+    <view class="card"><view class="beats">
+      <view class="li"><text class="tm">回合</text><text>特定回合（2-1、3-2…）三选一。</text></view>
+      <view class="li"><text class="tm">次序</text><text>专属/转职 → 经济 → 属性补强，顺延而取。</text></view>
+    </view></view>
+  </block>
+
+  <view class="legal" wx:if="{{d}}">{{pack.legal}}</view>
+</view>
+
+<view class="page" wx:else>
+  <view class="empty rise" style="margin-top:120rpx"><text class="k">未寻得此侠</text>内容可能随赛季更迭移入归档，或已在正式数据中更新名称</view>
+  <view class="legal">{{pack.legal}}</view>
+</view>

@@ -1,0 +1,59 @@
+/* 摆棋页专属：蜂窝棋盘 / 幽灵棋子 / 移除热区 / 选棋网格 / 设置弹窗小件 */
+.board { margin-top: 12rpx; }
+.hexrow { display: flex; justify-content: center; }
+.hexrow + .hexrow { margin-top: -21rpx; }
+.hexrow.odd { margin-left: 44rpx; }
+.hex {
+  position: relative; flex: none; width: 84rpx; height: 95rpx; margin: 0 2rpx;
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  background: #C9C2B2;
+}
+/* ⚠️ 实测部分环境 .hex 的 wxss 尺寸不生效(联调 2026-10-28),关键尺寸已内联到 wxml,改尺寸两处同步 */
+.hex .hin {
+  position: absolute; top: 4rpx; left: 4rpx; right: 4rpx; bottom: 4rpx;
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  background: #F7F4EC;
+  display: grid; place-items: center;
+  font-family: var(--serif); font-size: 30rpx; font-weight: 700; color: #B4AC99;
+}
+.hex.empty .hin { color: #B4AC99; font-size: 26rpx; }
+.hex.drop { background: var(--gold); }
+.ghost {
+  position: fixed; z-index: 66; width: 116rpx; height: 116rpx; border-radius: 24rpx;
+  border: 5rpx solid; display: none; place-items: center;
+  font-family: var(--serif); font-size: 48rpx; font-weight: 700;
+  box-shadow: 0 26rpx 56rpx -18rpx rgba(58, 50, 38, .5);
+  pointer-events: none;
+}
+.ghost.on { display: grid; transform: scale(1.06); }
+.rmzone {
+  position: fixed; left: 40rpx; right: 40rpx; top: calc(env(safe-area-inset-top) + 108rpx); z-index: 65;
+  height: 120rpx; border-radius: 32rpx; border: 3rpx dashed rgba(196, 69, 60, .55);
+  background: rgba(196, 69, 60, .1); color: var(--ts);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 27rpx; font-weight: 700; letter-spacing: .08em;
+  transform: translateY(-260rpx); transition: transform .3s ease, background .18s ease;
+  pointer-events: none;
+}
+.rmzone.on { transform: none; }
+.rmzone.hot { background: rgba(196, 69, 60, .26); border-style: solid; }
+.hstars { position: absolute; top: 7rpx; left: 0; right: 0; text-align: center; font-size: 14rpx; color: #E7A93C; letter-spacing: -2rpx; }
+.hcmark { position: absolute; top: 14rpx; left: 14rpx; width: 28rpx; height: 28rpx; border-radius: 50%; background: #E0862F; color: #FFF6EC; font-size: 17rpx; font-weight: 800; display: grid; place-items: center; }
+.hitems { position: absolute; bottom: 10rpx; left: 0; right: 0; display: flex; justify-content: center; gap: 4rpx; }
+.hit { width: 21rpx; height: 21rpx; border-radius: 5rpx; background: rgba(38, 34, 28, .72); color: #F5F1E6; font-size: 14rpx; font-family: var(--serif); display: grid; place-items: center; }
+
+.pick6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 22rpx 9rpx; }
+.p6 { text-align: center; }
+.p6 .ph {
+  position: relative; width: 100%; height: 0; padding-bottom: 100%; border-radius: 14rpx;
+  border: 4rpx solid; display: grid; place-items: center;
+  font-family: var(--serif); font-size: 28rpx; font-weight: 700; box-sizing: border-box;
+}
+.p6 .ph .inner { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: grid; place-items: center; }
+.p6 .ph .cb { position: absolute; top: 0; right: 0; padding: 1rpx 8rpx; background: rgba(38, 34, 28, .75); color: #F5F1E6; font-size: 18rpx; font-weight: 600; border-radius: 0 10rpx 0 12rpx; font-family: initial; }
+.p6 .ph.onboard { border-color: #2DA44E !important; }
+.p6 .pn { display: block; font-size: 20rpx; color: var(--dim); margin-top: 7rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.circ { width: 70rpx; height: 70rpx; border-radius: 50%; background: #ECE6D8; color: var(--dim); font-size: 36rpx; display: grid; place-items: center; }
+.circ.plus { background: var(--gold); color: #FFF9EE; }
+.eqslot { width: 106rpx; height: 106rpx; border-radius: 22rpx; border: 3rpx dashed var(--line-hi); display: grid; place-items: center; color: #B4AC99; font-family: var(--serif); font-size: 32rpx; }
+.eqslot.filled { border-style: solid; border-color: rgba(169, 134, 67, .5); background: var(--gold-dim); color: var(--gold-hi); font-size: 38rpx; }
