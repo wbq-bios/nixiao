@@ -1,11 +1,17 @@
 // 视图模型工具 · 把数据表整理成 WXML 友好结构（游戏无关）
 const pack = require("../games/xq/pack.js");
+const season = require("./season.js");
 const data = pack.data;
 
-function pieceOf(name) {
-  return data.pieces.find(p => p.n === name) || { n: name, c: 3, job: "", bonds: [], note: "" };
+// 棋子定位必须带赛季(数据包是多赛季合并,同名棋子跨赛季字段不同——外部评审#3)。
+// seasonId 缺省=当前赛季;找不到再退回任意赛季(兜底旧档/分享链接),最后给占位
+function pieceOf(name, seasonId) {
+  const sid = seasonId || season.get().id;
+  return data.pieces.find(p => p.n === name && p.season === sid)
+    || data.pieces.find(p => p.n === name)
+    || { n: name, c: 3, job: "", bonds: [], note: "" };
 }
-function costColor(name) { return pack.cost.colors[pieceOf(name).c] || pack.cost.colors[3]; }
+function costColor(name, seasonId) { return pack.cost.colors[pieceOf(name, seasonId).c] || pack.cost.colors[3]; }
 
 // 品阶 → ASCII 类名(中文类名过不了 wxss 编译,样式见 app.wxss .rar.r-*)
 const RAR_CLS = { "白": "r-bai", "紫": "r-zi", "独珍": "r-duzhen", "橙武": "r-chengwu" };

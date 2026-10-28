@@ -44,7 +44,7 @@
     <text class="bt">我的收藏</text><text class="cnt">{{favs.length}} 套</text>
     <text style="margin-left:auto;font-size:20rpx;color:var(--faint)">阵容推荐页点 ☆ 收藏</text>
   </view>
-  <view wx:for="{{favs}}" wx:key="name" class="card rise" data-name="{{item.name}}" bindtap="onOpenFav">
+  <view wx:for="{{favs}}" wx:key="name" class="card rise" data-name="{{item.name}}" data-season="{{item.season}}" bindtap="onOpenFav">
     <view style="display:flex;align-items:center;gap:14rpx">
       <text style="font-family:var(--serif);font-size:31rpx;font-weight:700">{{item.name}}</text>
       <text class="tier {{item.tier}}">{{item.tier}}</text>

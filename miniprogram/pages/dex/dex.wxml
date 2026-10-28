@@ -26,7 +26,7 @@
       <view style="display:flex;align-items:center;gap:12rpx">
         <text style="font-size:29rpx;font-weight:650">{{item.n}}</text>
         <block wx:if="{{item.cost}}"><text class="cost" style="color:{{item.color}}">{{item.cost}}费</text></block>
-        <block wx:elif="{{item.lv}}"><text class="tag gold">{{item.lv}}</text><text wx:if="{{item.color}}" class="tag gold">✦ 彩色</text></block>
+        <block wx:elif="{{item.lv}}"><text class="tag gold">{{item.lv}}</text><text wx:if="{{item.isColor}}" class="tag gold">✦ 彩色</text></block>
         <block wx:elif="{{item.r}}"><text class="rar {{item.rcls}}">{{item.r}}</text></block>
         <block wx:elif="{{item.t}}"><text class="tag">{{item.t}}</text></block>
       </view>

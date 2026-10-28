@@ -70,12 +70,16 @@ Page({
     const idx = +e.currentTarget.dataset.idx;
     const s = store.getSims()[idx];
     if (!s) return;
+    // 载入归档赛季的存档时提示,避免"数据看起来不对"的困惑(外部评审#7)
+    if (s.season && s.season !== season.get().id) {
+      wx.showToast({ title: `已载入 ${s.season} 赛季存档 · 当前为 ${season.get().id}`, icon: "none", duration: 2200 });
+    }
     boardModel.snapshot(boardModel.load());
     boardModel.save({
       board: s.board, stars: s.stars || {}, items: s.items || {}, main: s.main || null,
     });
     wx.switchTab({ url: "/pages/sim/sim" });
-    wx.showToast({ title: "已载入到摆棋", icon: "none" });
+    if (!s.season || s.season === season.get().id) wx.showToast({ title: "已载入到摆棋", icon: "none" });
   },
   onDelSim(e) {
     store.removeSim(+e.currentTarget.dataset.idx);
@@ -83,7 +87,7 @@ Page({
     wx.showToast({ title: "已删除推演存档", icon: "none" });
   },
   onOpenFav(e) {
-    wx.navigateTo({ url: `/pages/detail/detail?type=comp&name=${encodeURIComponent(e.currentTarget.dataset.name)}` });
+    wx.navigateTo({ url: `/pages/detail/detail?type=comp&name=${encodeURIComponent(e.currentTarget.dataset.name)}&season=${e.currentTarget.dataset.season || season.get().id}` });
   },
   onDelFav(e) {
     store.toggleFav(e.currentTarget.dataset.name, season.get().id);

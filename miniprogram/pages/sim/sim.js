@@ -7,6 +7,15 @@ const store = require("../../core/store.js");
 
 const COST = fmt.pack.cost.colors;
 
+// DOM 顺序(.hex 查询序=渲染序,自上而下)→ 棋盘真实索引。
+// 拖拽命中第 k 个矩形时必须经此映射,直接用 k 会把棋子放错格(外部评审#1)
+const DOM_SLOTS = [
+  21, 22, 23, 24, 25, 26, 27,
+  14, 15, 16, 17, 18, 19, 20,
+  7, 8, 9, 10, 11, 12, 13,
+  0, 1, 2, 3, 4, 5, 6,
+];
+
 let state = null;   // 棋盘模型当前状态（board/stars/items/main）
 
 // 当前赛季的数据视图(数据包按赛季 concat 合并,推算/选棋必须过滤,
@@ -16,6 +25,7 @@ function seasonData() {
   return {
     pieces: fmt.pack.data.pieces.filter(p => p.season === id),
     bonds: fmt.pack.data.bonds.filter(b => b.season === id),
+    equips: fmt.pack.data.equips.filter(e => e.season === id),
   };
 }
 
@@ -51,7 +61,11 @@ Page({
   },
   onShow() {
     state = boardModel.load();   // 支持从「我的」载入后回填
-    this.setData({ season: season.get() });
+    // 赛季可能在首页被切换:羁绊下拉必须随 onShow 刷新(外部评审#7)
+    this.setData({
+      season: season.get(),
+      bondOpts: [{ v: "", l: "全部" }].concat(seasonData().bonds.map(b => ({ v: b.n, l: b.n }))),
+    });
     this.render();
   },
 
@@ -145,6 +159,11 @@ Page({
   onPick(e) {
     const name = e.currentTarget.dataset.n;
     const slot = this._picker.slot;
+    // 自走棋规则:同名棋子全场唯一,绿框"已上阵"必须真拦截(外部评审#2)
+    if (state.board.includes(name)) {
+      wx.showToast({ title: "该棋子已在场上 · 不能重复上阵", icon: "none", position: "top" });
+      return;
+    }
     boardModel.snapshot(state);
     state.board[slot] = name;
     if (!state.stars[slot]) state.stars[slot] = 1;
@@ -207,7 +226,7 @@ Page({
       this._eqSlot = k;
       this.setData({
         eqOn: true,
-        equipsVM: fmt.pack.data.equips.map(x => ({ n: x.n, ch: x.n[0], r: x.r })),
+        equipsVM: seasonData().equips.map(x => ({ n: x.n, ch: x.n[0], r: x.r })),
       });
     }
   },
@@ -311,13 +330,20 @@ Page({
     }, 350);
   },
   onBoardMove(e) {
-    if (!this.drag) return;
+    // 拖拽未启动时仍检查移动距离:超 8px 视为滚动意图,取消待启动的长按定时(外部评审#4)
+    if (!this.drag) {
+      if (this._touch && !this._touch.dead) {
+        const t0 = e.touches[0];
+        if (Math.hypot(t0.clientX - this._touch.x, t0.clientY - this._touch.y) > 8) this.killTouch();
+      }
+      return;
+    }
     const t = e.touches[0];
     this.setData({ gx: t.clientX, gy: t.clientY });
     if (!this.drag.rects) return;
     let dropIdx = -1;
     this.drag.rects.forEach((r, k) => {
-      if (t.clientX >= r.left && t.clientX <= r.right && t.clientY >= r.top && t.clientY <= r.bottom) dropIdx = k;
+      if (t.clientX >= r.left && t.clientX <= r.right && t.clientY >= r.top && t.clientY <= r.bottom) dropIdx = DOM_SLOTS[k] ?? -1;
     });
     const rm = this.drag.rmRect;
     const rmHot = !!(rm && t.clientX >= rm.left && t.clientX <= rm.right && t.clientY >= rm.top && t.clientY <= rm.bottom);

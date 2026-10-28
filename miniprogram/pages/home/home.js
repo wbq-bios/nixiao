@@ -23,7 +23,8 @@ Page({
   },
   onShow() {
     const cur = season.get();
-    const comps = fmt.data.comps.filter(c => c.season === cur.id);
+    // 热荐=当前赛季热度最高的一套(显式排序,名实一致)
+    const comps = fmt.data.comps.filter(c => c.season === cur.id).sort((a, b) => (b.heat || 0) - (a.heat || 0));
     const hot = comps.length ? fmt.compCardVM(comps[0]) : null;
     this.setData({
       season: cur, seasons: season.list(),

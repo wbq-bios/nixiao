@@ -42,7 +42,7 @@ Page({
   onSort(e) { this.setData({ sort: e.currentTarget.dataset.k }); this.renderList(); },
   onFilter(e) { this.setData({ filter: e.currentTarget.dataset.k }); this.renderList(); },
   onOpen(e) {
-    wx.navigateTo({ url: `/pages/detail/detail?type=comp&name=${e.currentTarget.dataset.name}` });
+    wx.navigateTo({ url: `/pages/detail/detail?type=comp&name=${e.currentTarget.dataset.name}&season=${this.data.season.id}` });
   },
   onVote(e) {
     const { name, dir } = e.currentTarget.dataset;

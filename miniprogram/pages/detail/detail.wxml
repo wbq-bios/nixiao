@@ -100,7 +100,6 @@
         <view style="font-family:var(--serif);font-size:41rpx;font-weight:700">{{d.n}}</view>
         <view style="margin-top:8rpx"><text class="cost" style="color:{{d.color}}">{{d.c}}费</text> <text style="color:var(--faint);font-size:23rpx"> · {{d.job}}</text></view>
       </view>
-      <button class="vote" style="margin-left:auto" bindtap="onFav">{{fav ? "★ 已藏" : "☆ 收藏"}}</button>
     </view>
     <view class="blk"><text class="bt">羁纹</text></view>
     <view style="display:flex;gap:14rpx;flex-wrap:wrap">
@@ -124,7 +123,6 @@
         <view style="font-family:var(--serif);font-size:41rpx;font-weight:700">{{d.n}}</view>
         <view style="margin-top:8rpx;font-size:23rpx;color:var(--faint)">{{d.t}}羁绊 · 层数 {{d.lv}}{{d.color ? " · ✦ 彩色" : ""}}</view>
       </view>
-      <button class="vote" style="margin-left:auto" bindtap="onFav">{{fav ? "★ 已藏" : "☆ 收藏"}}</button>
     </view>
     <view class="blk"><text class="bt">效果</text></view>
     <view style="font-size:26rpx;color:var(--dim);line-height:1.8">{{d.d}}</view>
@@ -148,7 +146,6 @@
         <view style="font-family:var(--serif);font-size:41rpx;font-weight:700">{{d.n}}</view>
         <view style="margin-top:8rpx" wx:if="{{d.r}}"><text class="rar {{d.rcls}}">{{d.r}}</text></view>
       </view>
-      <button class="vote" style="margin-left:auto" bindtap="onFav">{{fav ? "★ 已藏" : "☆ 收藏"}}</button>
     </view>
     <view class="blk"><text class="bt">辞条</text></view>
     <view style="font-size:26rpx;color:var(--dim);line-height:1.8">{{d.d}}</view>
@@ -168,7 +165,6 @@
         <view style="font-family:var(--serif);font-size:41rpx;font-weight:700">{{d.n}}</view>
         <view style="margin-top:8rpx" wx:if="{{d.t}}"><text class="tag">{{d.t}}心悟</text></view>
       </view>
-      <button class="vote" style="margin-left:auto" bindtap="onFav">{{fav ? "★ 已藏" : "☆ 收藏"}}</button>
     </view>
     <view class="blk"><text class="bt">心法</text></view>
     <view style="font-size:26rpx;color:var(--dim);line-height:1.8">{{d.d}}</view>

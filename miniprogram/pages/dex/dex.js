@@ -32,7 +32,13 @@ Page({
       list = D.bonds
         .filter(b => b.season === season.get().id)
         .filter(b => !q || b.n.indexOf(q) >= 0 || b.d.indexOf(q) >= 0)
-        .map(b => ({ key: b.n, ch: b.n[0], n: b.n, lv: b.lv, color: !!b.color, desc: b.d }));
+        .map(b => ({
+          key: b.n, ch: b.n[0], n: b.n, lv: b.lv,
+          // isColor 控制"✦彩色"徽标,color 必须是真实色值(布尔会拼出非法 CSS——外部评审#5)
+          isColor: !!b.color,
+          color: b.color ? fmt.pack.cost.colors[5] : fmt.pack.cost.colors[3],
+          desc: b.d,
+        }));
     } else if (seg === "equip") {
       list = D.equips
         .filter(e => e.season === season.get().id)
@@ -51,7 +57,7 @@ Page({
   onCost(e) { this.setData({ cost: +e.currentTarget.dataset.v }); this.renderList(); },
   onOpen(e) {
     const typeMap = { piece: "piece", bond: "bond", equip: "equip", aug: "augment" };
-    wx.navigateTo({ url: `/pages/detail/detail?type=${typeMap[this.data.seg]}&name=${encodeURIComponent(e.currentTarget.dataset.key)}` });
+    wx.navigateTo({ url: `/pages/detail/detail?type=${typeMap[this.data.seg]}&name=${encodeURIComponent(e.currentTarget.dataset.key)}&season=${season.get().id}` });
   },
   // 立绘加载失败(图床未开/素材缺失)→ 回退印章字头像
   onArtErr(e) {
