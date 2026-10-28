@@ -7,10 +7,11 @@ const OUT = path.join(__dirname, "out");
 const TABS = [
   ["home", "/pages/home/home"],
   ["comps", "/pages/comps/comps"],
-  ["sim", "/pages/sim/sim"],
   ["dex", "/pages/dex/dex"],
   ["me", "/pages/me/me"],
 ];
+// 摆棋已非 tab 页,单独走 navigateTo
+const SUBPAGES = [["sim", "/pages/sim/sim"]];
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 (async () => {
@@ -31,6 +32,15 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     const page = await mini.currentPage();
     await mini.screenshot({ path: path.join(OUT, `ui_${name}.png`) });
     console.log(`tab ${name}: path=${page.path} ✓`);
+  }
+  for (const [name, route] of SUBPAGES) {
+    await mini.navigateTo(route);
+    await sleep(1200);
+    const page = await mini.currentPage();
+    await mini.screenshot({ path: path.join(OUT, `ui_${name}.png`) });
+    console.log(`page ${name}: path=${page.path} ✓`);
+    await mini.navigateBack();
+    await sleep(600);
   }
 
   // 阵容详情:点第一张卡

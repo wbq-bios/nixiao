@@ -3,6 +3,17 @@ const season = require("../../core/season.js");
 const fmt = require("../../core/format.js");
 const api = require("../../utils/api.js");
 
+// 更新志仅使用 <b> 强调,拆成 rich-text 节点
+function noteNodes(html) {
+  const out = [];
+  const push = (t, bold) => { if (t) out.push(bold ? { name: "b", children: [{ type: "text", text: t }] } : { type: "text", text: t }); };
+  const rx = /<b>([\s\S]*?)<\/b>/g;
+  let last = 0, m;
+  while ((m = rx.exec(String(html || "")))) { push(m.input.slice(last, m.index), false); push(m[1], true); last = rx.lastIndex; }
+  push(m ? m.input.slice(last) : "", false);
+  return out;
+}
+
 Page({
   data: {
     pack: fmt.pack, season: null,
@@ -11,7 +22,11 @@ Page({
     list: [],
   },
   onShow() {
-    this.setData({ season: season.get() });
+    // 首页快捷入口(羁绊查询/装备查询)通过 storage 直达对应分段
+    const seg = wx.getStorageSync("dex-seg");
+    const patch = { season: season.get(), odds: fmt.data.odds, notes: fmt.data.notes.map(n => ({ date: n.date, nodes: noteNodes(n.html) })) };
+    if (seg && seg !== this.data.seg) { patch.seg = seg; wx.removeStorageSync("dex-seg"); }
+    this.setData(patch);
     this.renderList();
   },
   renderList() {

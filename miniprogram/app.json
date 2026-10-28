@@ -20,11 +20,22 @@
     "backgroundColor": "#FBF9F3",
     "borderStyle": "white",
     "list": [
-      { "pagePath": "pages/home/home", "text": "首页" },
-      { "pagePath": "pages/comps/comps", "text": "阵容" },
-      { "pagePath": "pages/sim/sim", "text": "摆棋" },
-      { "pagePath": "pages/dex/dex", "text": "图鉴" },
-      { "pagePath": "pages/me/me", "text": "我的" }
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/comps/comps",
+        "text": "阵容"
+      },
+      {
+        "pagePath": "pages/dex/dex",
+        "text": "图鉴"
+      },
+      {
+        "pagePath": "pages/me/me",
+        "text": "我的"
+      }
     ]
   },
   "style": "v2",

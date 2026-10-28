@@ -16,7 +16,26 @@ app.use(authMiddleware);
 
 // 立绘/图标图床(开发期本机直出 OCR 素材目录;上线改为云存储,见后端设计版权注记)
 const path = require("path");
-app.use("/art", express.static(process.env.ART_DIR || "D:/AIPro/工具/orc识别数据/归档/S3赛季/提取结果", { maxAge: "7d" }));
+const ART_ROOT = process.env.ART_DIR || "D:/AIPro/工具/orc识别数据/归档/S3赛季/提取结果";
+app.use("/art", express.static(ART_ROOT, { maxAge: "7d" }));
+// 缩略图:/art/thumb/<宽>/红框/xx/立绘.png → 磁盘缓存(首页一屏几十张图,原图 1-2MB/张会拖死加载)
+const fs = require("fs");
+const CACHE_DIR = path.join(ART_ROOT, ".thumbs");
+app.get("/art/thumb/:w/*", async (req, res) => {
+  try {
+    const width = Math.min(Math.max(+req.params.w || 180, 40), 600);
+    const rel = req.params[0] || "";
+    const src = path.join(ART_ROOT, rel);
+    if (!fs.existsSync(src)) return res.status(404).json({ error: "not_found" });
+    const cacheFile = path.join(CACHE_DIR, `w${width}_${rel.replace(/[\\/]/g, "_")}.jpg`);
+    if (!fs.existsSync(cacheFile)) {
+      fs.mkdirSync(path.dirname(cacheFile), { recursive: true });
+      await require("sharp")(src).rotate().resize({ width }).jpeg({ quality: 78 }).toFile(cacheFile);
+    }
+    res.setHeader("Cache-Control", "public, max-age=604800");
+    res.sendFile(cacheFile);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
 
 /* ---------- 校验工具（服务端不信任任何客户端输入） ---------- */
 // 字符串校验：返回裁剪后的合法值，非法返回 null

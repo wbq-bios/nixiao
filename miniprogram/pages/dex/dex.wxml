@@ -38,3 +38,33 @@
   <view wx:if="{{!list.length}}" class="empty"><text class="k">未寻得此侠</text>换个关键字试试</view>
   <view wx:if="{{seg === 'piece'}}" class="ad"><text class="t1">广 告 位 · 预 留</text><text class="t2">banner · 可配置开关</text></view>
 </view>
+
+<!-- 资料区:刷牌概率 + 更新志(自首页迁入) -->
+<view class="blk"><text class="bt">刷牌概率</text><text class="cnt">等级 × 费用</text></view>
+<view class="card" style="padding:10rpx 26rpx">
+  <view class="odds">
+    <view class="tr" style="display:flex;border-bottom:1px solid var(--line)">
+      <text class="th" style="flex:1.2;text-align:left">等级</text>
+      <text class="th" style="flex:1">1费</text><text class="th" style="flex:1">2费</text>
+      <text class="th" style="flex:1">3费</text><text class="th" style="flex:1">4费</text><text class="th" style="flex:1">5费</text>
+    </view>
+    <view wx:for="{{odds}}" wx:key="lvl" class="tr" style="display:flex;border-bottom:1px solid var(--line)">
+      <text class="td lvl" style="flex:1.2">{{item.lvl}}</text>
+      <text class="td" style="flex:1">{{item.p[0]}}</text>
+      <text class="td" style="flex:1">{{item.p[1]}}</text>
+      <text class="td" style="flex:1">{{item.p[2]}}</text>
+      <text class="td hot" style="flex:1">{{item.p[3]}}</text>
+      <text class="td hot" style="flex:1">{{item.p[4]}}</text>
+    </view>
+  </view>
+</view>
+
+<view class="blk"><text class="bt">更新志</text></view>
+<view class="card">
+  <view class="tl">
+    <view wx:for="{{notes}}" wx:key="date" class="li">
+      <view class="tlt">{{item.date}}</view>
+      <view class="p"><rich-text nodes="{{item.nodes}}"></rich-text></view>
+    </view>
+  </view>
+</view>

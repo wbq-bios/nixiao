@@ -1,57 +1,110 @@
+// 首页 · 按设计稿重构:品牌头+赛季胶囊+搜索+Hero轮播+5快捷入口+今日推荐+热门阵容
+// 摆棋已降为快捷入口(4 Tab:首页/阵容/图鉴/我的);概率表/更新志迁至图鉴页资料区
 const season = require("../../core/season.js");
 const fmt = require("../../core/format.js");
+const api = require("../../utils/api.js");
+const store = require("../../core/store.js");
 
-// 更新志仅使用 <b> 强调，拆成 rich-text 节点（WXML 不支持直接渲染 HTML 片段）
-function noteNodes(html) {
-  const s = String(html || "");
-  const nodes = [];
-  const push = (t, bold) => {
-    if (t) nodes.push(bold ? { name: "b", children: [{ type: "text", text: t }] } : { type: "text", text: t });
-  };
-  const rx = /<b>([\s\S]*?)<\/b>/g;
-  let last = 0, m;
-  while ((m = rx.exec(s))) { push(s.slice(last, m.index), false); push(m[1], true); last = rx.lastIndex; }
-  push(s.slice(last), false);
-  return nodes;
-}
+const QUILLS = [
+  { n: "阵容大全", d: "强势阵容推荐", icon: "阵", go: { type: "tab", url: "/pages/comps/comps" } },
+  { n: "侠客图鉴", d: "全侠客信息", icon: "侠", go: { type: "tab", url: "/pages/dex/dex" }, seg: "piece" },
+  { n: "羁绊查询", d: "羁绊效果一览", icon: "羁", go: { type: "tab", url: "/pages/dex/dex" }, seg: "bond" },
+  { n: "装备查询", d: "装备合成路线", icon: "装", go: { type: "tab", url: "/pages/dex/dex" }, seg: "equip" },
+  { n: "模拟摆阵", d: "自由搭配阵容", icon: "摆", go: { type: "nav", url: "/pages/sim/sim" } },
+];
 
 Page({
   data: {
-    pack: fmt.pack, season: null, seasons: [],
-    hot: null, odds: [], notes: [],
-    sheetOn: false,
+    statusH: 40, season: null, seasons: [], sheetOn: false,
+    banners: [], today: null, hotList: [], quills: QUILLS,
+    favs: {},
   },
+
   onShow() {
-    const cur = season.get();
-    // 热荐=当前赛季热度最高的一套(显式排序,名实一致)
-    const comps = fmt.data.comps.filter(c => c.season === cur.id).sort((a, b) => (b.heat || 0) - (a.heat || 0));
-    const hot = comps.length ? fmt.compCardVM(comps[0]) : null;
+    const win = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync();
+    const sid = season.get().id;
+    // 当前赛季阵容按热度排序:前 3 进 Hero 轮播,第 4 套今日推荐,其余进热门列表
+    const list = fmt.data.comps.filter(c => c.season === sid).sort((a, b) => (b.heat || 0) - (a.heat || 0));
+    const favs = {};
+    store.getFavs().forEach(f => { favs[f.n] = true; });
     this.setData({
-      season: cur, seasons: season.list(),
-      hot,
-      odds: fmt.data.odds,
-      notes: fmt.data.notes.map(n => ({ date: n.date, nodes: noteNodes(n.html) })),
+      statusH: win.statusBarHeight || 40,
+      season: season.get(), seasons: season.list(),
+      banners: list.slice(0, 3).map(c => this.feedVM(c, true)),
+      today: list[3] ? this.feedVM(list[3]) : null,
+      hotList: list.slice(4).map(c => this.feedVM(c)),
+      favs,
     });
-    wx.setNavigationBarTitle({ title: fmt.pack.displayName });
   },
+
+  // 阵容 → 信息流卡片 VM:主C大图置首,羁绊带图标与彩色金/常规蓝
+  feedVM(c, isHero) {
+    const sid = c.season;
+    const bondOf = n => fmt.data.bonds.find(b => b.n === n && b.season === sid) || {};
+    const all = c.front.concat(c.back);
+    all.sort((a, b) => (b[0] === c.main ? 1 : 0) - (a[0] === c.main ? 1 : 0));
+    const units = all.map(u => ({
+      n: u[0], star: u[1] || 1,
+      art: api.artUrl(fmt.pieceOf(u[0], sid).art, isHero ? 200 : 130),
+      isMain: u[0] === c.main,
+    }));
+    return {
+      n: c.n, author: c.author || "官方推荐", season: sid,
+      heat: fmt.wan(c.heat), tier: c.tier, popCarry: `${c.pop}${c.carry}`,
+      mainArt: api.artUrl(fmt.pieceOf(c.main, sid).art, isHero ? 480 : 240),
+      mainName: c.main,
+      units,
+      traits: (c.traits || []).map(t => {
+        const b = bondOf(t[0]);
+        return {
+          n: t[0], count: t[1],
+          icon: api.artUrl(b.icon, 64),
+          color: b.color ? "#A98643" : "#2F6DA8",
+        };
+      }),
+    };
+  },
+
+  onBannerTap(e) {
+    const { name, season: sid } = e.currentTarget.dataset;
+    wx.navigateTo({ url: `/pages/detail/detail?type=comp&name=${encodeURIComponent(name)}&season=${sid}` });
+  },
+  onCompTap(e) {
+    const { name, season: sid } = e.currentTarget.dataset;
+    wx.navigateTo({ url: `/pages/detail/detail?type=comp&name=${encodeURIComponent(name)}&season=${sid}` });
+  },
+  onQuick(e) {
+    const q = QUILLS[e.currentTarget.dataset.i];
+    if (!q) return;
+    if (q.seg) wx.setStorageSync("dex-seg", q.seg);
+    q.go.type === "tab" ? wx.switchTab({ url: q.go.url }) : wx.navigateTo({ url: q.go.url });
+  },
+  onSearch() { wx.switchTab({ url: "/pages/dex/dex" }); },
+  onMore(e) { wx.switchTab({ url: "/pages/comps/comps" }); },
+
+  onFav(e) {
+    const { name, season: sid } = e.currentTarget.dataset;
+    const added = store.toggleFav(name, sid || season.get().id);
+    const favs = Object.assign({}, this.data.favs);
+    if (added) favs[name] = true; else delete favs[name];
+    this.setData({ favs });
+    wx.showToast({ title: added ? "已收藏" : "已取消收藏", icon: "none" });
+  },
+
+  /* ---------- 赛季切换弹层(沿用) ---------- */
   onSeasonBar() { this.setData({ sheetOn: true }); },
   onScrim() { this.setData({ sheetOn: false }); },
   onPickSeason(e) {
     const id = e.currentTarget.dataset.id;
+    this.setData({ sheetOn: false });
     if (id !== season.get().id) {
       season.set(id);
-      this.setData({ sheetOn: false });
       this.onShow();
       wx.showToast({ title: `已切换至 ${id}`, icon: "none" });
-    } else {
-      this.setData({ sheetOn: false });
     }
   },
-  onHot() {
-    if (this.data.hot) wx.navigateTo({ url: `/pages/detail/detail?type=comp&name=${this.data.hot.n}` });
-  },
-  onQuick(e) { wx.switchTab({ url: e.currentTarget.dataset.url }); },
+
   onShareAppMessage() {
-    return { title: `${fmt.pack.displayName} · ${this.data.season.name}赛季数据`, path: "/pages/home/home" };
+    return { title: `${fmt.pack.displayName} · 侠客为棋 江湖为局`, path: "/pages/home/home" };
   },
 });

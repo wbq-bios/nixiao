@@ -1,84 +1,117 @@
-<view class="page">
-  <view class="masthead rise" style="position:relative">
-    <button class="season-bar" bindtap="onSeasonBar">
-      <text class="nm">{{season.id}} · {{season.name}}<text class="curbadge">{{season.current ? "当前赛季" : "已归档"}}</text></text>
-      <text class="sw">切换赛季</text>
-    </button>
-    <text class="demo-badge">内测数据</text>
-    <view class="h1">逆水<text class="em">小助手</text></view>
-    <view class="sub"><text>备课 · 快查 · 复盘</text></view>
+<view class="home" style="padding-top:{{statusH}}px">
+
+  <!-- 品牌头 + 赛季胶囊(胶囊按钮占右上,赛季胶囊下移一行避让) -->
+  <view class="brand">
+    <view class="brand-l">
+      <view class="brand-logo">逆水侠棋<text class="brand-seal">手游</text></view>
+      <view class="brand-slogan">—— 侠客为棋 · 江湖为局 ——</view>
+    </view>
+  </view>
+  <view class="season-row">
+    <button class="season-pill" bindtap="onSeasonBar">当前赛季：{{season.id}} {{season.name}} <text class="pill-arrow">∨</text></button>
   </view>
 
-  <view wx:if="{{hot}}" class="card rise" bindtap="onHot" style="position:relative">
-    <view class="hot-badge">今日热荐</view>
-    <view style="display:grid;grid-template-columns:repeat({{hot.stripCols}},1fr);gap:10rpx;margin-bottom:20rpx">
-      <view wx:for="{{hot.units}}" wx:key="n" class="u-mini" style="border-color:{{item.color}}66;color:{{item.color}}">
-        <view class="inner">{{item.ch}}</view>
-        <view wx:if="{{item.isMain}}" class="cmark">C</view>
+  <!-- 全局搜索 -->
+  <view class="gsearch" bindtap="onSearch">
+    <text class="gs-icon">⌕</text>
+    <text class="gs-ph">搜索侠客、羁绊、装备、阵容...</text>
+  </view>
+
+  <!-- Hero 轮播:版本强势阵容 -->
+  <swiper class="hero" autoplay circular interval="4500" indicator-dots indicator-color="rgba(255,253,248,.5)" indicator-active-color="#FFFDF8">
+    <swiper-item wx:for="{{banners}}" wx:key="n">
+      <view class="hero-card" data-name="{{item.n}}" data-season="{{item.season}}" bindtap="onBannerTap">
+        <image class="hero-art" src="{{item.mainArt}}" mode="aspectFill" />
+        <view class="hero-shade"></view>
+        <view class="hero-copy">
+          <view class="hero-title">版本强势阵容</view>
+          <view class="hero-sub">{{item.n}}</view>
+          <view class="hero-btn">查看详情 →</view>
+        </view>
       </view>
-    </view>
-    <view style="display:flex;align-items:center;gap:14rpx;flex-wrap:wrap">
-      <text style="font-family:var(--serif);font-size:31rpx;font-weight:700">{{hot.n}}</text>
-      <text class="tier {{hot.tier}}">{{hot.tier}}</text>
-      <text class="badge solid">{{hot.popCarry}}</text>
-      <text wx:if="{{hot.colorBond}}" class="badge">✦ 彩色羁绊</text>
-    </view>
-    <view style="margin-top:14rpx">
-      <text wx:for="{{hot.traitsVM}}" wx:key="n" class="tag {{item.color ? 'gold' : ''}}">{{item.n}} {{item.count}}</text>
-    </view>
-    <view style="margin-top:14rpx;font-size:22rpx;color:var(--faint);display:flex;gap:20rpx">
-      <text>主C <text style="color:var(--dim);font-weight:600">{{hot.main}}</text></text>
-      <text>人口 <text style="color:var(--dim);font-weight:600">{{hot.pop}} 级</text></text>
-      <text>热度 <text style="color:var(--dim);font-weight:600">{{hot.heatWan}}</text></text>
+    </swiper-item>
+  </swiper>
+
+  <!-- 5 快捷入口 -->
+  <view class="quicks">
+    <view wx:for="{{quills}}" wx:key="n" class="qk5" hover-class="qk5-hover" data-i="{{index}}" bindtap="onQuick">
+      <view class="qk5-icon">{{item.icon}}</view>
+      <view class="qk5-n">{{item.n}}</view>
+      <view class="qk5-d">{{item.d}}</view>
     </view>
   </view>
 
-  <view class="quick rise" style="display:grid;grid-template-columns:repeat(4,1fr);gap:18rpx;margin-top:20rpx">
-    <view class="qk" hover-class="qk-hover" data-url="/pages/sim/sim" bindtap="onQuick">
-      <view class="qi">摆</view><text>摆棋推演</text>
-    </view>
-    <view class="qk" hover-class="qk-hover" data-url="/pages/comps/comps" bindtap="onQuick">
-      <view class="qi">阵</view><text>阵容库</text>
-    </view>
-    <view class="qk" hover-class="qk-hover" data-url="/pages/dex/dex" bindtap="onQuick">
-      <view class="qi">鉴</view><text>万象图鉴</text>
-    </view>
-    <view class="qk" hover-class="qk-hover" data-url="/pages/me/me" bindtap="onQuick">
-      <view class="qi">藏</view><text>我的收藏</text>
-    </view>
+  <!-- 今日推荐 -->
+  <view class="blk-row" wx:if="{{today}}">
+    <text class="blk-t">今日推荐</text>
+    <text class="blk-more" bindtap="onMore">查看更多 ›</text>
   </view>
-
-  <view class="sec-head"><text class="h2" style="font-size:30rpx">刷牌概率</text><text class="more">等级 × 费用</text></view>
-  <view class="card rise" style="padding:10rpx 26rpx">
-    <view class="odds">
-      <view class="tr" style="display:flex;border-bottom:1px solid var(--line)">
-        <text class="th" style="flex:1.2;text-align:left">等级</text>
-        <text class="th" style="flex:1">1费</text><text class="th" style="flex:1">2费</text>
-        <text class="th" style="flex:1">3费</text><text class="th" style="flex:1">4费</text><text class="th" style="flex:1">5费</text>
+  <view wx:if="{{today}}" class="feed-card big" data-name="{{today.n}}" data-season="{{today.season}}" bindtap="onCompTap">
+    <view class="fc-head">
+      <view class="fc-mark">✦</view>
+      <text class="fc-name">{{today.n}}</text>
+      <text class="fc-author">作者：{{today.author}}</text>
+      <view class="fc-fav {{favs[today.n] ? 'on' : ''}}" catchtap="onFav" data-name="{{today.n}}" data-season="{{today.season}}">{{favs[today.n] ? "★" : "☆"}} 收藏</view>
+    </view>
+    <view class="fc-units">
+      <view class="fc-main-wrap">
+        <text class="fc-main-seal">{{today.mainName[0]}}</text>
+        <image class="fc-main" src="{{today.mainArt}}" mode="aspectFill" lazy-load />
+        <text class="fc-cbadge">主C</text>
+        <text class="fc-star">★</text>
       </view>
-      <view wx:for="{{odds}}" wx:key="lvl" class="tr" style="display:flex;border-bottom:1px solid var(--line)">
-        <text class="td lvl" style="flex:1.2">{{item.lvl}}</text>
-        <text class="td" style="flex:1">{{item.p[0]}}</text>
-        <text class="td" style="flex:1">{{item.p[1]}}</text>
-        <text class="td" style="flex:1">{{item.p[2]}}</text>
-        <text class="td hot" style="flex:1">{{item.p[3]}}</text>
-        <text class="td hot" style="flex:1">{{item.p[4]}}</text>
+      <view class="fc-strip">
+        <view wx:for="{{today.units}}" wx:key="n" wx:if="{{!item.isMain}}" class="fc-unit">
+          <image src="{{item.art}}" mode="aspectFill" lazy-load />
+          <text class="fc-unit-star">★</text>
+        </view>
       </view>
+      <text class="fc-arrow">›</text>
     </view>
-  </view>
-
-  <view class="ad rise"><text class="t1">广 告 位 · 预 留</text><text class="t2">banner · 可配置开关</text></view>
-
-  <view class="sec-head"><text class="h2" style="font-size:30rpx">更新志</text></view>
-  <view class="card rise">
-    <view class="tl">
-      <view wx:for="{{notes}}" wx:key="date" class="li">
-        <view class="tlt">{{item.date}}</view>
-        <view class="p"><rich-text nodes="{{item.nodes}}"></rich-text></view>
+    <view class="fc-traits">
+      <view wx:for="{{today.traits}}" wx:key="n" class="fpill" style="border-color:{{item.color}}55">
+        <image class="fpill-icon" src="{{item.icon}}" mode="aspectFill" />
+        <text class="fpill-n" style="color:{{item.color}}">{{item.n}} {{item.count}}</text>
       </view>
     </view>
   </view>
-  <view class="legal">{{pack.legal}}</view>
+
+  <!-- 热门阵容 -->
+  <view class="blk-row hot">
+    <text class="blk-t"><text class="blk-flame">🔥</text> 热门阵容</text>
+    <text class="blk-more" bindtap="onMore">查看更多 ›</text>
+  </view>
+  <view wx:for="{{hotList}}" wx:key="n" class="feed-card" data-name="{{item.n}}" data-season="{{item.season}}" bindtap="onCompTap">
+    <view class="fc-head">
+      <view class="fc-mark">✦</view>
+      <text class="fc-name">{{item.n}}</text>
+      <text class="fc-author">者：{{item.author}}</text>
+      <view class="fc-fav {{favs[item.n] ? 'on' : ''}}" catchtap="onFav" data-name="{{item.n}}" data-season="{{item.season}}">{{favs[item.n] ? "★" : "☆"}} 收藏</view>
+    </view>
+    <view class="fc-units">
+      <view class="fc-main-wrap">
+        <text class="fc-main-seal">{{item.mainName[0]}}</text>
+        <image class="fc-main" src="{{item.mainArt}}" mode="aspectFill" lazy-load />
+        <text class="fc-cbadge">主C</text>
+        <text class="fc-star">★</text>
+      </view>
+      <view class="fc-strip">
+        <view wx:for="{{item.units}}" wx:for-item="u" wx:key="n" wx:if="{{!u.isMain}}" class="fc-unit">
+          <image src="{{u.art}}" mode="aspectFill" lazy-load />
+          <text class="fc-unit-star">★</text>
+        </view>
+      </view>
+      <text class="fc-arrow">›</text>
+    </view>
+    <view class="fc-traits">
+      <view wx:for="{{item.traits}}" wx:for-item="t" wx:key="n" class="fpill" style="border-color:{{t.color}}55">
+        <image class="fpill-icon" src="{{t.icon}}" mode="aspectFill" />
+        <text class="fpill-n" style="color:{{t.color}}">{{t.n}} {{t.count}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="legal">{{season.id}} 赛季 · 内测数据 · 非官方工具,版权归网易所有</view>
 </view>
 
 <view class="scrim {{sheetOn ? 'on' : ''}}" bindtap="onScrim"></view>

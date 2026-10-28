@@ -1,0 +1,71 @@
+/* 首页 · 按设计稿(品牌头/搜索/Hero/5快捷/今日推荐/热门阵容) */
+.home { min-height: 100vh; background: linear-gradient(180deg, #F6F1E6 0%, var(--bg) 30%); padding-left: 24rpx; padding-right: 24rpx; padding-bottom: calc(140rpx + env(safe-area-inset-bottom)); box-sizing: border-box; }
+
+/* ---- 品牌头 ---- */
+.brand { display: flex; align-items: flex-start; gap: 16rpx; padding: 12rpx 4rpx 8rpx; }
+.brand-l { flex: 1; min-width: 0; }
+.brand-logo { font-family: var(--serif); font-size: 52rpx; font-weight: 700; letter-spacing: .06em; color: var(--txt); position: relative; display: inline-block; }
+.brand-seal { position: absolute; top: -6rpx; right: -52rpx; font-family: initial; font-size: 18rpx; line-height: 1; padding: 6rpx 6rpx; background: #C4453C; color: #FFF6EC; border-radius: 8rpx; letter-spacing: 0; }
+.brand-slogan { font-size: 21rpx; color: var(--gold-hi); letter-spacing: .22em; margin-top: 2rpx; }
+.season-row { display: flex; justify-content: flex-end; padding: 0 4rpx; margin-top: -6rpx; }
+.season-pill { max-width: 60%; height: 60rpx; line-height: 60rpx; padding: 0 26rpx; border-radius: 99rpx; background: var(--card); border: 1px solid var(--line-hi); font-size: 23rpx; color: var(--dim); box-shadow: 0 4rpx 14rpx -8rpx rgba(58,50,38,.2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pill-arrow { font-size: 19rpx; opacity: .7; }
+
+/* ---- 全局搜索 ---- */
+.gsearch { display: flex; align-items: center; gap: 12rpx; height: 80rpx; margin-top: 16rpx; padding: 0 28rpx; border-radius: 99rpx; background: var(--card); border: 1px solid var(--line-hi); }
+.gs-icon { font-size: 30rpx; color: var(--faint); }
+.gs-ph { font-size: 25rpx; color: #B4AC99; }
+
+/* ---- Hero 轮播 ---- */
+.hero { height: 300rpx; margin-top: 20rpx; border-radius: 28rpx; overflow: hidden; }
+.hero-card { position: relative; width: 100%; height: 100%; }
+.hero-art { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hero-shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(38,34,26,.72) 0%, rgba(38,34,26,.28) 55%, rgba(38,34,26,0) 100%); }
+.hero-copy { position: absolute; left: 40rpx; top: 50%; transform: translateY(-50%); color: #FFF6EC; }
+.hero-title { font-family: var(--serif); font-size: 46rpx; font-weight: 700; letter-spacing: .1em; text-shadow: 0 2rpx 8rpx rgba(0,0,0,.4); }
+.hero-sub { font-size: 23rpx; opacity: .92; margin-top: 10rpx; max-width: 420rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hero-btn { display: inline-block; margin-top: 20rpx; padding: 10rpx 30rpx; border-radius: 99rpx; background: rgba(169,134,67,.92); font-size: 24rpx; font-weight: 650; }
+
+/* ---- 5 快捷入口 ---- */
+.quicks { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14rpx; margin-top: 22rpx; }
+.qk5 { background: var(--card); border: 1px solid var(--line); border-radius: 22rpx; padding: 20rpx 4rpx 16rpx; text-align: center; box-shadow: 0 4rpx 14rpx -10rpx rgba(58,50,38,.14); }
+.qk5-hover { transform: scale(.95); }
+.qk5-icon { width: 72rpx; height: 72rpx; margin: 0 auto 10rpx; border-radius: 50%; background: var(--gold-dim); color: var(--gold-hi); font-family: var(--serif); font-size: 32rpx; font-weight: 700; display: grid; place-items: center; }
+.qk5-n { font-size: 23rpx; font-weight: 650; color: var(--txt); }
+.qk5-d { font-size: 18rpx; color: var(--faint); margin-top: 3rpx; transform: scale(.9); }
+
+/* ---- 区块标题行 ---- */
+.blk-row { display: flex; align-items: center; gap: 12rpx; margin: 36rpx 4rpx 18rpx; }
+.blk-row.hot { margin-top: 30rpx; }
+.blk-t { font-family: var(--serif); font-size: 34rpx; font-weight: 700; letter-spacing: .05em; }
+.blk-flame { font-size: 28rpx; }
+.blk-more { margin-left: auto; font-size: 22rpx; color: var(--faint); }
+
+/* ---- 阵容信息流卡 ---- */
+.feed-card { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 24rpx; padding: 22rpx 24rpx 20rpx; margin-bottom: 22rpx; box-shadow: 0 4rpx 16rpx -10rpx rgba(58,50,38,.15); }
+.feed-card.big { border-color: rgba(169,134,67,.4); }
+.fc-head { display: flex; align-items: center; gap: 12rpx; margin-bottom: 16rpx; }
+.fc-mark { flex: none; width: 40rpx; height: 40rpx; border-radius: 50%; background: var(--gold-dim); color: var(--gold-hi); display: grid; place-items: center; font-size: 22rpx; }
+.fc-name { font-family: var(--serif); font-size: 30rpx; font-weight: 700; max-width: 34%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fc-author { font-size: 20rpx; color: var(--faint); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fc-fav { flex: none; font-size: 21rpx; color: var(--dim); padding: 6rpx 16rpx; border: 1px solid var(--line-hi); border-radius: 99rpx; background: #FFFDF8; }
+.fc-fav.on { color: var(--gold-hi); border-color: rgba(169,134,67,.5); background: var(--gold-dim); }
+
+.fc-units { display: flex; align-items: stretch; gap: 12rpx; }
+.fc-main-wrap { position: relative; flex: none; width: 128rpx; height: 160rpx; border-radius: 14rpx; overflow: hidden; border: 3rpx solid var(--gold); background: var(--gold-dim); }
+.fc-main-seal { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--serif); font-size: 52rpx; font-weight: 700; color: var(--gold-hi); }
+.fc-main { position: absolute; inset: 0; width: 100%; height: 100%; }
+.fc-cbadge { position: absolute; top: 0; left: 0; font-size: 17rpx; padding: 2rpx 10rpx; background: var(--gold); color: #FFF9EE; border-radius: 0 0 12rpx 0; font-weight: 700; }
+.fc-star { position: absolute; bottom: 2rpx; left: 6rpx; font-size: 16rpx; color: #FFE9B8; text-shadow: 0 0 4rpx rgba(0,0,0,.6); }
+.fc-strip { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; gap: 8rpx; align-content: flex-start; }
+.fc-unit { position: relative; width: calc((100% - 16rpx) / 3); height: 0; padding-bottom: calc((100% - 16rpx) / 3 * 1.2); border-radius: 10rpx; overflow: hidden; border: 2rpx solid var(--line-hi); box-sizing: border-box; }
+.fc-unit image { position: absolute; inset: 0; width: 100%; height: 100%; }
+.fc-unit-star { position: absolute; bottom: 1rpx; left: 4rpx; font-size: 14rpx; color: #FFE9B8; text-shadow: 0 0 3rpx rgba(0,0,0,.6); }
+.fc-arrow { flex: none; align-self: center; color: var(--faint); font-size: 34rpx; }
+
+.fc-traits { display: flex; flex-wrap: wrap; gap: 10rpx; margin-top: 14rpx; }
+.fpill { display: inline-flex; align-items: center; gap: 8rpx; padding: 5rpx 14rpx 5rpx 6rpx; border-radius: 99rpx; border: 1px solid; background: #FFFDF8; }
+.fpill-icon { width: 34rpx; height: 34rpx; border-radius: 50%; background: var(--panel); }
+.fpill-n { font-size: 21rpx; font-weight: 650; }
+
+.legal { text-align: center; font-size: 20rpx; color: var(--faint); padding: 26rpx 0 10rpx; }

@@ -46,11 +46,13 @@ function ensureLogin() {
 
 const online = () => !!getToken();
 
-/** OCR 素材相对路径 → 图床 URL(数据里的 art/icon 以 output\ 开头,需去掉前缀;中文逐段编码) */
-function artUrl(rel) {
+/** OCR 素材相对路径 → 图床 URL(数据里的 art/icon 以 output\ 开头,需去掉前缀;中文逐段编码)
+ *  w 传数字时走缩略图路由(列表用),不传为原图(详情用) */
+function artUrl(rel, w) {
   if (!rel) return "";
   const clean = String(rel).replace(/^output[\\/]/i, "").replace(/\\/g, "/");
-  return BASE + "/art/" + clean.split("/").map(encodeURIComponent).join("/");
+  const enc = clean.split("/").map(encodeURIComponent).join("/");
+  return w ? `${BASE}/art/thumb/${+w || 180}/${enc}` : `${BASE}/art/${enc}`;
 }
 
 module.exports = { BASE, request, ensureLogin, online, artUrl,

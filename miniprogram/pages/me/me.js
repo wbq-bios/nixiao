@@ -78,7 +78,7 @@ Page({
     boardModel.save({
       board: s.board, stars: s.stars || {}, items: s.items || {}, main: s.main || null,
     });
-    wx.switchTab({ url: "/pages/sim/sim" });
+    wx.navigateTo({ url: "/pages/sim/sim" });  // 摆棋已降为快捷入口,不再是 tab
     if (!s.season || s.season === season.get().id) wx.showToast({ title: "已载入到摆棋", icon: "none" });
   },
   onDelSim(e) {
