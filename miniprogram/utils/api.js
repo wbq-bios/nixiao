@@ -47,15 +47,21 @@ function ensureLogin() {
 const online = () => !!getToken();
 
 /** OCR 素材相对路径 → 图床 URL(数据里的 art/icon 以 output\ 开头,需去掉前缀;中文逐段编码)
- *  w 传数字时走缩略图路由(列表用),不传为原图(详情用) */
+ *  w 传数字时走缩略图路由(cover 裁剪,立绘用);iconUrl 走图标路由(trim 颜色边界+contain,图形用) */
 function artUrl(rel, w) {
   if (!rel) return "";
   const clean = String(rel).replace(/^output[\\/]/i, "").replace(/\\/g, "/");
   const enc = clean.split("/").map(encodeURIComponent).join("/");
   return w ? `${BASE}/art/thumb/${+w || 180}/${enc}` : `${BASE}/art/${enc}`;
 }
+function iconUrl(rel, w) {
+  if (!rel) return "";
+  const clean = String(rel).replace(/^output[\\/]/i, "").replace(/\\/g, "/");
+  const enc = clean.split("/").map(encodeURIComponent).join("/");
+  return `${BASE}/art/icon/${+w || 96}/${enc}`;
+}
 
-module.exports = { BASE, request, ensureLogin, online, artUrl,
+module.exports = { BASE, request, ensureLogin, online, artUrl, iconUrl,
   pullFavs: () => request("/api/user/favs"),
   toggleFavRemote: (gameId, season, name) => request("/api/user/favs/toggle", "POST", { gameId, season, name }),
   pullSims: () => request("/api/user/sims"),

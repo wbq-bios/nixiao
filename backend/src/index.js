@@ -37,6 +37,23 @@ app.get("/art/thumb/:w/*", async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// 图标路由:先按颜色边界 trim 掉四周空白,再 contain 完整放入透明画布(不裁图形本身,羁绊图标用)
+app.get("/art/icon/:w/*", async (req, res) => {
+  try {
+    const width = Math.min(Math.max(+req.params.w || 96, 32), 256);
+    const rel = req.params[0] || "";
+    const src = path.join(ART_ROOT, rel);
+    if (!fs.existsSync(src)) return res.status(404).json({ error: "not_found" });
+    const cacheFile = path.join(CACHE_DIR, `i${width}_${rel.replace(/[\\/]/g, "_")}.png`);
+    if (!fs.existsSync(cacheFile)) {
+      fs.mkdirSync(path.dirname(cacheFile), { recursive: true });
+      await require("sharp")(src).rotate().trim().resize({ width, height: width, fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toFile(cacheFile);
+    }
+    res.setHeader("Cache-Control", "public, max-age=604800");
+    res.type("image/png").sendFile(cacheFile);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 /* ---------- 校验工具（服务端不信任任何客户端输入） ---------- */
 // 字符串校验：返回裁剪后的合法值，非法返回 null
 function vstr(v, max) {

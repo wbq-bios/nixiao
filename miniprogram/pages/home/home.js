@@ -63,7 +63,7 @@ Page({
         const b = bondOf(t[0]);
         return {
           n: t[0], count: t[1],
-          icon: api.artUrl(b.icon, 64),
+          icon: api.iconUrl(b.icon, 96),
           color: b.color ? "#A98643" : "#2F6DA8",
         };
       }),
@@ -115,7 +115,7 @@ Page({
     const b = fmt.data.bonds.find(x => x.n === n && x.season === sidE) || {};
     this.setData({ popUnit: null, popBond: {
       n: b.n || n, t: b.t || "势力", lv: b.lv || "", d: b.d || "", season: sidE,
-      icon: api.artUrl(b.icon, 120),
+      icon: api.iconUrl(b.icon, 160),
     }});
   },
   onPopClose() { this.setData({ popUnit: null, popBond: null }); },
