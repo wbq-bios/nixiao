@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <title>侠棋 · 羁绊徽记 · 镜天阁（彩色版）</title>
+  <desc>炭黑边框 + 珠光细边 + 幻彩面板 + 淡紫徽记；透明底。</desc>
+  <defs>
+    <linearGradient id="gbevel" gradientUnits="userSpaceOnUse" x1="90" y1="45" x2="430" y2="470">
+      <stop offset="0" stop-color="#413D3E" stop-opacity="1"/>
+      <stop offset="0.45" stop-color="#353132" stop-opacity="1"/>
+      <stop offset="1" stop-color="#292627" stop-opacity="1"/>
+    </linearGradient>
+    <linearGradient id="grim" gradientUnits="userSpaceOnUse" x1="256" y1="41" x2="256" y2="471">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="1"/>
+      <stop offset="0.45" stop-color="#FFFDF6" stop-opacity="1"/>
+      <stop offset="1" stop-color="#FFF9E6" stop-opacity="1"/>
+    </linearGradient>
+    <radialGradient id="gface" gradientUnits="userSpaceOnUse" cx="256" cy="285" r="390">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="1"/>
+      <stop offset="0.58" stop-color="#FFFEF8" stop-opacity="1"/>
+      <stop offset="1" stop-color="#FFF3C8" stop-opacity="1"/>
+    </radialGradient>
+    <radialGradient id="gmint" gradientUnits="userSpaceOnUse" cx="98" cy="132" r="242">
+      <stop offset="0" stop-color="#CEFBE9" stop-opacity="0.9"/>
+      <stop offset="0.55" stop-color="#D8FCEE" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#D8FCEE" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glilac" gradientUnits="userSpaceOnUse" cx="252" cy="46" r="238">
+      <stop offset="0" stop-color="#DBCBFF" stop-opacity="1"/>
+      <stop offset="0.58" stop-color="#E2D5FF" stop-opacity="0.46"/>
+      <stop offset="1" stop-color="#E2D5FF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="gpink" gradientUnits="userSpaceOnUse" cx="405" cy="95" r="240">
+      <stop offset="0" stop-color="#FBD4F4" stop-opacity="0.92"/>
+      <stop offset="0.58" stop-color="#FCDBF6" stop-opacity="0.44"/>
+      <stop offset="1" stop-color="#FCDBF6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="grose" gradientUnits="userSpaceOnUse" cx="440" cy="300" r="215">
+      <stop offset="0" stop-color="#FFDEF9" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#FFDEF9" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="gcream" gradientUnits="userSpaceOnUse" cx="256" cy="500" r="250">
+      <stop offset="0" stop-color="#FFF4CB" stop-opacity="0.72"/>
+      <stop offset="0.55" stop-color="#FFF6CE" stop-opacity="0.3"/>
+      <stop offset="1" stop-color="#FFF6CE" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="gshade" gradientUnits="userSpaceOnUse" cx="256" cy="256" r="250">
+      <stop offset="0.62" stop-color="#4A3B5E" stop-opacity="0"/>
+      <stop offset="1" stop-color="#4A3B5E" stop-opacity="0.12"/>
+    </radialGradient>
+    <linearGradient id="gmark" gradientUnits="userSpaceOnUse" x1="300" y1="110" x2="320" y2="390">
+      <stop offset="0" stop-color="#CEA0F0" stop-opacity="1"/>
+      <stop offset="0.5" stop-color="#BC8CE7" stop-opacity="1"/>
+      <stop offset="1" stop-color="#A877D9" stop-opacity="1"/>
+    </linearGradient>
+  </defs>
+  <g id="hex-frame">
+    <path id="bevel" d="M256.0 16.0L463.8 136.0L463.8 376.0L256.0 496.0L48.2 376.0L48.2 136.0Z" fill="url(#gbevel)"/>
+    <path id="rim" d="M256.0 44.0L439.6 150.0L439.6 362.0L256.0 468.0L72.4 362.0L72.4 150.0Z" fill="url(#grim)"/>
+    <path id="face" d="M256.0 60.0L425.7 158.0L425.7 354.0L256.0 452.0L86.3 354.0L86.3 158.0Z" fill="url(#gface)"/>
+    <path id="face-tint-mint" d="M256.0 60.0L425.7 158.0L425.7 354.0L256.0 452.0L86.3 354.0L86.3 158.0Z" fill="url(#gmint)"/>
+    <path id="face-tint-lilac" d="M256.0 60.0L425.7 158.0L425.7 354.0L256.0 452.0L86.3 354.0L86.3 158.0Z" fill="url(#glilac)"/>
+    <path id="face-tint-pink" d="M256.0 60.0L425.7 158.0L425.7 354.0L256.0 452.0L86.3 354.0L86.3 158.0Z" fill="url(#gpink)"/>
+    <path id="face-tint-rose" d="M256.0 60.0L425.7 158.0L425.7 354.0L256.0 452.0L86.3 354.0L86.3 158.0Z" fill="url(#grose)"/>
+    <path id="face-tint-cream" d="M256.0 60.0L425.7 158.0L425.7 354.0L256.0 452.0L86.3 354.0L86.3 158.0Z" fill="url(#gcream)"/>
+    <path id="face-shade" d="M256.0 60.0L425.7 158.0L425.7 354.0L256.0 452.0L86.3 354.0L86.3 158.0Z" fill="url(#gshade)"/>
+  </g>
+  <g id="emblem" fill="url(#gmark)" fill-rule="evenodd">
+    <path id="mark1" d="M212.2 179.1L202.6 183.1L196.0 189.6L193.5 199.3L185.3 221.3L167.2 249.0L150.6 262.6L138.7 264.4L131.1 265.5L125.9 269.1L119.8 276.1L115.9 286.0L115.9 296.9L120.0 307.0L128.0 314.8L137.9 318.9L147.9 319.1L156.1 317.0L161.7 313.5L166.6 307.2L170.1 297.3L170.1 285.6L177.9 265.4L196.8 238.9L210.0 227.2L217.2 229.7L227.0 241.4L242.6 268.3L256.4 298.1L258.3 315.0L256.4 325.7L257.8 339.2L262.2 350.9L270.0 358.9L282.7 363.9L297.7 365.3L308.8 363.1L317.4 357.1L325.0 347.8L329.1 338.2L330.8 331.2L338.2 323.4L353.6 314.6L366.3 310.7L372.1 309.2L375.4 306.3L377.2 301.2L376.8 293.6L374.1 287.6L368.0 284.8L359.6 285.0L353.0 289.5L344.1 298.3L329.6 304.1L317.6 301.2L308.6 295.5L297.9 292.6L287.0 290.3L270.2 270.8L249.2 233.6L241.4 208.5L242.0 197.8L239.4 189.8L235.0 184.3L229.1 180.4L221.7 178.5Z"/>
+    <path id="mark2" d="M359.6 181.8L350.3 185.3L344.6 190.9L342.3 198.3L342.3 206.9L338.0 221.5L326.7 241.6L316.6 252.9L308.6 256.2L302.4 260.5L300.0 266.5L300.0 273.5L302.0 279.4L305.5 283.3L311.9 285.0L321.8 283.1L329.2 276.3L338.2 259.3L353.0 236.7L364.9 224.8L373.9 220.9L381.3 215.1L384.6 206.9L384.6 197.8L381.6 190.2L376.6 184.9L369.4 181.8Z"/>
+  </g>
+</svg>

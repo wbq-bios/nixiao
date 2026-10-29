@@ -61,7 +61,21 @@ function iconUrl(rel, w) {
   return `${BASE}/art/icon/${+w || 96}/${enc}`;
 }
 
-module.exports = { BASE, request, ensureLogin, online, artUrl, iconUrl,
+/** 羁绊图标:默认用数据里的灰度原图,**满羁绊**时换成彩色重绘版(放在图床 羁绊重绘/color 下)。
+ *  彩色版只有 S3 这 22 个羁绊有重绘,没重绘的羁绊即使满了也继续用原图,避免 404。
+ *  @param {string} rel 数据里的 icon 相对路径(灰度原图)
+ *  @param {string} name 羁绊名(与重绘文件名一致)
+ *  @param {boolean} maxed 是否已满羁绊(达到最高档) */
+const BOND_COLOR_ICONS = new Set([
+  "白帝城", "碧血营", "初涉江湖", "刺客", "凤城", "辅阵", "固守", "回元", "镜天阁", "力士", "明昭侯",
+  "冥渊", "魔天", "谋士", "破军", "射手", "天下双势", "武林风云录", "小宠联萌", "御剑", "战士", "重鸣",
+]);
+function bondIcon(rel, name, maxed) {
+  if (maxed && BOND_COLOR_ICONS.has(name)) return iconUrl(`羁绊重绘/color/${name}.png`, 128);
+  return iconUrl(rel, 96);
+}
+
+module.exports = { BASE, request, ensureLogin, online, artUrl, iconUrl, bondIcon,
   pullFavs: () => request("/api/user/favs"),
   toggleFavRemote: (gameId, season, name) => request("/api/user/favs/toggle", "POST", { gameId, season, name }),
   pullSims: () => request("/api/user/sims"),
@@ -69,4 +83,6 @@ module.exports = { BASE, request, ensureLogin, online, artUrl, iconUrl,
   delSimRemote: id => request("/api/user/sims/" + id, "DELETE"),
   vote: (gameId, season, comp, value) => request("/api/vote", "POST", { gameId, season, comp, value }),
   pullContent: (gameId, season, version) => request(`/api/content/${encodeURIComponent(gameId)}?season=${encodeURIComponent(season)}&version=${encodeURIComponent(version || "")}`),
+  // 阵容计数:赞踩总数(热度) + 收藏数(强度),列表页只刷计数不重拉内容
+  compStats: (gameId, season) => request(`/api/comps/stats/${encodeURIComponent(gameId)}?season=${encodeURIComponent(season || "")}`),
 };

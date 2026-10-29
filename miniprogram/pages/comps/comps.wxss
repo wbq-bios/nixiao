@@ -1,0 +1,26 @@
+/* 阵容列表页:赛季胶囊 / 搜索 / 分类+排序 / 卡片(TOP 徽记、等级、作者、头像条、羁绊、点赞) */
+.cpage { padding-top: 8rpx; }
+.cs-ico { font-size: 30rpx; color: var(--faint); }
+
+/* ---- 分类行 + 排序下拉 ---- */
+.cfilter-wrap { position: relative; margin-bottom: 8rpx; }
+.cfilter { display: flex; align-items: center; gap: 10rpx; }
+.ctab { flex: none; padding: 9rpx 18rpx; border-radius: 99rpx; border: 1px solid var(--line-hi); background: var(--card); color: var(--dim); font-size: 22rpx; }
+.ctab.on { background: var(--gold); border-color: var(--gold); color: #FFF9EE; font-weight: 650; }
+.csort { margin-left: auto; flex: none; font-size: 21rpx; color: var(--dim); }
+.cs-arrow { margin-left: 6rpx; font-size: 17rpx; color: var(--faint); }
+.cmenu {
+  position: absolute; right: 0; top: 62rpx; z-index: 20; width: 210rpx;
+  background: #FFFDF8; border: 1px solid var(--line); border-radius: 18rpx;
+  box-shadow: 0 22rpx 44rpx -22rpx rgba(58, 50, 38, .5); overflow: hidden;
+}
+.cmenu-i { padding: 16rpx 22rpx; font-size: 23rpx; color: var(--dim); }
+.cmenu-i.on { background: var(--gold-dim); color: var(--gold-hi); font-weight: 650; }
+
+/* 排序胶囊里的方向箭头(↑ 升序 / ↓ 降序) */
+.cs-dir { margin-left: 6rpx; font-size: 18rpx; color: var(--gold-hi); }
+/* 下拉里升降序那一行:与维度分开,切维度时方向保留 */
+.cmenu-sep { height: 1rpx; margin: 4rpx 0; background: var(--line); }
+.cmenu-order { display: flex; gap: 8rpx; padding: 8rpx 10rpx 12rpx; }
+.corder { flex: 1; padding: 10rpx 0; text-align: center; border-radius: 10rpx; font-size: 20rpx; color: var(--dim); background: var(--panel); }
+.corder.on { background: var(--gold-dim); color: var(--gold-hi); font-weight: 650; }

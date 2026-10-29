@@ -1,0 +1,36 @@
+/* 详情页:羁绊/装备/棋子 统一用真实图标;没有图的仍回退首字 */
+/* 羁绊胶囊图标(与摆棋页同一套写法) */
+.trait .ic.img { background: none; border-color: transparent; width: 50rpx; height: 50rpx; }
+.trait.color .ic.img { background: none; }
+.trait .ic-ico { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-size: contain; background-position: center; background-repeat: no-repeat; }
+/* 阵容构成:棋子立绘铺满格子 */
+.u-box .u-art { position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 13rpx; background-size: cover; background-position: center 12%; }
+/* 装备小格:图标铺满 27rpx 的方槽 */
+.u-box .items .it { position: relative; overflow: hidden; }
+.u-box .items .it-ico { position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 6rpx; background-size: cover; background-position: center; }
+/* 棋子详情页的羁绊标签带图标 */
+.bond-tag { display: inline-flex; align-items: center; gap: 8rpx; }
+.bt-ico { width: 34rpx; height: 34rpx; background-size: contain; background-position: center; background-repeat: no-repeat; }
+/* 强度等级 SSS 是收藏数攒够才升的顶级,给个更强的金色底(全局 .tier 只有 S/A/B) */
+.tier.SSS { background: linear-gradient(135deg, #D8B56A, #A98643); font-size: 22rpx; letter-spacing: -1rpx; }
+/* 详情页「使用」:金色主按钮,和收藏并排(载入摆棋的唯一入口) */
+.usebtn {
+  padding: 0 26rpx; height: 56rpx; line-height: 56rpx; border-radius: 99rpx;
+  background: var(--gold); color: #FFF9EE; font-size: 24rpx; font-weight: 700;
+  box-shadow: 0 8rpx 18rpx -10rpx rgba(143, 111, 47, .65);
+}
+/* 运营节奏空态:版块预留,没数据时给一行提示而不是空白卡 */
+.beats-empty { font-size: 21rpx; color: var(--faint); line-height: 1.8; }
+
+/* ---- 按设计稿回灌:本页卡片圆角 28、羁绊胶囊 56 高/40 图标、点赞与收藏按钮 56 高/28 圆角 ---- */
+.dpage .card { border-radius: 28rpx; }
+.dpage .trait {
+  height: 56rpx; padding: 0 22rpx 0 14rpx; border-radius: 28rpx; gap: 8rpx;
+}
+.dpage .trait.color { border-radius: 28rpx; }
+.dpage .trait .ic.img { width: 40rpx; height: 40rpx; }
+/* 计数并进文字(与设计稿一致),角标不再显示 */
+.dpage .trait .ct { display: none; }
+.dpage .traits { gap: 12rpx; }
+.dpage .vote { height: 56rpx; min-width: 130rpx; border-radius: 28rpx; font-size: 23rpx; }
+.dpage .usebtn { height: 56rpx; line-height: 56rpx; padding: 0 30rpx; border-radius: 28rpx; font-size: 23rpx; }

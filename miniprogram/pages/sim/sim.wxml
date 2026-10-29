@@ -1,4 +1,4 @@
-<page-meta page-style="{{dragOn ? 'overflow:hidden;' : ''}}" />
+<page-meta page-style="{{dragOn || pickDrag ? 'overflow:hidden;' : ''}}" />
 
 <view class="page">
   <view class="blk" style="margin-top:4rpx">
@@ -12,56 +12,175 @@
     </view>
   </view>
 
+  <!-- 常驻选人面板:搜索 + 费用 + 职业/特质/羁绊三下拉 + 6 列立绘格子 -->
   <view class="blk">
-    <text class="bt">阵容站位</text>
-    <text class="cnt">人口 {{filled}}</text>
-    <text style="margin-left:auto;font-size:20rpx;color:var(--faint)">总费用 {{totalCost}} · 点格选棋 · 长按拖出移除</text>
+    <text class="bt">选择棋子</text>
+    <text class="cnt">{{panel.count}} 位</text>
+    <text style="margin-left:auto;font-size:20rpx;color:var(--faint)">点棋子落入第一个空位</text>
+  </view>
+  <view class="card" style="padding:20rpx 22rpx">
+    <view class="search">
+      <input placeholder="搜索侠客、羁绊…" value="{{panel.q}}" bindinput="onPanelQ" />
+    </view>
+    <view class="chiprow" style="margin-top:16rpx">
+      <view wx:for="{{costs}}" wx:key="*this" class="chip sm {{panel.cost === item ? 'on' : ''}}" data-v="{{item}}" bindtap="onPanelCost">{{item === 0 ? "全部" : item + "费"}}</view>
+    </view>
+    <!-- 三个筛选下拉:展开面板互斥(dd 字段) -->
+    <view class="ddrow">
+      <view class="dd {{panel.job ? 'on' : ''}}" data-v="job" bindtap="onPanelDD">{{panel.job || "全部职业"}}<text class="ar">▾</text></view>
+      <view class="dd {{panel.tag ? 'on' : ''}}" data-v="tag" bindtap="onPanelDD">{{panel.tag || "全部特质"}}<text class="ar">▾</text></view>
+      <view class="dd {{panel.bond ? 'on' : ''}}" data-v="bond" bindtap="onPanelDD">{{panel.bond || "全部羁绊"}}<text class="ar">▾</text></view>
+    </view>
+    <view class="ddpanel {{panel.dd === 'job' ? 'open' : ''}}">
+      <view wx:for="{{jobOpts}}" wx:key="v" class="chip sm {{panel.job === item.v ? 'on' : ''}}" data-v="{{item.v}}" bindtap="onPanelJob">{{item.l}}</view>
+    </view>
+    <view class="ddpanel {{panel.dd === 'tag' ? 'open' : ''}}">
+      <view wx:for="{{tagOpts}}" wx:key="v" class="chip sm {{panel.tag === item.v ? 'on' : ''}}" data-v="{{item.v}}" bindtap="onPanelTag">{{item.l}}</view>
+    </view>
+    <view class="ddpanel {{panel.dd === 'bond' ? 'open' : ''}}">
+      <view wx:for="{{bondOpts}}" wx:key="v" class="chip sm {{panel.bond === item.v ? 'on' : ''}}" data-v="{{item.v}}" bindtap="onPanelBond">{{item.l}}</view>
+    </view>
+    <!-- 固定高度滚动模块:60 个棋子在模块内上下滑,页面长度恒定;
+         长按起拖后临时关掉纵向滚动(scroll-y 绑定 pickDrag),否则拖向棋盘时列表会跟着滚;
+         底部渐变遮罩把"被截断的半行"柔化,同时暗示还能继续滑 -->
+    <view class="pickbox">
+      <scroll-view scroll-y="{{!pickDrag}}" class="pickwrap" style="height:{{panelH}}px">
+        <view class="pick6">
+          <view wx:for="{{panel.pool}}" wx:key="n" class="p6" data-n="{{item.n}}" bindtap="onPanelPick"
+            bindtouchstart="onPickDown" bindtouchmove="onPickMove" bindtouchend="onPickUp" bindtouchcancel="onPickCancel">
+            <view class="ph {{item.onboard ? 'onboard' : ''}}" style="border-color:{{item.color}}a6;background:{{item.color}}17;color:{{item.color}}">
+              <view class="inner">{{item.ch}}</view>
+              <!-- 立绘缩略层(cover 头部优先);图 404/无 art 时透出首字 -->
+              <view wx:if="{{item.art}}" class="ph-art" style="background-image:url('{{item.art}}')"></view>
+              <text class="cb">{{item.cost}}费</text>
+              <!-- 已上阵:压在头像底部,比只靠绿框更直白 -->
+              <text wx:if="{{item.onboard}}" class="ob">已上阵</text>
+            </view>
+            <text class="pn">{{item.n}}</text>
+          </view>
+        </view>
+        <view wx:if="{{!panel.pool.length}}" class="empty" style="padding:30rpx 10rpx"><text class="k">未寻得此侠</text>换个关键字试试</view>
+      </scroll-view>
+      <view class="pickfade"></view>
+    </view>
+    <view style="font-size:20rpx;color:#8A8375;text-align:center;margin-top:20rpx">点选上阵 · 长按拖到格子/移除区 · 绿框为已上阵</view>
   </view>
 
-  <view class="card" style="padding:20rpx 10rpx">
+  <!-- 人口上限选择行 -->
+  <view class="blk">
+    <text class="bt">阵容站位</text>
+    <text class="cnt">人口 {{filled}}{{cap ? '/' + cap : ''}}</text>
+    <text style="margin-left:auto;font-size:20rpx;color:var(--faint)">总费用 {{totalCost}}</text>
+  </view>
+  <view class="chiprow">
+    <view wx:for="{{capOpts}}" wx:key="v" class="chip sm {{cap === item.v ? 'on' : ''}}" data-v="{{item.v}}" bindtap="onCap">{{item.l}}</view>
+  </view>
+
+  <view class="card board-card" style="padding:14rpx 10rpx">
     <view style="display:flex;justify-content:space-between;font-size:19rpx;color:var(--faint);letter-spacing:.18em;padding:0 8rpx">
       <text>上 · 后排输出</text><text>下 · 前排承伤</text>
     </view>
     <view class="board" bindtouchmove="onBoardMove" bindtouchend="onBoardEnd" bindtouchcancel="onBoardCancel">
-      <view wx:for="{{rows}}" wx:for-item="row" wx:key="ri" class="hexrow {{index % 2 === 1 ? 'odd' : ''}}">
+      <view wx:for="{{rows}}" wx:for-item="row" wx:key="ri" class="hexrow {{index % 2 === 1 ? 'odd' : ''}}" style="{{row.sty}}">
         <view wx:for="{{row.cells}}" wx:for-item="cell" wx:key="i"
-          class="hex {{cell.empty ? 'empty' : ''}} {{dropIdx === cell.i ? 'drop' : ''}}"
-          style="{{hexStyle}};{{cell.color ? 'background:' + cell.color + '8c;' : ''}}"
+          class="mhex {{cell.empty ? 'is-empty' : ''}} {{dropIdx === cell.i ? 'drop' : ''}}"
+          style="{{cell.sty}};{{cell.color ? 'background:' + cell.color + '8c;' : ''}}"
           data-i="{{cell.i}}"
           bindtouchstart="onHexStart"
           bindtap="onSlotTap">
           <view class="hin" style="{{cell.color ? 'background:' + cell.color + '14;color:' + cell.color : ''}}">
             {{cell.empty ? "＋" : cell.ch}}
+            <!-- 棋子立绘:铺满内层六边形(外层 clip-path 裁形);图 404/无 art 时透出下面的首字 -->
+            <view wx:if="{{cell.art}}" class="h-art" style="background-image:url('{{cell.art}}')"></view>
             <view wx:if="{{cell.stars}}" class="hstars">{{cell.stars}}</view>
             <view wx:if="{{cell.isMain}}" class="hcmark">C</view>
             <view wx:if="{{cell.items.length}}" class="hitems">
-              <text wx:for="{{cell.items}}" wx:for-item="it" wx:key="name" class="hit">{{it.ch}}</text>
+              <!-- 已装装备的小图标(无 icon 的旧数据回退首字) -->
+              <view wx:for="{{cell.items}}" wx:for-item="it" wx:key="name" class="hit">
+                <view wx:if="{{it.icon}}" class="hit-ico" style="background-image:url('{{it.icon}}')"></view>
+                <text wx:else>{{it.ch}}</text>
+              </view>
             </view>
           </view>
         </view>
       </view>
     </view>
-    <view style="text-align:center;font-size:19rpx;color:var(--faint);margin-top:12rpx">点格选棋 · 长按拖拽换位/移除 · 点棋子可设置</view>
+    <view style="text-align:center;font-size:19rpx;color:var(--faint);margin-top:8rpx">松手放置 · 拖到移除区可移除 · 点棋子可设置</view>
   </view>
 
   <view class="blk"><text class="bt">阵容羁绊</text><text class="cnt">{{bondsVM.length}} 个在凑</text></view>
   <view class="card rise">
     <view wx:if="{{bondsVM.length}}" class="traits">
       <view wx:for="{{bondsVM}}" wx:key="n" class="trait {{item.color ? 'color' : ''}} {{item.dim ? 'dim' : ''}}">
-        <view class="ic">{{item.ch}}<text class="ct">{{item.count}}</text></view>
+        <view class="ic {{item.icon ? 'img' : ''}}">
+          <!-- 真实羁绊图标(自带六边形底),无图回退首字 -->
+          <view wx:if="{{item.icon}}" class="ic-ico" style="background-image:url('{{item.icon}}')"></view>
+          <text wx:else>{{item.ch}}</text>
+          <text class="ct">{{item.count}}</text>
+        </view>
         {{item.n}}<text class="pg">{{item.pg}}</text>
       </view>
     </view>
-    <view wx:else class="empty" style="padding:40rpx 30rpx"><text class="k">棋盘尚虚</text>点击棋盘空格选择棋子，羁绊实时推算</view>
+    <view wx:else class="empty" style="padding:40rpx 30rpx"><text class="k">棋盘尚虚</text>点上方选人面板上阵，羁绊实时推算</view>
   </view>
 
-  <button class="savebtn" bindtap="onSave">保存到我的</button>
+  <!-- 阵容标题(≤20 字,实时计数) -->
+  <view class="blk"><text class="bt">阵容标题</text><text class="cnt-r">{{name.length}}/20</text></view>
+  <view class="card" style="padding:20rpx 26rpx">
+    <input class="tin" placeholder="给这套阵容起个名（选填）" value="{{name}}" maxlength="20" bindinput="onName" />
+  </view>
+
+  <!-- 运营思路(≤200 字,实时计数) -->
+  <view class="blk"><text class="bt">运营思路</text><text class="cnt-r">{{notes.length}}/200</text></view>
+  <view class="card" style="padding:20rpx 26rpx">
+    <textarea class="tin tarea" placeholder="运营思路、过渡节奏、站位调整等（选填）" value="{{notes}}" maxlength="200" bindinput="onNotes" auto-height />
+  </view>
+
+  <view class="save-row">
+    <view hover-class="tap-dim" class="savebtn" bindtap="onSave">保存到我的</view>
+    <view hover-class="tap-dim" class="savebtn" bindtap="onPublish">发布</view>
+  </view>
   <view class="legal">推演存于本机 · 正式版随赛季云端同步</view>
 </view>
 
-<!-- 拖拽视觉层 -->
-<view class="rmzone {{dragOn ? 'on' : ''}} {{rmHot ? 'hot' : ''}}">✕ 拖到此处移除</view>
-<view class="ghost {{dragOn ? 'on' : ''}}" style="left:{{gx - 29}}px;top:{{gy - 62}}px;background:{{ghostColor}}26;border-color:{{ghostColor}}9a;color:{{ghostColor}}">{{ghostCh}}</view>
+<!-- 拖拽视觉层:移除热区 + 跟手幽灵棋子 + 操作后撤条 -->
+<!-- 移除热区定位由 startDrag 量棋盘卡矩形后下发(top/left/width),拖动时贴在棋盘正上方 -->
+<view class="rmzone {{dragOn ? 'on' : ''}} {{rmHot ? 'hot' : ''}}" style="top:{{rmTop}}px;left:{{rmLeft}}px;width:{{rmW}}px"><text class="rm-ico">🗑</text>拖到此处移除</view>
+<view class="ghost {{dragOn || pickDrag ? 'on' : ''}}" style="left:{{gx - 29}}px;top:{{gy - 62}}px;background:{{ghostColor}}26;border-color:{{ghostColor}}9a;color:{{ghostColor}}">{{ghostCh}}<view wx:if="{{ghostArt}}" class="ghost-art" style="background-image:url('{{ghostArt}}')"></view></view>
+<!-- 操作回执:移除/换位后 3 秒内可点此撤销(设计稿「已移除 · 撤销」) -->
+<view class="snack {{snackOn ? 'on' : ''}}" bindtap="onSnackTap">
+  <text class="snack-ico">✓</text>{{snackText}}<text class="snack-act">撤销</text>
+</view>
+
+<!-- 空格子 → 底部搜索选棋弹窗:点棋盘空格弹出,选中直接落到该格(复用全局 .sheet/.scrim) -->
+<view class="scrim {{pickOn ? 'on' : ''}}" bindtap="onPickSheetClose"></view>
+<view class="sheet {{pickOn ? 'on' : ''}}">
+  <view class="grab"></view>
+  <view class="h3">选择棋子</view>
+  <view class="sp">第 {{pickRow}} 排 · {{pickCol}} 号位 · 点棋子即落到此格</view>
+  <text class="pcount">{{pickPool.length}} 位</text>
+  <view class="search">
+    <input placeholder="搜索侠客、羁绊…" value="{{pickQ}}" bindinput="onPickSheetQ" />
+  </view>
+  <view class="chiprow">
+    <view wx:for="{{costs}}" wx:key="*this" class="chip sm {{pickCost === item ? 'on' : ''}}" data-v="{{item}}" bindtap="onPickSheetCost">{{item === 0 ? "全部" : item + "费"}}</view>
+  </view>
+  <!-- 固定高度滚动:3 行左右,弹层不顶满整屏 -->
+  <scroll-view scroll-y class="sheet-scroll" style="height:{{sheetH}}px">
+    <view class="pick6">
+      <view wx:for="{{pickPool}}" wx:key="n" class="p6" data-n="{{item.n}}" bindtap="onPickSheetPick">
+        <view class="ph {{item.onboard ? 'onboard' : ''}}" style="border-color:{{item.color}}a6;background:{{item.color}}17;color:{{item.color}}">
+          <view class="inner">{{item.ch}}</view>
+          <view wx:if="{{item.art}}" class="ph-art" style="background-image:url('{{item.art}}')"></view>
+          <text class="cb">{{item.cost}}费</text>
+          <text wx:if="{{item.onboard}}" class="ob">已上阵</text>
+        </view>
+        <text class="pn">{{item.n}}</text>
+      </view>
+    </view>
+    <view wx:if="{{!pickPool.length}}" class="empty" style="padding:30rpx 10rpx"><text class="k">未寻得此侠</text>换个关键字试试</view>
+  </scroll-view>
+</view>
 
 <!-- 重置确认弹窗(复用全局 modal) -->
 <view class="modal-mask {{resetAsk ? 'on' : ''}}" bindtap="onResetCancel">
@@ -69,46 +188,10 @@
     <view class="mtop"><text class="h3">清空当前棋盘?</text></view>
     <view style="font-size:25rpx;color:var(--dim);line-height:1.7">将移除已上阵的 {{filled}} 枚棋子及其星级装备。误操作可点「撤销」恢复。</view>
     <view class="mrow">
-      <button class="btn-rm" bindtap="onResetCancel">再想想</button>
-      <button class="btn-ok" bindtap="onResetDo">确认清空</button>
+      <view hover-class="tap-dim" class="btn-rm" bindtap="onResetCancel">再想想</view>
+      <view hover-class="tap-dim" class="btn-ok" bindtap="onResetDo">确认清空</view>
     </view>
   </view>
-</view>
-
-<!-- 选棋弹窗 -->
-<view class="scrim {{pickerOn ? 'on' : ''}}" bindtap="onPickerClose"></view>
-<view class="sheet {{pickerOn ? 'on' : ''}}">
-  <view class="grab"></view>
-  <view class="h3">选择棋子</view>
-  <view class="sp">第 {{picker.row}} 排 · {{picker.col}} 号位 · 当前：{{picker.cur}}</view>
-  <text class="pcount">{{picker.count}} 位</text>
-  <view class="search">
-    <input placeholder="搜索棋子名称或羁绊" value="{{picker.q}}" bindinput="onPickerQ" />
-  </view>
-  <view class="chiprow">
-    <button wx:for="{{costs}}" wx:key="*this" class="chip sm {{picker.cost === item ? 'on' : ''}}" data-v="{{item}}" bindtap="onPickerCost">{{item === 0 ? "全部" : item + "费"}}</button>
-  </view>
-  <view class="ddrow">
-    <button class="dd {{picker.job ? 'on' : ''}}" data-v="job" bindtap="onPickerDD">{{picker.job || "全部职业"}}<text class="ar">▾</text></button>
-    <button class="dd {{picker.bond ? 'on' : ''}}" data-v="bond" bindtap="onPickerDD">{{picker.bond || "全部羁绊"}}<text class="ar">▾</text></button>
-  </view>
-  <view class="ddpanel {{picker.dd === 'job' ? 'open' : ''}}">
-    <button wx:for="{{jobOpts}}" wx:key="v" class="chip sm {{picker.job === item.v ? 'on' : ''}}" data-v="{{item.v}}" bindtap="onPickerJob">{{item.l}}</button>
-  </view>
-  <view class="ddpanel {{picker.dd === 'bond' ? 'open' : ''}}">
-    <button wx:for="{{bondOpts}}" wx:key="v" class="chip sm {{picker.bond === item.v ? 'on' : ''}}" data-v="{{item.v}}" bindtap="onPickerBond">{{item.l}}</button>
-  </view>
-  <view class="pick6">
-    <button wx:for="{{picker.pool}}" wx:key="n" class="p6" data-n="{{item.n}}" bindtap="onPick">
-      <view class="ph {{item.onboard ? 'onboard' : ''}}" style="border-color:{{item.color}}a6;background:{{item.color}}17;color:{{item.color}}">
-        <view class="inner">{{item.ch}}</view>
-        <text class="cb">{{item.cost}}费</text>
-      </view>
-      <text class="pn">{{item.n}}</text>
-    </button>
-  </view>
-  <view wx:if="{{!picker.pool.length}}" class="empty" style="padding:30rpx"><text class="k">未寻得此侠</text>换个关键字试试</view>
-  <view style="font-size:20rpx;color:#8A8375;text-align:center;margin-top:20rpx">点选棋子上阵 · 绿框为已上阵棋子</view>
 </view>
 
 <!-- 棋子设置弹窗 -->
@@ -133,15 +216,21 @@
       <view class="mcard">
         <view class="t">棋子星级<text class="hint">3枚同名合一升星</text></view>
         <view style="display:flex;align-items:center;justify-content:center;gap:34rpx">
-          <button class="circ" data-d="-1" bindtap="onStar">−</button>
+          <view hover-class="tap-dim" class="circ" data-d="-1" bindtap="onStar">−</view>
           <text style="color:#E7A93C;font-size:36rpx;letter-spacing:6rpx;min-width:124rpx;text-align:center">{{unit.stars}}</text>
-          <button class="circ plus" data-d="1" bindtap="onStar">＋</button>
+          <view hover-class="tap-dim" class="circ plus" data-d="1" bindtap="onStar">＋</view>
         </view>
       </view>
       <view class="mcard">
-        <view class="t">棋子装备<text class="hint">至多3件 · 点空槽选择 / 点已装卸下</text></view>
+        <view class="t">棋子装备<text class="hint">至多3件 · 点槽选择/替换 · 点 × 卸下</text></view>
         <view style="display:flex;gap:18rpx;justify-content:center">
-          <button wx:for="{{unit.slots}}" wx:key="k" class="eqslot {{item.name ? 'filled' : ''}}" data-k="{{item.k}}" bindtap="onEqSlot">{{item.name ? item.ch : "＋"}}</button>
+          <view hover-class="tap-dim" wx:for="{{unit.slots}}" wx:key="k" class="eqslot {{item.name ? 'filled' : ''}}" data-k="{{item.k}}" bindtap="onEqSlot">
+            <view wx:if="{{item.icon}}" class="eq-ico" style="background-image:url('{{item.icon}}')"></view>
+            <text wx:elif="{{item.name}}" class="eq-ch">{{item.ch}}</text>
+            <text wx:else class="eq-plus">＋</text>
+            <!-- 已装:右上角 × 直接卸下(不弹层);catchtap 防止冒泡去开选择弹层 -->
+            <view wx:if="{{item.name}}" class="eq-x" data-k="{{item.k}}" catchtap="onEqRemove">✕</view>
+          </view>
         </view>
       </view>
       <view class="mcard">
@@ -149,23 +238,43 @@
         <view style="font-size:26rpx;color:var(--dim);line-height:1.75">{{unitDetail}}</view>
       </view>
       <view class="mrow">
-        <button class="btn-rm" bindtap="onRemoveUnit">移除英雄</button>
-        <button class="btn-ok" bindtap="onModalClose">完成设置</button>
+        <view hover-class="tap-dim" class="btn-rm" bindtap="onRemoveUnit">移除英雄</view>
+        <view hover-class="tap-dim" class="btn-ok" bindtap="onModalClose">完成设置</view>
       </view>
     </block>
   </view>
 </view>
 
-<!-- 装备选择弹层 -->
-<view class="scrim {{eqOn ? 'on' : ''}}" bindtap="onEqClose"></view>
-<view class="sheet {{eqOn ? 'on' : ''}}">
+<!-- 装备选择弹层(eq-* 类把层级抬到棋子设置弹窗之上:modal-mask 是 80,装备层必须 90+) -->
+<view class="scrim eq-scrim {{eqOn ? 'on' : ''}}" bindtap="onEqClose"></view>
+<view class="sheet eq-sheet {{eqOn ? 'on' : ''}}">
   <view class="grab"></view>
-  <view class="h3">选择装备</view>
-  <view class="sp">按品阶点选</view>
-  <view class="pick6">
-    <button wx:for="{{equipsVM}}" wx:key="n" class="p6" data-n="{{item.n}}" bindtap="onEqPick">
-      <view class="ph" style="border-color:rgba(169,134,67,.6);background:var(--gold-dim);color:var(--gold-hi)">{{item.ch}}<text class="cb">{{item.r}}</text></view>
-      <text class="pn">{{item.n}}</text>
-    </button>
+  <view class="h3">选择装备<text class="h3-slot">第 {{eqSlot + 1}} 槽</text></view>
+  <view class="sp">按品阶点选 · 共 {{equipsVM.length}} 件</view>
+  <!-- 顶部三槽:显示当前装备,点哪个槽就把下一次选择装到哪个槽(一次弹窗可连装 3 件) -->
+  <view class="eq-slots">
+    <view wx:for="{{eqSheetSlots}}" wx:key="k" class="eq-mini {{item.k === eqSlot ? 'on' : ''}} {{item.name ? 'filled' : ''}}" data-k="{{item.k}}" bindtap="onEqSwitchSlot">
+      <view wx:if="{{item.icon}}" class="eq-mini-ico" style="background-image:url('{{item.icon}}')"></view>
+      <text wx:else class="eq-mini-plus">＋</text>
+      <text class="eq-mini-k">{{item.k + 1}}</text>
+    </view>
   </view>
+  <!-- 搜索:156 件装备滚起来太累,按名称/品阶过滤 -->
+  <view class="search" style="margin-top:18rpx">
+    <input placeholder="搜索装备名称" value="{{eqQ}}" bindinput="onEqQ" />
+  </view>
+  <!-- 156 件装备不铺满整屏:固定高度内滚,弹层只占下半屏,后面的棋子信息还能看见 -->
+  <scroll-view scroll-y class="sheet-scroll" style="height:{{eqGridH}}px">
+    <view class="pick6">
+      <view hover-class="tap-dim" wx:for="{{equipsVM}}" wx:key="n" class="p6" data-n="{{item.n}}" bindtap="onEqPick">
+        <view class="ph eqph">
+          <view wx:if="{{item.icon}}" class="eq-ico" style="background-image:url('{{item.icon}}')"></view>
+          <text wx:else>{{item.ch}}</text>
+          <text class="cb">{{item.r}}</text>
+        </view>
+        <text class="pn">{{item.n}}</text>
+      </view>
+    </view>
+    <view wx:if="{{!equipsVM.length}}" class="empty" style="padding:30rpx 10rpx"><text class="k">未寻得此装备</text>换个关键字试试</view>
+  </scroll-view>
 </view>

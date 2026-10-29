@@ -202,9 +202,13 @@ def convert_equips():
         if not name or name in seen:
             continue
         seen.add(name)
+        # 图标字段只存文件名,补上 装备图标/ 目录前缀(存在性校验,前端经 /art 服务)——同羁绊修法
+        icon = (e.get("图标") or "").strip()
+        if icon and "/" not in icon and os.path.exists(os.path.join(SRC, "装备图标", icon)):
+            icon = f"装备图标/{icon}"
         out.append({
             "n": name, "d": (e.get("词条") or "").strip(),
-            "icon": e.get("图标") or "", "season": SEASON,
+            "icon": icon, "season": SEASON,
         })
     return out
 
@@ -217,9 +221,13 @@ def convert_augments():
             continue
         seen.add(name)
         # 类型字段（专属/转职/经济/属性）暂不需要——2026-10-28 用户确认，不入库
+        # 图标字段只存文件名,补上 心悟图标/ 目录前缀(存在性校验,前端经 /art 服务)——同羁绊修法
+        icon = (a.get("图标") or "").strip()
+        if icon and "/" not in icon and os.path.exists(os.path.join(SRC, "心悟图标", icon)):
+            icon = f"心悟图标/{icon}"
         row = {
             "n": name, "d": (a.get("效果描述") or "").strip(),
-            "icon": a.get("图标") or "", "season": SEASON,
+            "icon": icon, "season": SEASON,
         }
         sc = a.get("评分")
         try:

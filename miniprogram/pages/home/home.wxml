@@ -1,15 +1,14 @@
 <view class="home" style="padding-top:{{statusH}}px">
 
-  <!-- 品牌头 + 赛季胶囊(胶囊按钮占右上,赛季胶囊下移一行避让) -->
+  <!-- 品牌头(logo + 标语) -->
   <view class="brand">
     <view class="brand-l">
       <view class="brand-logo">逆水侠棋<text class="brand-seal">手游</text></view>
       <view class="brand-slogan">—— 侠客为棋 · 江湖为局 ——</view>
     </view>
   </view>
-  <view class="season-row">
-    <button class="season-pill" bindtap="onSeasonBar">当前赛季：{{season.id}} {{season.name}} <text class="pill-arrow">∨</text></button>
-  </view>
+  <!-- 赛季胶囊:设计稿位置——品牌行右侧、紧邻系统胶囊;top/right/可用宽由 onReady 实测菜单按钮下发 -->
+  <view hover-class="tap-dim" class="season-pill" style="top:{{pillTop}}px;right:{{pillRight}}px;max-width:{{pillMaxW}}px" bindtap="onSeasonBar">当前赛季：{{season.id}} {{season.name}} <text class="pill-arrow">∨</text></view>
 
   <!-- 全局搜索 -->
   <view class="gsearch" bindtap="onSearch">
@@ -35,7 +34,7 @@
   <!-- 5 快捷入口 -->
   <view class="quicks">
     <view wx:for="{{quills}}" wx:key="n" class="qk5" hover-class="qk5-hover" data-i="{{index}}" bindtap="onQuick">
-      <view class="qk5-icon">{{item.icon}}</view>
+      <view class="qk5-icon"><image class="qk5-img" src="{{item.img}}" mode="aspectFit" /></view>
       <view class="qk5-n">{{item.n}}</view>
       <view class="qk5-d">{{item.d}}</view>
     </view>
@@ -46,29 +45,38 @@
     <text class="blk-t">今日推荐</text>
     <text class="blk-more" bindtap="onMore">查看更多 ›</text>
   </view>
-  <view wx:if="{{today}}" class="feed-card big" data-name="{{today.n}}" data-season="{{today.season}}" bindtap="onCompTap">
-    <view class="fc-head">
-      <view class="fc-mark">✦</view>
-      <text class="fc-name">{{today.n}}</text>
-      <view class="fc-acts">
-        <text class="fc-author">{{today.author}}</text>
-        <view class="fc-star {{favs[today.n] ? 'on' : ''}}" catchtap="onFav" data-name="{{today.n}}" data-season="{{today.season}}">{{favs[today.n] ? "★" : "☆"}}</view>
-      </view>
+  <view wx:if="{{today}}" class="ccard rise" data-name="{{today.n}}" data-season="{{today.season}}" bindtap="onCompTap">
+    <view class="chead">
+      <view class="ctop t1">TOP1</view>
+      <text class="cname">{{today.n}}</text>
+      <text class="cfav {{favs[today.n] ? 'on' : ''}}" catchtap="onFav" data-name="{{today.n}}" data-season="{{today.season}}">{{favs[today.n] ? "★" : "☆"}}</text>
+      <text class="carrow">›</text>
     </view>
-    <scroll-view class="fc-strip" scroll-x enhanced show-scrollbar="{{false}}">
-      <view wx:for="{{today.units}}" wx:key="n" class="fc-unit" style="border-color:{{item.color}}" catchtap="onUnitTap" data-n="{{item.n}}" data-season="{{today.season}}">
-        <view class="fc-unit-img" style="background-image:url('{{item.art}}');background-size:cover;background-position:center 12%"></view>
-        <view wx:if="{{item.isMain}}" class="fc-cbadge">主C</view>
-        <text class="fc-unit-star">★</text>
-        <view wx:if="{{item.items.length}}" class="fc-items">
-          <text wx:for="{{item.items}}" wx:for-item="it" wx:key="*this" class="fc-item">{{it[0]}}</text>
+    <view class="cmeta">
+      <text class="ctag">{{today.grade}} 级</text>
+      <text class="ctag">{{today.pop}} 人口</text>
+      <text wx:if="{{today.colorBond}}" class="ctag">彩色羁绊</text>
+      <text class="cauthor">{{today.author}}</text>
+      <text class="cupd">{{today.updText}}</text>
+    </view>
+    <view class="cdesc">{{today.desc}}</view>
+    <view class="cunits-wrap">
+      <scroll-view scroll-x class="cunits" show-scrollbar="{{false}}">
+        <view class="cunits-in">
+          <view wx:for="{{today.units}}" wx:key="n" class="cunit {{item.isMain ? 'main' : ''}}" style="border-color:{{item.color}}66" catchtap="onUnitTap" data-n="{{item.n}}" data-season="{{today.season}}">
+            <view wx:if="{{item.art}}" class="cu-art" style="background-image:url('{{item.art}}')"></view>
+            <text wx:else class="cu-ch" style="color:{{item.color}}">{{item.ch}}</text>
+            <text wx:if="{{item.isMain}}" class="cu-c">主C</text>
+            <text wx:if="{{item.stars}}" class="cu-s">{{item.stars}}</text>
+          </view>
         </view>
-      </view>
-    </scroll-view>
-    <view class="fc-traits">
-      <view wx:for="{{today.traits}}" wx:key="n" class="fpill" style="border-color:{{item.color}}55" catchtap="onBondTap" data-n="{{item.n}}" data-season="{{today.season}}">
-        <image class="fpill-icon" style="background-image:url('{{item.icon}}');background-size:contain;background-position:center;background-repeat:no-repeat" />
-        <text class="fpill-n" style="color:{{item.color}}">{{item.n}} {{item.count}}</text>
+      </scroll-view>
+      <view class="cunits-fade"></view>
+    </view>
+    <view class="cbonds">
+      <view wx:for="{{today.bonds}}" wx:key="n" class="cbond" catchtap="onBondTap" data-n="{{item.n}}" data-season="{{today.season}}">
+        <view class="cb-ico" style="background-image:url('{{item.icon}}')"></view>
+        <text class="cb-n">{{item.count}} {{item.n}}</text>
       </view>
     </view>
   </view>
@@ -78,29 +86,38 @@
     <text class="blk-t"><text class="blk-flame">🔥</text> 热门阵容</text>
     <text class="blk-more" bindtap="onMore">查看更多 ›</text>
   </view>
-  <view wx:for="{{hotList}}" wx:key="n" class="feed-card" data-name="{{item.n}}" data-season="{{item.season}}" bindtap="onCompTap">
-    <view class="fc-head">
-      <view class="fc-mark">✦</view>
-      <text class="fc-name">{{item.n}}</text>
-      <view class="fc-acts">
-        <text class="fc-author">{{item.author}}</text>
-        <view class="fc-star {{favs[item.n] ? 'on' : ''}}" catchtap="onFav" data-name="{{item.n}}" data-season="{{item.season}}">{{favs[item.n] ? "★" : "☆"}}</view>
-      </view>
+  <view wx:for="{{hotList}}" wx:key="n" class="ccard rise" data-name="{{item.n}}" data-season="{{item.season}}" bindtap="onCompTap">
+    <view class="chead">
+      <view class="cbar"></view>
+      <text class="cname">{{item.n}}</text>
+      <text class="cfav {{favs[item.n] ? 'on' : ''}}" catchtap="onFav" data-name="{{item.n}}" data-season="{{item.season}}">{{favs[item.n] ? "★" : "☆"}}</text>
+      <text class="carrow">›</text>
     </view>
-    <scroll-view class="fc-strip" scroll-x enhanced show-scrollbar="{{false}}">
-      <view wx:for="{{item.units}}" wx:key="n" wx:for-item="u" class="fc-unit" style="border-color:{{u.color}}" catchtap="onUnitTap" data-n="{{u.n}}" data-season="{{item.season}}">
-        <view class="fc-unit-img" style="background-image:url('{{u.art}}');background-size:cover;background-position:center 12%"></view>
-        <view wx:if="{{u.isMain}}" class="fc-cbadge">主C</view>
-        <text class="fc-unit-star">★</text>
-        <view wx:if="{{u.items.length}}" class="fc-items">
-          <text wx:for="{{u.items}}" wx:for-item="it" wx:key="*this" class="fc-item">{{it[0]}}</text>
+    <view class="cmeta">
+      <text class="ctag">{{item.grade}} 级</text>
+      <text class="ctag">{{item.pop}} 人口</text>
+      <text wx:if="{{item.colorBond}}" class="ctag">彩色羁绊</text>
+      <text class="cauthor">{{item.author}}</text>
+      <text class="cupd">{{item.updText}}</text>
+    </view>
+    <view class="cdesc">{{item.desc}}</view>
+    <view class="cunits-wrap">
+      <scroll-view scroll-x class="cunits" show-scrollbar="{{false}}">
+        <view class="cunits-in">
+          <view wx:for="{{item.units}}" wx:for-item="u" wx:key="n" class="cunit {{u.isMain ? 'main' : ''}}" style="border-color:{{u.color}}66" catchtap="onUnitTap" data-n="{{u.n}}" data-season="{{item.season}}">
+            <view wx:if="{{u.art}}" class="cu-art" style="background-image:url('{{u.art}}')"></view>
+            <text wx:else class="cu-ch" style="color:{{u.color}}">{{u.ch}}</text>
+            <text wx:if="{{u.isMain}}" class="cu-c">主C</text>
+            <text wx:if="{{u.stars}}" class="cu-s">{{u.stars}}</text>
+          </view>
         </view>
-      </view>
-    </scroll-view>
-    <view class="fc-traits">
-      <view wx:for="{{item.traits}}" wx:for-item="t" wx:key="n" class="fpill" style="border-color:{{t.color}}55" catchtap="onBondTap" data-n="{{t.n}}" data-season="{{item.season}}">
-        <image class="fpill-icon" style="background-image:url('{{t.icon}}');background-size:contain;background-position:center;background-repeat:no-repeat" />
-        <text class="fpill-n" style="color:{{t.color}}">{{t.n}} {{t.count}}</text>
+      </scroll-view>
+      <view class="cunits-fade"></view>
+    </view>
+    <view class="cbonds">
+      <view wx:for="{{item.bonds}}" wx:for-item="b" wx:key="n" class="cbond" catchtap="onBondTap" data-n="{{b.n}}" data-season="{{item.season}}">
+        <view class="cb-ico" style="background-image:url('{{b.icon}}')"></view>
+        <text class="cb-n">{{b.count}} {{b.n}}</text>
       </view>
     </view>
   </view>
@@ -113,13 +130,14 @@
   <view class="grab"></view>
   <view class="h3">赛季更迭</view>
   <view class="sp">每个赛季棋子与羁绊会更换；归档赛季数据只读可查</view>
-  <button wx:for="{{seasons}}" wx:key="id" class="season-item {{season.id === item.id ? 'on' : ''}}" data-id="{{item.id}}" bindtap="onPickSeason" style="text-align:left">
-    <view class="info" style="flex:1">
-      <view class="nm" style="font-size:30rpx;font-weight:650">{{item.id}} · {{item.name}}</view>
-      <view class="rg" style="font-size:21rpx;color:#8A8375;margin-top:4rpx">{{item.range}}</view>
+  <view wx:for="{{seasons}}" wx:key="id" class="season-item {{season.id === item.id ? 'on' : ''}}" data-id="{{item.id}}" bindtap="onPickSeason">
+    <view class="s-info">
+      <view class="s-nm">{{item.id}} · {{item.name}}</view>
+      <view class="s-rg">{{item.range}}</view>
     </view>
-    <text class="meta" style="font-size:23rpx;color:#8A8375">{{season.id === item.id ? "当前赛季" : "切换"}}</text>
-  </button>
+    <view wx:if="{{season.id === item.id}}" class="s-tag">当前赛季</view>
+    <view wx:else class="s-go">切换</view>
+  </view>
 </view>
 
 <!-- 侠客速览弹层 -->
@@ -139,8 +157,8 @@
         <view class="pop-skill-d">{{popUnit.skill.d}}</view>
       </view>
       <view class="pop-btns">
-        <button class="pop-btn ghost" bindtap="onPopClose">关闭</button>
-        <button class="pop-btn" bindtap="onPopDetail" data-type="piece" data-name="{{popUnit.n}}">查看完整详情</button>
+        <view hover-class="tap-dim" class="pop-btn ghost" bindtap="onPopClose">关闭</view>
+        <view hover-class="tap-dim" class="pop-btn" bindtap="onPopDetail" data-type="piece" data-name="{{popUnit.n}}">查看完整详情</view>
       </view>
     </block>
   </view>
@@ -161,8 +179,8 @@
         <view class="pop-skill-d">{{popBond.d}}</view>
       </view>
       <view class="pop-btns">
-        <button class="pop-btn ghost" bindtap="onPopClose">关闭</button>
-        <button class="pop-btn" bindtap="onPopDetail" data-type="bond" data-name="{{popBond.n}}">查看完整详情</button>
+        <view hover-class="tap-dim" class="pop-btn ghost" bindtap="onPopClose">关闭</view>
+        <view hover-class="tap-dim" class="pop-btn" bindtap="onPopDetail" data-type="bond" data-name="{{popBond.n}}">查看完整详情</view>
       </view>
     </block>
   </view>

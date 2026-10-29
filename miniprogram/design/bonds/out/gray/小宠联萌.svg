@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <title>侠棋 · 羁绊徽记 · 小宠联萌（灰色版）</title>
+  <desc>同一结构去色：浅灰珠光边 + 灰面板 + 中灰徽记（未解锁观感）；透明底。</desc>
+  <defs>
+    <linearGradient id="gbevel" gradientUnits="userSpaceOnUse" x1="90" y1="45" x2="430" y2="470">
+      <stop offset="0" stop-color="#4A4A4A" stop-opacity="1"/>
+      <stop offset="0.45" stop-color="#3C3C3C" stop-opacity="1"/>
+      <stop offset="1" stop-color="#2E2E2E" stop-opacity="1"/>
+    </linearGradient>
+    <linearGradient id="grim" gradientUnits="userSpaceOnUse" x1="256" y1="41" x2="256" y2="471">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="1"/>
+      <stop offset="0.45" stop-color="#F4F4F4" stop-opacity="1"/>
+      <stop offset="1" stop-color="#E4E4E4" stop-opacity="1"/>
+    </linearGradient>
+    <linearGradient id="gface" gradientUnits="userSpaceOnUse" x1="256" y1="60" x2="256" y2="452">
+      <stop offset="0" stop-color="#F0F0F0" stop-opacity="1"/>
+      <stop offset="0.55" stop-color="#E8E8E8" stop-opacity="1"/>
+      <stop offset="1" stop-color="#D9D9D9" stop-opacity="1"/>
+    </linearGradient>
+    <radialGradient id="gshade" gradientUnits="userSpaceOnUse" cx="256" cy="256" r="250">
+      <stop offset="0.62" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.1"/>
+    </radialGradient>
+    <linearGradient id="gmark" gradientUnits="userSpaceOnUse" x1="300" y1="110" x2="320" y2="390">
+      <stop offset="0" stop-color="#A6A6A6" stop-opacity="1"/>
+      <stop offset="0.5" stop-color="#9A9A9A" stop-opacity="1"/>
+      <stop offset="1" stop-color="#8C8C8C" stop-opacity="1"/>
+    </linearGradient>
+  </defs>
+  <g id="hex-frame">
+    <path id="bevel" d="M256.0 16.0L463.8 136.0L463.8 376.0L256.0 496.0L48.2 376.0L48.2 136.0Z" fill="url(#gbevel)"/>
+    <path id="rim" d="M256.0 44.0L439.6 150.0L439.6 362.0L256.0 468.0L72.4 362.0L72.4 150.0Z" fill="url(#grim)"/>
+    <path id="face" d="M256.0 60.0L425.7 158.0L425.7 354.0L256.0 452.0L86.3 354.0L86.3 158.0Z" fill="url(#gface)"/>
+    <path id="face-shade" d="M256.0 60.0L425.7 158.0L425.7 354.0L256.0 452.0L86.3 354.0L86.3 158.0Z" fill="url(#gshade)"/>
+  </g>
+  <g id="emblem" fill="url(#gmark)" fill-rule="evenodd">
+    <path id="mark1" d="M296.1 103.1L290.9 107.4L290.5 113.6L295.0 120.8L300.8 127.2L299.8 129.0L289.7 127.0L271.8 133.3L252.5 148.5L239.2 156.3L226.4 155.1L212.8 153.1L202.6 153.5L193.5 159.6L184.5 171.6L176.3 185.7L168.9 197.9L165.2 209.6L165.2 223.3L168.1 239.2L174.6 255.0L182.8 265.4L192.7 269.6L202.8 270.2L210.8 266.1L216.8 255.6L218.8 241.4L215.9 228.9L212.4 221.1L213.5 220.0L219.0 224.8L223.5 233.0L225.8 241.0L232.0 245.1L245.3 252.1L258.3 264.4L267.5 269.4L278.0 266.5L290.7 264.2L299.1 264.6L298.3 266.1L289.7 268.3L278.6 272.4L267.9 279.8L259.9 290.5L258.3 302.0L262.8 311.1L271.6 317.2L286.2 320.5L307.0 320.3L327.1 317.0L340.2 312.5L349.3 306.8L356.7 299.6L360.6 291.6L363.7 282.9L369.6 271.4L375.4 257.9L377.9 244.9L377.2 228.5L372.7 207.9L364.5 188.2L354.6 172.6L344.4 161.3L337.0 154.3L337.4 153.3L343.9 156.3L349.3 157.2L351.1 152.8L349.3 144.0L344.8 136.8L337.0 133.5L327.7 131.7L322.8 128.2L321.6 121.8L318.1 113.8L311.5 106.2L303.9 102.3ZM228.1 186.6L228.9 191.1L229.1 195.8L226.0 198.1L220.7 199.3L218.8 200.7L221.7 201.8L227.9 201.5L233.6 197.9L233.4 191.7L229.7 186.6ZM291.8 193.1L291.3 194.8L296.9 194.6L297.5 192.9ZM288.7 211.8L285.2 216.1L286.6 223.5L288.9 228.1L290.7 228.7L291.1 226.6L290.1 222.3L289.9 218.0L293.2 215.7L297.7 214.1L295.7 212.2ZM250.5 218.4L245.1 220.0L244.5 221.9L250.5 223.1L255.6 226.4L257.6 231.1L258.9 232.0L258.9 228.1L257.2 222.7L254.6 219.2Z"/>
+    <path id="mark2" d="M243.9 105.4L224.8 108.7L210.8 115.4L199.9 124.5L202.6 132.7L221.3 137.8L244.9 132.7L264.2 117.5L271.0 107.4L263.0 105.0Z"/>
+    <path id="mark3" d="M148.3 195.2L136.4 212.0L126.3 234.0L120.2 255.0L117.7 276.5L117.7 299.2L119.2 316.0L121.4 325.2L125.7 337.2L134.6 355.5L147.3 373.1L162.7 387.5L179.6 399.0L201.3 407.8L231.3 413.8L261.8 414.8L286.4 410.7L309.0 401.5L330.8 387.1L348.5 368.8L361.0 349.7L367.8 334.5L370.9 324.2L372.9 314.8L372.7 306.5L368.6 306.3L360.6 315.2L348.3 325.7L331.4 333.5L311.9 337.8L294.0 338.8L280.2 337.2L268.1 332.6L256.8 324.8L249.2 316.4L245.5 309.6L243.9 302.6L244.5 293.2L246.5 283.7L246.1 274.7L242.6 266.5L238.3 262.2L234.0 262.2L229.7 266.5L224.4 274.5L216.8 282.1L207.3 286.8L197.6 287.9L188.6 286.0L180.0 281.3L171.6 273.3L163.9 260.3L157.6 240.0L155.3 215.1L154.7 195.8ZM308.2 373.1L299.2 374.8L287.0 377.9L272.4 380.7L247.6 383.0L219.2 383.2L205.4 383.8L212.4 387.7L232.4 391.6L260.1 391.0L286.6 385.2L303.9 377.2Z"/>
+  </g>
+</svg>

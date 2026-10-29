@@ -3,7 +3,8 @@ const KEY = "xq-sim";
 const ROWS = 4, COLS = 7, SIZE = ROWS * COLS;
 
 function blank() {
-  return { board: Array(SIZE).fill(null), stars: {}, items: {}, main: null };
+  // name/notes:阵容标题与运营思路,随棋盘状态一起持久化(保存存档时写入记录)
+  return { board: Array(SIZE).fill(null), stars: {}, items: {}, main: null, name: "", notes: "" };
 }
 function load() {
   try {
@@ -12,6 +13,9 @@ function load() {
       return {
         board: s.board.slice(0, SIZE).map(x => x || null).concat(Array(Math.max(0, SIZE - s.board.length)).fill(null)),
         stars: s.stars || {}, items: s.items || {}, main: s.main || null,
+        // 边界:老存档无此两字段/类型异常时兜底空串并钳长度
+        name: typeof s.name === "string" ? s.name.slice(0, 20) : "",
+        notes: typeof s.notes === "string" ? s.notes.slice(0, 200) : "",
       };
     }
   } catch (e) { /* 忽略坏档 */ }

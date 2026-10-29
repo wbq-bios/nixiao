@@ -3,8 +3,10 @@
 const api = require("../utils/api.js");
 
 const FAVS = "user_favs";   // [{n, season, sid?}]
-const SIMS = "user_sims";   // [{sid?, name, board, stars, items, main, season}]
+const SIMS = "user_sims";   // [{sid?, name, board, stars, items, main, season, notes?}]
+                            // notes=运营思路,暂仅本地(user_sims 表无此列,云端待迁移)
 const VOTES = "votes";      // {compName: "up"|"down"}
+const PUBS = "user_pubs";   // [{name, board, stars, items, main, season, date, author}] 我发布的公开阵容(暂仅本机)
 
 function get(key, fallback) {
   try { return JSON.parse(wx.getStorageSync(key) || "null") ?? fallback; }
@@ -52,12 +54,13 @@ function removeSim(idx) {
 
 function getVotes() { return get(VOTES, {}); }
 function getVote(name) { return get(VOTES, {})[name] || ""; }
-function setVote(name, v) {
+function setVote(name, v, season) {
   const m = get(VOTES, {});
   m[name] = v;
   if (!v) delete m[name];
   set(VOTES, m);
-  if (api.online()) api.vote("xq", "", name, v).catch(() => {});
+  // 服务端按 season 定位阵容计数,必须带赛季,否则 /api/vote 直接 bad params
+  if (api.online()) api.vote("xq", season || "", name, v).catch(() => {});
 }
 
 /* ---------- 启动时双向同步（服务端 → 本地合并，静默失败） ---------- */
@@ -94,10 +97,28 @@ function pullRemote() {
   }).catch(() => {});
 }
 
+/* ---------- 我发布的公开阵容(本地) ---------- */
+// 上限 50 条,和存档一致;满了由调用方提示先清理
+function getPubs() { return get(PUBS, []); }
+function addPub(p) {
+  const a = getPubs();
+  if (a.length >= 50) return false;
+  a.push(p);
+  set(PUBS, a);
+  return true;
+}
+function removePub(idx) {
+  const a = getPubs();
+  if (idx < 0 || idx >= a.length) return;
+  a.splice(idx, 1);
+  set(PUBS, a);
+}
+
 module.exports = {
   FAVS, SIMS, VOTES,
   getFavs, setFavs, toggleFav,
   getSims, setSims, addSim, removeSim,
   getVotes, getVote, setVote,
+  PUBS, getPubs, addPub, removePub,
   pullRemote,
 };

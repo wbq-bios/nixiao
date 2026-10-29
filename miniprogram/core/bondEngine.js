@@ -33,4 +33,10 @@ function calc(unitNames, bonds, pieces) {
     .sort((a, b2) => b2.count - a.count);
 }
 
-module.exports = { calc, pieceOf };
+// 是否满羁绊:人数达到 lv 的最高档(用于"满羁绊才点亮彩色图标")
+function isMaxed(bond, count) {
+  const tiers = String((bond && bond.lv) || "").split("/").map(Number).filter(n => !isNaN(n));
+  return tiers.length > 0 && count >= Math.max.apply(null, tiers);
+}
+
+module.exports = { calc, isMaxed, pieceOf };

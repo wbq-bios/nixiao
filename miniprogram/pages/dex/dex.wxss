@@ -1,0 +1,54 @@
+/* 图鉴页(dex)页面样式 · 目前仅费用筛选矩阵,后续页面级样式统一收敛到这里
+   约定:静态布局入类,动态色值(费用色等)保留 wxml 内联;token 全走 app.wxss 的 var(--) */
+/* 费用筛选:一行 6 列等宽圆角矩阵(全部/1费~5费)
+   坑:grid 里放 button 会破布局(快捷入口踩过),单元格必须用 view */
+.cost-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12rpx;
+  margin: 16rpx 0 4rpx;
+}
+.cost-cell {
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18rpx;
+  background: var(--card);
+  border: 1px solid var(--line);
+  font-size: 24rpx;
+  color: var(--dim);
+}
+/* 选中态:金色浅底+金字,与全站胶囊选中语言一致 */
+.cost-cell.on {
+  background: var(--gold-dim);
+  border-color: rgba(169, 134, 67, .45);
+  color: var(--gold-hi);
+  font-weight: 650;
+}
+/* 六边形/圆角方槽样式都在 app.wxss 全局(.hex/.hex-in/.hex-ico 与 .sq/.sq-ico),详情页头标同用,勿在此重复定义 */
+/* 心悟筛选:品质/类型两行胶囊,与搜索叠加 */
+.afilter { margin: 4rpx 0 10rpx; }
+.frow { display: flex; align-items: center; gap: 8rpx; margin-top: 10rpx; flex-wrap: wrap; }
+.flabel { flex: none; width: 52rpx; font-size: 20rpx; color: var(--faint); }
+.fopt {
+  flex: none; padding: 8rpx 16rpx; border-radius: 99rpx;
+  border: 1px solid var(--line-hi); background: var(--card); color: var(--dim); font-size: 22rpx;
+}
+.fopt.on { background: var(--gold-dim); border-color: rgba(169, 134, 67, .55); color: var(--gold-hi); font-weight: 650; }
+/* 品质徽记:金/紫/蓝(数据补齐后才会出现) */
+.qual { width: 32rpx; height: 32rpx; line-height: 32rpx; text-align: center; border-radius: 8rpx; font-size: 18rpx; color: #FFF9EE; font-weight: 700; }
+.q-gold { background: #C9A24B; }
+.q-purple { background: #8C6BB1; }
+.q-blue { background: #4A7FB5; }
+/* 刷牌概率表:费用列用棋子费用色(1灰/2绿/3蓝/4紫/5金),"-" 淡化 */
+/* 选择器要压过 app.wxss 里的 .odds .td(0,2,0),否则颜色不生效 */
+.odds .td.c1, .odds .th.c1 { color: var(--dim); }
+.odds .td.c2, .odds .th.c2 { color: #3F7D52; }
+.odds .td.c3, .odds .th.c3 { color: #2F6DA8; }
+.odds .td.c4, .odds .th.c4 { color: #7C50C8; }
+.odds .td.c5, .odds .th.c5 { color: var(--gold-hi); }
+.odds .td.nil { color: var(--line-hi); }
+.odds .th.c1, .odds .th.c2, .odds .th.c3, .odds .th.c4, .odds .th.c5 { font-weight: 700; }
+/* 表头与数值都右对齐(等级列用行内 text-align:left),否则表头在左、数字在右会看着错位 */
+.odds .th { text-align: right; }

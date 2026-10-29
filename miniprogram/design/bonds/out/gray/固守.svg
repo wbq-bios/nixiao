@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <title>侠棋 · 羁绊徽记 · 固守（灰色版）</title>
+  <desc>同一结构去色：浅灰珠光边 + 灰面板 + 中灰徽记（未解锁观感）；透明底。</desc>
+  <defs>
+    <linearGradient id="gbevel" gradientUnits="userSpaceOnUse" x1="90" y1="45" x2="430" y2="470">
+      <stop offset="0" stop-color="#4A4A4A" stop-opacity="1"/>
+      <stop offset="0.45" stop-color="#3C3C3C" stop-opacity="1"/>
+      <stop offset="1" stop-color="#2E2E2E" stop-opacity="1"/>
+    </linearGradient>
+    <linearGradient id="grim" gradientUnits="userSpaceOnUse" x1="256" y1="41" x2="256" y2="471">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="1"/>
+      <stop offset="0.45" stop-color="#F4F4F4" stop-opacity="1"/>
+      <stop offset="1" stop-color="#E4E4E4" stop-opacity="1"/>
+    </linearGradient>
+    <linearGradient id="gface" gradientUnits="userSpaceOnUse" x1="256" y1="60" x2="256" y2="452">
+      <stop offset="0" stop-color="#F0F0F0" stop-opacity="1"/>
+      <stop offset="0.55" stop-color="#E8E8E8" stop-opacity="1"/>
+      <stop offset="1" stop-color="#D9D9D9" stop-opacity="1"/>
+    </linearGradient>
+    <radialGradient id="gshade" gradientUnits="userSpaceOnUse" cx="256" cy="256" r="250">
+      <stop offset="0.62" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.1"/>
+    </radialGradient>
+    <linearGradient id="gmark" gradientUnits="userSpaceOnUse" x1="300" y1="110" x2="320" y2="390">
+      <stop offset="0" stop-color="#A6A6A6" stop-opacity="1"/>
+      <stop offset="0.5" stop-color="#9A9A9A" stop-opacity="1"/>
+      <stop offset="1" stop-color="#8C8C8C" stop-opacity="1"/>
+    </linearGradient>
+  </defs>
+  <g id="hex-frame">
+    <path id="bevel" d="M256.0 16.0L463.8 136.0L463.8 376.0L256.0 496.0L48.2 376.0L48.2 136.0Z" fill="url(#gbevel)"/>
+    <path id="rim" d="M256.0 44.0L439.6 150.0L439.6 362.0L256.0 468.0L72.4 362.0L72.4 150.0Z" fill="url(#grim)"/>
+    <path id="face" d="M256.0 60.0L425.7 158.0L425.7 354.0L256.0 452.0L86.3 354.0L86.3 158.0Z" fill="url(#gface)"/>
+    <path id="face-shade" d="M256.0 60.0L425.7 158.0L425.7 354.0L256.0 452.0L86.3 354.0L86.3 158.0Z" fill="url(#gshade)"/>
+  </g>
+  <g id="emblem" fill="url(#gmark)" fill-rule="evenodd">
+    <path id="mark1" d="M251.5 110.9L227.2 112.4L206.5 116.5L189.0 123.1L172.8 131.9L158.0 142.8L144.4 155.7L131.1 173.0L118.5 197.9L110.7 230.9L109.7 265.7L112.6 290.5L116.1 302.8L119.1 307.8L124.5 309.4L132.7 309.0L137.6 306.5L137.6 302.6L135.8 297.9L133.9 292.4L131.1 283.1L128.2 264.4L128.0 238.7L132.3 214.3L139.7 195.4L148.7 180.8L160.2 167.4L175.0 154.3L192.5 143.0L210.8 134.8L227.9 130.4L244.3 128.6L262.8 129.2L280.7 129.8L290.3 126.8L292.8 121.8L293.0 117.5L287.9 114.4L273.7 111.8Z"/>
+    <path id="mark2" d="M333.9 120.6L323.2 124.9L314.8 131.5L310.5 137.9L309.0 147.7L310.0 160.9L314.8 171.6L323.6 178.7L334.3 182.6L345.8 182.2L357.3 177.5L365.9 169.5L370.2 158.2L370.4 145.4L365.3 133.9L355.5 124.9L344.6 120.4Z"/>
+    <path id="mark3" d="M246.8 160.4L239.1 163.7L233.0 169.7L229.9 182.2L231.8 201.5L235.9 217.6L234.6 225.8L225.8 231.5L214.1 236.9L205.2 241.0L198.7 246.8L194.2 258.3L191.7 273.7L189.6 287.4L187.2 299.4L181.6 312.3L167.6 324.0L143.4 332.0L120.4 335.5L110.7 338.6L109.3 344.1L110.1 349.5L115.0 354.2L123.5 358.1L131.3 359.1L136.8 360.8L142.8 369.0L153.9 379.9L170.9 388.5L190.2 394.1L212.8 397.4L236.7 399.6L263.0 400.0L297.9 396.3L329.2 389.1L347.6 380.3L357.1 370.7L361.2 362.8L363.9 359.4L368.0 360.0L375.6 359.2L385.2 354.6L390.2 347.8L389.4 340.7L379.1 336.5L356.9 333.3L336.5 327.9L325.2 321.5L317.9 313.5L312.7 299.1L309.0 277.8L306.3 259.1L302.9 248.8L292.6 241.2L275.5 232.2L264.0 224.8L262.4 219.6L265.9 213.1L269.6 199.7L268.9 180.2L263.6 167.0L258.1 162.3L253.5 160.2ZM213.1 316.0L211.0 323.2L206.3 332.0L198.9 338.4L197.6 342.7L206.5 344.2L214.1 336.1L214.7 320.9ZM286.4 316.4L285.0 325.0L286.6 338.6L294.8 345.4L302.0 343.1L299.2 338.0L293.0 332.0L289.5 324.0L287.8 317.2Z"/>
+    <path id="mark4" d="M375.2 198.1L368.6 203.8L366.6 211.0L369.4 220.5L372.7 238.5L373.7 260.9L371.1 279.8L366.5 293.4L362.9 301.0L362.6 304.9L365.1 307.6L370.7 308.8L377.8 307.8L383.2 302.6L387.5 291.6L390.6 270.0L389.6 235.9L385.2 207.5L380.9 197.4Z"/>
+  </g>
+</svg>

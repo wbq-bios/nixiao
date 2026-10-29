@@ -1,8 +1,8 @@
 <view class="page">
-  <view class="blk" style="margin-top:4rpx;position:relative">
+  <view class="blk" style="margin-top:4rpx">
     <text class="bt">万象图鉴</text>
-    <text class="cnt">{{season.id}} · {{season.name}}</text>
-    <text class="demo-badge" style="position:static;margin-left:auto">内测数据</text>
+    <!-- 赛季胶囊:点开底部抽屉选择赛季(复用首页 .sheet/.season-item 全局样式) -->
+    <view class="cnt" bindtap="onSeasonTap">{{season.id}} · {{season.name}} <text style="font-size:16rpx">▾</text></view>
   </view>
 
   <view class="search">
@@ -10,15 +10,45 @@
   </view>
 
   <view class="seg">
-    <button wx:for="{{segs}}" wx:key="k" class="opt {{seg === item.k ? 'on' : ''}}" data-k="{{item.k}}" bindtap="onSeg">{{item.l}}</button>
+    <view hover-class="tap-dim" wx:for="{{segs}}" wx:key="k" class="opt {{seg === item.k ? 'on' : ''}}" data-k="{{item.k}}" bindtap="onSeg">{{item.l}}</view>
   </view>
 
-  <view wx:if="{{seg === 'piece'}}" class="chiprow">
-    <button wx:for="{{costs}}" wx:key="*this" class="chip sm {{cost === item ? 'on' : ''}}" data-v="{{item}}" bindtap="onCost">{{item === 0 ? "全部" : item + "费"}}</button>
+  <!-- 装备品阶筛选:白色/紫色/独珍/橙武/转职书/其他 -->
+  <view wx:if="{{seg === 'equip'}}" class="afilter">
+    <view class="frow">
+      <text class="flabel">品阶</text>
+      <view hover-class="tap-dim" wx:for="{{equipCats}}" wx:key="k" class="fopt {{equipC === item.k ? 'on' : ''}}" data-k="{{item.k}}" bindtap="onEquipC">{{item.l}}</view>
+    </view>
+  </view>
+
+  <!-- 心悟筛选:品质(金/紫/蓝,有数据才显示) + 类型(战力/经济/专属),都与搜索叠加 -->
+  <view wx:if="{{seg === 'aug'}}" class="afilter">
+    <view wx:if="{{hasRarity}}" class="frow">
+      <text class="flabel">品质</text>
+      <view hover-class="tap-dim" wx:for="{{augQuals}}" wx:key="k" class="fopt {{augR === item.k ? 'on' : ''}}" data-k="{{item.k}}" bindtap="onAugR">{{item.l}}</view>
+    </view>
+    <view class="frow">
+      <text class="flabel">类型</text>
+      <view hover-class="tap-dim" wx:for="{{augCats}}" wx:key="k" class="fopt {{augC === item.k ? 'on' : ''}}" data-k="{{item.k}}" bindtap="onAugC">{{item.l}}</view>
+    </view>
+  </view>
+
+  <!-- 费用筛选:6 列圆角矩阵(view 单元格,button 在 grid 里会破布局) -->
+  <view wx:if="{{seg === 'piece'}}" class="cost-grid">
+    <view wx:for="{{costs}}" wx:key="*this" class="cost-cell {{cost === item ? 'on' : ''}}" data-v="{{item}}" bindtap="onCost">{{item === 0 ? "全部" : item + "费"}}</view>
   </view>
 
   <view wx:for="{{list}}" wx:key="key" class="card rise" style="display:flex;align-items:center;gap:22rpx" data-key="{{item.key}}" bindtap="onOpen">
-    <view class="ava" style="position:relative;overflow:hidden;background:{{item.color || 'var(--gold-dim)'}}22;color:{{item.color || 'var(--gold-hi)'}};border:3rpx solid {{item.color || 'rgba(169,134,67,.5)'}}80">
+    <!-- 头像:羁绊→六边形槽;装备/心悟→圆角方槽;无图(404/S4 演示/棋子)→首字圆徽+立绘层 -->
+    <view wx:if="{{item.icon && item.hex}}" class="hex">
+      <view class="hex-in" style="background:var(--card)">
+        <view class="hex-ico" style="background-image:url('{{item.icon}}')"></view>
+      </view>
+    </view>
+    <view wx:elif="{{item.icon}}" class="sq">
+      <view class="sq-ico" style="background-image:url('{{item.icon}}')"></view>
+    </view>
+    <view wx:else class="ava" style="position:relative;overflow:hidden;background:{{item.color || 'var(--gold-dim)'}}22;color:{{item.color || 'var(--gold-hi)'}};border:3rpx solid {{item.color || 'rgba(169,134,67,.5)'}}80">
       <text>{{item.ch}}</text>
       <view wx:if="{{item.art}}" style="position:absolute;inset:0;background-image:url('{{item.art}}');background-size:cover;background-position:center 12%"></view>
     </view>
@@ -28,7 +58,7 @@
         <block wx:if="{{item.cost}}"><text class="cost" style="color:{{item.color}}">{{item.cost}}费</text></block>
         <block wx:elif="{{item.lv}}"><text class="tag gold">{{item.lv}}</text><text wx:if="{{item.isColor}}" class="tag gold">✦ 彩色</text></block>
         <block wx:elif="{{item.r}}"><text class="rar {{item.rcls}}">{{item.r}}</text></block>
-        <block wx:elif="{{item.t}}"><text class="tag">{{item.t}}</text></block>
+        <block wx:elif="{{item.t}}"><text wx:if="{{item.qual}}" class="qual {{item.qualCls}}">{{item.qual}}</text><text class="tag">{{item.t}}</text></block>
       </view>
       <view style="font-size:22rpx;color:var(--faint);margin-top:8rpx;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{item.desc}}</view>
     </view>
@@ -43,18 +73,19 @@
 <view class="blk"><text class="bt">刷牌概率</text><text class="cnt">等级 × 费用</text></view>
 <view class="card" style="padding:10rpx 26rpx">
   <view class="odds">
+    <!-- 表头:费用列按棋子费用色着色(与游戏内概率表一致) -->
     <view class="tr" style="display:flex;border-bottom:1px solid var(--line)">
       <text class="th" style="flex:1.2;text-align:left">等级</text>
-      <text class="th" style="flex:1">1费</text><text class="th" style="flex:1">2费</text>
-      <text class="th" style="flex:1">3费</text><text class="th" style="flex:1">4费</text><text class="th" style="flex:1">5费</text>
+      <text class="th c1" style="flex:1">1费</text><text class="th c2" style="flex:1">2费</text>
+      <text class="th c3" style="flex:1">3费</text><text class="th c4" style="flex:1">4费</text><text class="th c5" style="flex:1">5费</text>
     </view>
     <view wx:for="{{odds}}" wx:key="lvl" class="tr" style="display:flex;border-bottom:1px solid var(--line)">
       <text class="td lvl" style="flex:1.2">{{item.lvl}}</text>
-      <text class="td" style="flex:1">{{item.p[0]}}</text>
-      <text class="td" style="flex:1">{{item.p[1]}}</text>
-      <text class="td" style="flex:1">{{item.p[2]}}</text>
-      <text class="td hot" style="flex:1">{{item.p[3]}}</text>
-      <text class="td hot" style="flex:1">{{item.p[4]}}</text>
+      <text class="td c1 {{item.p[0] === '-' ? 'nil' : ''}}" style="flex:1">{{item.p[0]}}</text>
+      <text class="td c2 {{item.p[1] === '-' ? 'nil' : ''}}" style="flex:1">{{item.p[1]}}</text>
+      <text class="td c3 {{item.p[2] === '-' ? 'nil' : ''}}" style="flex:1">{{item.p[2]}}</text>
+      <text class="td c4 {{item.p[3] === '-' ? 'nil' : ''}}" style="flex:1">{{item.p[3]}}</text>
+      <text class="td c5 {{item.p[4] === '-' ? 'nil' : ''}}" style="flex:1">{{item.p[4]}}</text>
     </view>
   </view>
 </view>
@@ -66,5 +97,21 @@
       <view class="tlt">{{item.date}}</view>
       <view class="p"><rich-text nodes="{{item.nodes}}"></rich-text></view>
     </view>
+  </view>
+</view>
+
+<!-- 赛季切换抽屉(复用首页 .scrim/.sheet/.season-item 全局样式) -->
+<view class="scrim {{sheetOn ? 'on' : ''}}" bindtap="onScrim"></view>
+<view class="sheet {{sheetOn ? 'on' : ''}}">
+  <view class="grab"></view>
+  <view class="h3">赛季更迭</view>
+  <view class="sp">每个赛季棋子与羁绊会更换；归档赛季数据只读可查</view>
+  <view wx:for="{{seasons}}" wx:key="id" class="season-item {{season.id === item.id ? 'on' : ''}}" data-id="{{item.id}}" bindtap="onPickSeason">
+    <view class="s-info">
+      <view class="s-nm">{{item.id}} · {{item.name}}</view>
+      <view class="s-rg">{{item.range}}</view>
+    </view>
+    <view wx:if="{{season.id === item.id}}" class="s-tag">当前赛季</view>
+    <view wx:else class="s-go">切换</view>
   </view>
 </view>

@@ -1,11 +1,11 @@
-# 本机绿色运行时(1.4G,node/mysql 副本),不入库
+# 本机绿色运行时（1.4G，node/mysql 副本），不入库
 tools/
 
 # 依赖
 node_modules/
 **/node_modules/
 
-# 密钥(模板见 backend/.env.example)
+# 密钥（模板见 backend/.env.example）
 backend/.env
 
 # 工具与系统目录
@@ -15,8 +15,8 @@ backend/.env
 Thumbs.db
 .DS_Store
 
-# 联调临时截图
-pipeline/out/ui_*.png
+# 联调临时截图（可重跑生成，不入库）
+pipeline/out/*.png
 
 # Office 打开时的锁文件
 ~$*

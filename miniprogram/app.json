@@ -22,19 +22,27 @@
     "list": [
       {
         "pagePath": "pages/home/home",
-        "text": "首页"
+        "text": "首页",
+        "iconPath": "assets/icons/tab-home.png",
+        "selectedIconPath": "assets/icons/tab-home-on.png"
       },
       {
         "pagePath": "pages/comps/comps",
-        "text": "阵容"
+        "text": "阵容",
+        "iconPath": "assets/icons/tab-comps.png",
+        "selectedIconPath": "assets/icons/tab-comps-on.png"
       },
       {
         "pagePath": "pages/dex/dex",
-        "text": "图鉴"
+        "text": "图鉴",
+        "iconPath": "assets/icons/tab-dex.png",
+        "selectedIconPath": "assets/icons/tab-dex-on.png"
       },
       {
         "pagePath": "pages/me/me",
-        "text": "我的"
+        "text": "我的",
+        "iconPath": "assets/icons/tab-me.png",
+        "selectedIconPath": "assets/icons/tab-me-on.png"
       }
     ]
   },

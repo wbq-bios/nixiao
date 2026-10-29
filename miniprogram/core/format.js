@@ -56,4 +56,11 @@ function compCardVM(c) {
   });
 }
 
-module.exports = { pack, data, pieceOf, costColor, rarCls, wan, unitVM, compUnitsVM, compCardVM, traitVM };
+// 阵容强度等级:按收藏数分级(与列表/详情共用;阈值要调只改这里)
+const COMP_GRADES = [{ min: 10, k: "SSS" }, { min: 3, k: "S" }, { min: 0, k: "A" }];
+function compGrade(favs) {
+  const hit = COMP_GRADES.find(g => favs >= g.min);
+  return hit ? hit.k : "A";
+}
+
+module.exports = { pack, data, pieceOf, costColor, rarCls, wan, unitVM, compUnitsVM, compCardVM, traitVM, compGrade };

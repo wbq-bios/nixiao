@@ -109,6 +109,23 @@ app.get("/api/content/:gameId", async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+/* 阵容热度/强度统计:热度 = 点赞数(comps.up),强度 = 收藏数(user_favs 聚合)。
+   单独一个轻接口,列表页只刷计数、不重拉整包内容;按赛季过滤,避免同名阵容跨赛季串数 */
+app.get("/api/comps/stats/:gameId", async (req, res) => {
+  try {
+    const gameId = GAMEID_RE.test(req.params.gameId || "") ? req.params.gameId : null;
+    if (!gameId) return bad(res, "bad gameId");
+    const season = typeof req.query.season === "string" ? req.query.season.slice(0, 20) : "";
+    if (!season) return bad(res, "bad season");
+    const [votes] = await db.execute("SELECT n, up, down FROM comps WHERE gameId = ? AND season = ?", [gameId, season]);
+    const [favs] = await db.execute(
+      "SELECT name, COUNT(*) AS c FROM user_favs WHERE gameId = ? AND season = ? GROUP BY name", [gameId, season]
+    );
+    const favMap = Object.fromEntries(favs.map(r => [r.name, Number(r.c) || 0]));
+    res.json(votes.map(r => ({ n: r.n, up: Number(r.up) || 0, down: Number(r.down) || 0, favs: favMap[r.n] || 0 })));
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 /* ---------- user（收藏 / 摆棋存档） ---------- */
 app.get("/api/user/favs", requireAuth, async (req, res) => {
   try {

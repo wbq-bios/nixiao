@@ -1,85 +1,167 @@
-<view class="page">
-  <view class="me-head rise" style="text-align:center;padding:30rpx 0 10rpx">
-    <view class="ava" style="width:118rpx;height:118rpx;margin:0 auto 18rpx;font-size:48rpx;background:rgba(169,134,67,.15);color:var(--gold-hi);border:3rpx solid rgba(169,134,67,.5)">侠</view>
-    <view style="font-family:var(--serif);font-size:37rpx;letter-spacing:.06em">少侠请留步</view>
-    <view style="font-size:22rpx;color:var(--faint);margin-top:8rpx">登录后云端同步我的阵容与收藏（占位）</view>
+<view class="page me">
+  <!-- 个人信息:头像 / 昵称 / 签名(只读) / ID / 赛季下拉 -->
+  <view class="mhead rise">
+    <view class="mava">
+      <text class="mava-ch">侠</text>
+      <text class="mlv">Lv.12</text>
+    </view>
+    <view class="mbody">
+      <view class="mname">逆水侠棋玩家<text class="msex">♂</text></view>
+      <view class="msig">这家伙很懒，还没有写个性签名～</view>
+      <view class="mid">ID: {{uid}}<text hover-class="tap-dim" class="mcopy" catchtap="onCopyId">⧉</text></view>
+    </view>
+    <!-- 赛季下拉:点开底部抽屉切换赛季 -->
+    <view hover-class="tap-dim" class="mseason" bindtap="onSeasonBar">{{season.id}} · {{season.name}}<text class="msarrow">▾</text></view>
   </view>
 
-  <button class="season-bar rise" bindtap="onSeasonBar">
-    <text class="nm">{{season.id}} · {{season.name}}<text class="curbadge">{{season.current ? "当前赛季" : "已归档"}}</text></text>
-    <text class="sw">切换赛季</text>
-  </button>
-
-  <view class="slider-seg rise">
-    <view class="thumb" style="transform:{{thumbX}}"></view>
-    <button class="opt {{seg === 'all' ? 'on' : ''}}" data-k="all" bindtap="onSeg">全部阵容</button>
-    <button class="opt {{seg === 'cur' ? 'on' : ''}}" data-k="cur" bindtap="onSeg">当前赛季</button>
+  <!-- 数据概览:阵容 / 收藏 / 分享 -->
+  <view class="mstats rise">
+    <view hover-class="tap-dim" class="ms" bindtap="onGoSims"><text class="msn">{{stats.sims}}</text><text class="msl">我的阵容</text></view>
+    <view hover-class="tap-dim" class="ms" bindtap="onGoFavs"><text class="msn">{{stats.favs}}</text><text class="msl">我的收藏</text></view>
+    <view class="ms"><text class="msn">{{stats.shares}}</text><text class="msl">分享记录</text></view>
   </view>
 
-  <view class="blk">
-    <text class="bt">我的阵容</text><text class="cnt">{{sims.length}} 套</text>
-    <text style="margin-left:auto;font-size:20rpx;color:var(--faint)">摆棋页「保存到我的」生成</text>
+  <!-- 我的发布:公开展示的阵容(沿用原阵容码横幅的金色样式) -->
+  <view hover-class="tap-dim" class="mcode rise" bindtap="onGoPub">
+    <view class="mcode-ico"><image class="mcode-img" src="/assets/icons/me-pub-light.png" mode="aspectFit" /></view>
+    <view class="mcode-body">
+      <text class="mcode-t">我的发布</text>
+      <text class="mcode-d">公开展示的阵容</text>
+    </view>
+    <text class="mcode-go">›</text>
   </view>
-  <view wx:for="{{sims}}" wx:key="idx" class="card rise">
-    <view style="display:flex;align-items:center;gap:14rpx">
-      <text style="font-family:var(--serif);font-size:31rpx;font-weight:700">{{item.name}}</text>
-      <text class="tag">{{item.season}}</text>
-      <text style="margin-left:auto;color:var(--faint)" data-idx="{{item.idx}}" bindtap="onDelSim">🗑</text>
-    </view>
-    <view style="display:grid;grid-template-columns:repeat(8,1fr);gap:9rpx;margin-top:20rpx">
-      <view wx:for="{{item.units}}" wx:for-item="u" wx:key="n" class="u-mini" style="border-color:{{u.color}}66;color:{{u.color}}">
-        <view class="inner">{{u.ch}}</view>
-        <view wx:if="{{u.isMain}}" class="cmark">C</view>
-      </view>
-    </view>
-    <view style="margin-top:18rpx;display:flex;align-items:center;gap:10rpx;flex-wrap:wrap">
-      <text class="tag">{{item.count}} 枚 · 费用 {{item.cost}}</text>
-      <text wx:if="{{item.main}}" class="tag gold">主C {{item.main}}</text>
-      <button class="chip sm" style="margin-left:auto" data-idx="{{item.idx}}" bindtap="onLoadSim">载入摆棋</button>
-    </view>
-  </view>
-  <view wx:if="{{!sims.length}}" class="empty rise"><text class="k">尚无自己的阵容</text>在摆棋页摆好棋子后点「保存到我的」，棋盘快照会收进这里</view>
 
-  <view class="blk">
-    <text class="bt">我的收藏</text><text class="cnt">{{favs.length}} 套</text>
-    <text style="margin-left:auto;font-size:20rpx;color:var(--faint)">阵容推荐页点 ☆ 收藏</text>
-  </view>
-  <view wx:for="{{favs}}" wx:key="name" class="card rise" data-name="{{item.name}}" data-season="{{item.season}}" bindtap="onOpenFav">
-    <view style="display:flex;align-items:center;gap:14rpx">
-      <text style="font-family:var(--serif);font-size:31rpx;font-weight:700">{{item.name}}</text>
-      <text class="tier {{item.tier}}">{{item.tier}}</text>
-      <text class="tag">{{item.season}}</text>
-      <text style="margin-left:auto;color:var(--faint)" catchtap="onDelFav" data-name="{{item.name}}">🗑</text>
+  <!-- 功能入口:列表都在二级页 -->
+  <view class="mmenu rise">
+    <view hover-class="tap-dim" class="mrow" bindtap="onGoSims">
+      <view class="mrow-ico"><image class="mrow-img" src="/assets/icons/me-sim.png" mode="aspectFit" /></view>
+      <view class="mrow-body"><text class="mrow-t">我的阵容</text><text class="mrow-d">查看、编辑、管理你的阵容</text></view>
+      <text class="mrow-go">›</text>
     </view>
-    <view style="display:grid;grid-template-columns:repeat(8,1fr);gap:9rpx;margin-top:20rpx">
-      <view wx:for="{{item.units}}" wx:for-item="u" wx:key="n" class="u-mini" style="border-color:{{u.color}}66;color:{{u.color}}">
-        <view class="inner">{{u.ch}}</view>
-        <view wx:if="{{u.isMain}}" class="cmark">C</view>
-      </view>
+    <view hover-class="tap-dim" class="mrow" bindtap="onGoFavs">
+      <view class="mrow-ico"><image class="mrow-img" src="/assets/icons/me-fav.png" mode="aspectFit" /></view>
+      <view class="mrow-body"><text class="mrow-t">我的收藏</text><text class="mrow-d">收藏的侠客、阵容、攻略</text></view>
+      <text class="mrow-go">›</text>
     </view>
-    <view style="margin-top:18rpx">
-      <text wx:for="{{item.traits}}" wx:for-item="t" wx:key="n" class="tag {{t.color ? 'gold' : ''}}">{{t.n}} {{t.count}}</text>
-    </view>
-  </view>
-  <view wx:if="{{!favs.length}}" class="empty rise"><text class="k">暂无收藏</text>看阵容推荐时点 ☆，把别人的阵容收进这里随时翻看</view>
 
-  <view class="sec-head"><text class="h2">关于</text></view>
-  <view class="card" style="font-size:25rpx;color:var(--dim);line-height:1.8">
-    本工具为非官方玩家工具，与网易无关联。当前展示为原型演示数据，正式版数据来自官方公告与社区整理，随赛季云端热更新、赛季更迭后可回看归档数据。
+    <view hover-class="tap-dim" class="mrow" bindtap="onAbout">
+      <view class="mrow-ico"><image class="mrow-img" src="/assets/icons/me-about.png" mode="aspectFit" /></view>
+      <view class="mrow-body"><text class="mrow-t">关于我们</text><text class="mrow-d">版本信息、用户协议、隐私政策</text></view>
+      <text class="mrow-go">›</text>
+    </view>
+    <view class="mrow last">
+      <view class="mrow-ico"><image class="mrow-img" src="/assets/icons/me-service.png" mode="aspectFit" /></view>
+      <view class="mrow-body"><text class="mrow-t">联系客服</text><text class="mrow-d">有问题？点击快速联系客服</text></view>
+      <view hover-class="tap-dim" class="mbtn" catchtap="onService">立即咨询</view>
+    </view>
   </view>
+
   <view class="legal">{{pack.legal}}</view>
 </view>
 
+<!-- 赛季切换抽屉 -->
 <view class="scrim {{sheetOn ? 'on' : ''}}" bindtap="onScrim"></view>
 <view class="sheet {{sheetOn ? 'on' : ''}}">
   <view class="grab"></view>
   <view class="h3">赛季更迭</view>
   <view class="sp">每个赛季棋子与羁绊会更换；归档赛季数据只读可查</view>
-  <button wx:for="{{seasons}}" wx:key="id" class="season-item {{season.id === item.id ? 'on' : ''}}" data-id="{{item.id}}" bindtap="onPickSeason" style="text-align:left">
+  <view hover-class="tap-dim" wx:for="{{seasons}}" wx:key="id" class="season-item {{season.id === item.id ? 'on' : ''}}" data-id="{{item.id}}" bindtap="onPickSeason" style="text-align:left">
     <view class="info" style="flex:1">
       <view class="nm" style="font-size:30rpx;font-weight:650">{{item.id}} · {{item.name}}</view>
       <view class="rg" style="font-size:21rpx;color:#8A8375;margin-top:4rpx">{{item.range}}</view>
     </view>
     <text class="meta" style="font-size:23rpx;color:#8A8375">{{season.id === item.id ? "当前赛季" : "切换"}}</text>
-  </button>
+  </view>
+</view>
+
+<!-- 关于我们(版本与免责声明) -->
+<view class="scrim {{aboutOn ? 'on' : ''}}" bindtap="onAboutScrim"></view>
+<view class="sheet {{aboutOn ? 'on' : ''}}">
+  <view class="grab"></view>
+  <view class="h3">关于我们</view>
+  <view class="sp">版本 {{version}}</view>
+  <view class="mabout">
+    本工具为非官方玩家工具，与网易无关联。当前展示为原型演示数据；正式版数据来自官方公告与社区整理，随赛季云端正热更新，赛季更迭后可回看归档数据。
+  </view>
+  <view class="mlegal">{{pack.legal}}</view>
+</view>
+
+<!-- 我的阵容 / 我的收藏 / 我的发布:整屏浮层(当详情页用,带返回) -->
+<view class="mpage {{subOn ? 'on' : ''}}">
+  <view class="mpage-hd">
+    <text hover-class="tap-dim" class="mpage-back" bindtap="onSubBack">‹</text>
+    <text class="mpage-title">{{subTitle}}</text>
+    <text class="mpage-season">{{season.id}}</text>
+    <text class="mpage-cnt">{{subCount}} 套</text>
+  </view>
+  <scroll-view scroll-y class="mpage-body">
+    <!-- 我的阵容:本地推演存档 -->
+    <block wx:if="{{subTab === 'sims'}}">
+      <view wx:for="{{sims}}" wx:key="idx" class="card rise">
+        <view style="display:flex;align-items:center;gap:14rpx">
+          <text style="font-family:var(--serif);font-size:31rpx;font-weight:700">{{item.name}}</text>
+          <text class="tag">{{item.season}}</text>
+          <text style="margin-left:auto;color:var(--faint);padding:0 8rpx" data-idx="{{item.idx}}" bindtap="onDelSim">✕</text>
+        </view>
+        <view style="display:grid;grid-template-columns:repeat(8,1fr);gap:9rpx;margin-top:20rpx">
+          <view wx:for="{{item.units}}" wx:for-item="u" wx:key="n" class="u-mini" style="border-color:{{u.color}}66;color:{{u.color}}">
+            <view class="inner">{{u.ch}}</view>
+            <view wx:if="{{u.isMain}}" class="cmark">C</view>
+          </view>
+        </view>
+        <view style="margin-top:18rpx;display:flex;align-items:center;gap:10rpx;flex-wrap:wrap">
+          <text class="tag">{{item.count}} 枚 · 费用 {{item.cost}}</text>
+          <text wx:if="{{item.main}}" class="tag gold">主C {{item.main}}</text>
+          <view hover-class="tap-dim" class="chip sm" style="margin-left:auto" data-idx="{{item.idx}}" bindtap="onLoadSim">载入摆棋</view>
+        </view>
+      </view>
+      <view wx:if="{{!sims.length}}" class="empty rise"><text class="k">尚无自己的阵容</text>在摆棋页摆好棋子后点「保存到我的」，棋盘快照会收进这里</view>
+    </block>
+
+    <!-- 我的收藏 -->
+    <block wx:elif="{{subTab === 'favs'}}">
+      <view wx:for="{{favs}}" wx:key="name" class="card rise" data-name="{{item.name}}" data-season="{{item.season}}" bindtap="onOpenFav">
+        <view style="display:flex;align-items:center;gap:14rpx">
+          <text style="font-family:var(--serif);font-size:31rpx;font-weight:700">{{item.name}}</text>
+          <text class="tag">{{item.season}}</text>
+          <text style="margin-left:auto;color:var(--faint);padding:0 8rpx" catchtap="onDelFav" data-name="{{item.name}}">✕</text>
+        </view>
+        <view style="display:grid;grid-template-columns:repeat(8,1fr);gap:9rpx;margin-top:20rpx">
+          <view wx:for="{{item.units}}" wx:for-item="u" wx:key="n" class="u-mini" style="border-color:{{u.color}}66;color:{{u.color}}">
+            <view class="inner">{{u.ch}}</view>
+            <view wx:if="{{u.isMain}}" class="cmark">C</view>
+          </view>
+        </view>
+        <view style="margin-top:18rpx">
+          <text wx:for="{{item.traits}}" wx:for-item="t" wx:key="n" class="tag {{t.color ? 'gold' : ''}}">{{t.n}} {{t.count}}</text>
+        </view>
+      </view>
+      <view wx:if="{{!favs.length}}" class="empty rise"><text class="k">暂无收藏</text>看阵容推荐时点 ☆，把别人的阵容收进这里随时翻看</view>
+    </block>
+
+    <!-- 我的发布:公开到阵容页的阵容 -->
+    <block wx:else>
+      <view wx:for="{{pubs}}" wx:key="idx" class="card rise">
+        <view style="display:flex;align-items:center;gap:14rpx">
+          <text style="font-family:var(--serif);font-size:31rpx;font-weight:700">{{item.name}}</text>
+          <text class="tag">{{item.season}}</text>
+          <text style="margin-left:auto;color:var(--faint);padding:0 8rpx" data-idx="{{item.idx}}" bindtap="onDelPub">✕</text>
+        </view>
+        <view style="display:flex;gap:14rpx;font-size:20rpx;color:var(--faint);margin-top:8rpx">
+          <text>{{item.date}} 发布</text><text>作者 {{item.author}}</text><text>{{item.count}} 枚</text>
+        </view>
+        <view style="display:grid;grid-template-columns:repeat(8,1fr);gap:9rpx;margin-top:18rpx">
+          <view wx:for="{{item.units}}" wx:for-item="u" wx:key="n" class="u-mini" style="border-color:{{u.color}}66;color:{{u.color}}">
+            <view class="inner">{{u.ch}}</view>
+            <view wx:if="{{u.isMain}}" class="cmark">C</view>
+          </view>
+        </view>
+        <view style="margin-top:18rpx;display:flex;align-items:center;gap:10rpx">
+          <text class="tag gold">已公开</text>
+          <view hover-class="tap-dim" class="chip sm" style="margin-left:auto" data-idx="{{item.idx}}" bindtap="onLoadPub">载入摆棋</view>
+        </view>
+      </view>
+      <view wx:if="{{!pubs.length}}" class="empty rise"><text class="k">还没发布过阵容</text>在摆棋页摆好后点顶部「发布」，就会出现在这里</view>
+    </block>
+  </scroll-view>
 </view>

@@ -1,45 +1,99 @@
-<view class="page">
-  <view class="blk" style="margin-top:4rpx;position:relative">
+<view class="page cpage">
+  <!-- 页头:赛季可切(复用首页/图鉴的赛季抽屉) + 数据口径 -->
+  <view class="blk" style="margin-top:4rpx">
     <text class="bt">阵容库</text>
-    <text class="cnt">{{season.id}} · {{season.name}}</text>
+    <view class="cnt" bindtap="onSeasonTap">{{season.id}} · {{season.name}} <text style="font-size:16rpx">▾</text></view>
     <text class="demo-badge" style="position:static;margin-left:auto">内测数据</text>
   </view>
 
-  <view class="chiprow">
-    <button wx:for="{{sorts}}" wx:key="key" class="chip sm {{sort === item.key ? 'on' : ''}}" data-k="{{item.key}}" bindtap="onSort">{{item.label}}</button>
-    <view style="flex:none;width:2rpx;background:var(--line-hi);margin:14rpx 6rpx"></view>
-    <button wx:for="{{filters}}" wx:key="key" class="chip sm {{filter === item.key ? 'on' : ''}}" data-k="{{item.key}}" bindtap="onFilter">{{item.label}}</button>
+  <!-- 搜索:阵容名 / 标签 / 侠客 / 作者都能命中 -->
+  <view class="search" style="margin-bottom:14rpx">
+    <text class="cs-ico">⌕</text>
+    <input placeholder="搜索阵容名称、标签、侠客…" value="{{q}}" bindinput="onQ" />
   </view>
 
-  <view wx:for="{{list}}" wx:key="n" class="card rise" data-name="{{item.n}}" bindtap="onOpen">
-    <view style="display:grid;grid-template-columns:repeat({{item.stripCols}},1fr);gap:10rpx;margin-bottom:20rpx">
-      <view wx:for="{{item.units}}" wx:for-item="u" wx:key="n" class="u-mini" style="border-color:{{u.color}}66;color:{{u.color}}">
-        <view class="inner">{{u.ch}}</view>
-        <view wx:if="{{u.isMain}}" class="cmark">C</view>
+  <!-- 分类 + 排序下拉(时间 / 热度=点赞 / 强度=收藏) -->
+  <view class="cfilter-wrap">
+    <view class="cfilter">
+      <view wx:for="{{tabs}}" wx:key="k" hover-class="tap-dim" class="ctab {{tab === item.k ? 'on' : ''}}" data-k="{{item.k}}" bindtap="onTab">{{item.l}}</view>
+      <view hover-class="tap-dim" class="csort" bindtap="onSortDD">{{sortLabel}}<text class="cs-dir">{{order === 'asc' ? '↑' : '↓'}}</text><text class="cs-arrow">▾</text></view>
+    </view>
+    <view wx:if="{{ddOn}}" class="cmenu">
+      <view wx:for="{{sorts}}" wx:key="k" class="cmenu-i {{sort === item.k ? 'on' : ''}}" data-k="{{item.k}}" bindtap="onSortPick">{{item.l}}</view>
+      <!-- 升降序独立一行,切维度时方向保留 -->
+      <view class="cmenu-sep"></view>
+      <view class="cmenu-order">
+        <view class="corder {{order === 'asc' ? 'on' : ''}}" data-o="asc" bindtap="onOrderPick">↑ 升序</view>
+        <view class="corder {{order === 'desc' ? 'on' : ''}}" data-o="desc" bindtap="onOrderPick">↓ 降序</view>
       </view>
     </view>
-    <view style="display:flex;align-items:center;gap:14rpx;flex-wrap:wrap">
-      <text style="font-family:var(--serif);font-size:31rpx;font-weight:700">{{item.n}}</text>
-      <text class="tier {{item.tier}}">{{item.tier}}</text>
-      <text class="badge solid">{{item.popCarry}}</text>
-      <text wx:if="{{item.colorBond}}" class="badge">✦ 彩色羁绊</text>
+  </view>
+
+  <!-- 阵容卡 -->
+  <view wx:for="{{list}}" wx:key="n" class="ccard rise" data-name="{{item.n}}" bindtap="onOpen">
+    <view class="chead">
+      <view wx:if="{{item.rank}}" class="ctop t{{item.rank}}">TOP{{item.rank}}</view>
+      <view wx:else class="cbar"></view>
+      <text class="cname">{{item.n}}</text>
+      <text class="cfav {{item.fav ? 'on' : ''}}" catchtap="onFav" data-name="{{item.n}}">{{item.fav ? '★' : '☆'}}</text>
+      <text class="carrow">›</text>
     </view>
-    <view style="margin-top:14rpx">
-      <text wx:for="{{item.traitsVM}}" wx:for-item="t" wx:key="n" class="tag {{t.color ? 'gold' : ''}}">{{t.n}} {{t.count}}</text>
+
+    <!-- 等级/人口/作者同一行,更新时间靠右 -->
+    <view class="cmeta">
+      <text class="ctag">{{item.grade}} 级</text>
+      <text class="ctag">{{item.pop}} 人口</text>
+      <text wx:if="{{item.colorBond}}" class="ctag">彩色羁绊</text>
+      <text class="cauthor">{{item.author}}</text>
+      <text class="cupd">{{item.updText}}</text>
     </view>
-    <view style="margin-top:14rpx;font-size:22rpx;color:var(--faint);display:flex;gap:20rpx;flex-wrap:wrap">
-      <text>主C <text style="color:var(--dim);font-weight:600">{{item.main}}</text></text>
-      <text>人口 <text style="color:var(--dim);font-weight:600">{{item.pop}} 级</text></text>
-      <text>热度 <text style="color:var(--dim);font-weight:600">{{item.heatWan}}</text></text>
-      <text>更新 <text style="color:var(--dim);font-weight:600">{{item.upd}}</text></text>
+
+    <view class="cdesc">{{item.desc}}</view>
+
+    <!-- 头像条:人数多时可横滑,右缘渐隐 -->
+    <view class="cunits-wrap">
+      <scroll-view scroll-x class="cunits" show-scrollbar="{{false}}">
+        <view class="cunits-in">
+          <view wx:for="{{item.units}}" wx:for-item="u" wx:key="n" class="cunit {{u.isMain ? 'main' : ''}}" style="border-color:{{u.color}}66">
+            <view wx:if="{{u.art}}" class="cu-art" style="background-image:url('{{u.art}}')"></view>
+            <text wx:else class="cu-ch" style="color:{{u.color}}">{{u.ch}}</text>
+            <text wx:if="{{u.isMain}}" class="cu-c">主C</text>
+            <text wx:if="{{u.stars}}" class="cu-s">{{u.stars}}</text>
+          </view>
+        </view>
+      </scroll-view>
+      <view class="cunits-fade"></view>
     </view>
-    <view class="votes">
-      <text class="hint">你的评价会影响排序</text>
-      <button class="vote {{item.my === 'up' ? 'on' : ''}} {{item.up === 0 ? 'zero' : ''}}" catchtap="onVote" data-name="{{item.n}}" data-dir="up">👍 {{item.up}}</button>
-      <button class="vote down {{item.my === 'down' ? 'on' : ''}} {{item.down === 0 ? 'zero' : ''}}" catchtap="onVote" data-name="{{item.n}}" data-dir="down">👎 {{item.down}}</button>
+
+    <view class="cbonds">
+      <view wx:for="{{item.bonds}}" wx:for-item="b" wx:key="n" class="cbond">
+        <view class="cb-ico" style="background-image:url('{{b.icon}}')"></view>
+        <text class="cb-n">{{b.count}} {{b.n}}</text>
+      </view>
+    </view>
+
+    <!-- 点赞:热度=点赞数,再点一次取消 -->
+    <view class="cfoot">
+      <view hover-class="tap-dim" class="cvote {{item.my === 'up' ? 'on' : ''}}" catchtap="onVote" data-name="{{item.n}}" data-dir="up">👍 {{item.up}}</view>
+      <view hover-class="tap-dim" class="cvote down {{item.my === 'down' ? 'on' : ''}}" catchtap="onVote" data-name="{{item.n}}" data-dir="down">👎 {{item.down}}</view>
     </view>
   </view>
 
-  <view wx:if="{{!list.length}}" class="empty rise"><text class="k">此筛选下暂无阵容</text>换个筛选条件试试</view>
-  <view class="ad"><text class="t1">广 告 位 · 预 留</text><text class="t2">banner · 可配置开关</text></view>
+  <view wx:if="{{!list.length}}" class="empty rise"><text class="k">没有匹配的阵容</text>换个关键词或筛选条件试试</view>
+</view>
+
+<!-- 赛季切换抽屉(复用首页 .scrim/.sheet/.season-item 全局样式) -->
+<view class="scrim {{sheetOn ? 'on' : ''}}" bindtap="onScrim"></view>
+<view class="sheet {{sheetOn ? 'on' : ''}}">
+  <view class="grab"></view>
+  <view class="h3">赛季更迭</view>
+  <view class="sp">每个赛季棋子与羁绊会更换；归档赛季数据只读可查</view>
+  <view wx:for="{{seasons}}" wx:key="id" class="season-item {{season.id === item.id ? 'on' : ''}}" data-id="{{item.id}}" bindtap="onPickSeason">
+    <view class="s-info">
+      <view class="s-nm">{{item.id}} · {{item.name}}</view>
+      <view class="s-rg">{{item.range}}</view>
+    </view>
+    <view wx:if="{{season.id === item.id}}" class="s-tag">当前赛季</view>
+    <view wx:else class="s-go">切换</view>
+  </view>
 </view>

@@ -43,11 +43,11 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     await sleep(600);
   }
 
-  // 阵容详情:点第一张卡
+  // 阵容详情:点第一张卡(卡片类名 .ccard;旧版是 .card)
   await mini.switchTab("/pages/comps/comps");
   await sleep(800);
   const cpage = await mini.currentPage();
-  const card = await cpage.$(".card");
+  const card = await cpage.$(".ccard");
   if (card) {
     await card.tap();
     await sleep(1200);
@@ -57,7 +57,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     await mini.navigateBack();
     await sleep(600);
   } else {
-    errors.push("[comps] 页面上找不到 .card 元素");
+    errors.push("[comps] 页面上找不到 .ccard 元素");
   }
 
   // 首页:打开赛季弹层

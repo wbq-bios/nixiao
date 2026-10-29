@@ -1,9 +1,5 @@
 // 游戏内容包 · 侠棋（换游戏 = 复制本目录改 pack 与 data，代码零改动）
-const pieces = require("./data/pieces.js");
-const bonds = require("./data/bonds.js");
-const equips = require("./data/equips.js");
-const augments = require("./data/augments.js");
-const comps = require("./data/comps.js");
+// 只保留 S3 真实数据;早期 S4 演示数据(棋子/羁绊/装备/心悟/阵容)已清理
 const odds = require("./data/odds.js");
 const notes = require("./data/notes.js");
 // S3 真实数据（OCR 提取+清洗，pipeline/s3_convert.py 生成）与演示数据按 season 并存
@@ -47,11 +43,11 @@ module.exports = {
     { id: "S2", name: "明星回归", range: "2025-05 ~ 2025-09", archive: true },
   ],
   data: {
-    pieces: pieces.concat(s3Pieces),
-    bonds: bonds.concat(s3Bonds),
-    equips: equips.concat(s3Equips),
-    augments: augments.concat(s3Augments),
-    comps: comps.concat(s3Comps),
+    pieces: s3Pieces,
+    bonds: s3Bonds,
+    equips: s3Equips,
+    augments: s3Augments,
+    comps: s3Comps,
     odds, notes,
   },
   legal: "非官方工具 · 数据为演示 · 《逆水寒》及相关版权归网易所有",
